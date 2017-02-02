@@ -1,4 +1,6 @@
 .*.swp
 *.pyc
 venv
-Extractor/venv
+extractor/host_config.txt
+extractor/venv
+demo_data
