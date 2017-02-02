@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>Data Extractor</title>
+    </head>
+    <body>
+	<h1>Data Extractor</h1>
+	<p>{{ name }}</p>
+	{% for dataset in datasets %}
+	<p>{{ dataset.name }}</p>
+	{% endfor %}
+    </body>
+</html>
