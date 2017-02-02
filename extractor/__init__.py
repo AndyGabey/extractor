@@ -7,7 +7,8 @@ import pandas as pd
 
 # Create flask object and configure based on site specific host_config.txt
 app = Flask(__name__)
-config = open('host_config.txt', 'r').read().strip()
+dir_path = os.path.dirname(os.path.realpath(__file__))
+config = open(os.path.join(dir_path, 'host_config.txt'), 'r').read().strip()
 app.config.from_object(config)
 
 
