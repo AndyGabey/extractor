@@ -31,4 +31,4 @@ Then go to: http://127.0.0.1:5000/
 
 Try also:
 
-http://127.0.0.1:5000/get\_data?start\_date=2015-03-27-00:00:11&end\_date=2015-03-27-00:00:21&field=P&field=RH&data\_format=html
+http://127.0.0.1:5000/get_data?start_date=2015-03-27-00:00:11&end_date=2015-03-27-00:00:21&field=P&field=RH&data_format=html
