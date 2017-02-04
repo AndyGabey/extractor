@@ -25,43 +25,56 @@ def main(expt):
     print('Expt: ' + expt)
     print_mem('Base usage')
     start = timer()
+    cols = ['RH', 'P']
     if expt not in expts:
         raise Exception('Unknown expt')
+
     if expt == 'pandas':
-        test_pandas()
+        res = test_pandas(cols)
     elif expt == 'csv':
-        test_csv()
+        res = test_csv(cols)
     elif expt == 'manual':
-        test_manual()
+        res = test_manual(cols)
+    print_mem('CSV parsed')
+    outfile = 'parse_csv_{}.json'.format(expt)
+    with open(outfile, 'w') as f:
+        f.write(res)
     end = timer()
     print('Ran in {0:.3f} s'.format(end - start))
 
 
-def test_pandas():
+def test_pandas(cols):
     import pandas as pd
     print_mem('Libs loaded')
     df = pd.read_csv(DATAFILE)
-    print_mem('CSV parsed')
+    return df[cols].to_json()
 
 
-def test_csv():
+def test_csv(cols):
     import csv
     print_mem('Libs loaded')
     rows = []
     with open(DATAFILE, 'r') as f:
         reader = csv.reader(f)
+        header = reader.next()
+        col_indices = []
+        for i, col in enumerate(header):
+            if col in cols:
+                col_indices.append(i)
+        reader.next()
+
         for row in reader:
-            rows.append(row)
-    print_mem('CSV parsed')
+            for i in col_indices:
+                rows.append(row[i])
+    return ','.join(rows)
 
 
-def test_manual():
+def test_manual(cols):
     print_mem('Libs loaded')
     rows = []
     with open(DATAFILE, 'r') as f:
         for line in f.readlines():
             rows.append(line.split(','))
-    print_mem('CSV parsed')
 
 if __name__ == '__main__':
     main(sys.argv[1])

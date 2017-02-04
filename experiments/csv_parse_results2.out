@@ -1,0 +1,12 @@
+# Check out the mem usage/time savings.
+Expt: csv
+Base usage: 9.5 MB
+Libs loaded: 9.7 MB
+CSV parsed: 10.7 MB
+Ran in 0.356 s
+
+Expt: pandas
+Base usage: 9.4 MB
+Libs loaded: 56.5 MB
+CSV parsed: 270.8 MB
+Ran in 0.942 s
