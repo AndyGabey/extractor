@@ -7,13 +7,15 @@ from flask_sqlalchemy import SQLAlchemy
 import numpy as np
 import pandas as pd
 
+from datasets import DATASETS
+
 # Create flask object and configure based on site specific host_config.txt
 app = Flask(__name__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config = open(os.path.join(dir_path, 'host_config.txt'), 'r').read().strip()
 app.config.from_object(config)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(os.path.join(dir_path, 'extractor.db'))
 db = SQLAlchemy(app)
 
 
@@ -36,7 +38,7 @@ def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
 def index():
     #ds = DataSet.query.first()
     #datasets = DataSet.query.all()
-    return render_template('index.html')
+    return render_template('index.html', datasets=DATASETS)
 
 
 @app.route('/login')

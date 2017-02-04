@@ -4,4 +4,4 @@ venv
 extractor/host_config.txt
 extractor/venv
 demo_data
-extractor/test.db
+extractor/extractor.db
