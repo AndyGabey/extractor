@@ -1,11 +1,9 @@
 import os
 import datetime as dt
+from timeit import default_timer as timer
 
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-
-import numpy as np
-import pandas as pd
 
 from datasets import DATASETS
 
@@ -46,15 +44,9 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/get_data')
-def get_data():
-    data_format = request.args.get('data_format', 'json')
-
-    fields = request.args.getlist('field')
-    start_date_ts = request.args.get('start_date')
-    end_date_ts = request.args.get('end_date')
-    start_date = date_parser(start_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
-    end_date = date_parser(end_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
+def parse_csv_pandas(fields, start_date, end_date, data_format):
+    import numpy as np
+    import pandas as pd
 
     try:
         df = pd.read_csv(os.path.join(app.config['DATA_LOCATION'], '2015-SMP1-086.csv'), 
@@ -69,10 +61,104 @@ def get_data():
         return str(e)
 
     if data_format == 'json':
-        return df_requested.loc[(df['TimeStamp'] > start_date) & (df['TimeStamp'] < end_date)].to_json()
+        return df_requested.loc[(df['TimeStamp'] >= start_date) & (df['TimeStamp'] <= end_date)].to_json()
     elif data_format == 'html':
-        return df_requested.loc[(df['TimeStamp'] > start_date) & (df['TimeStamp'] < end_date)].to_html()
+        return df_requested.loc[(df['TimeStamp'] >= start_date) & (df['TimeStamp'] <= end_date)].to_html()
 
+
+def parse_csv_csv(fields, start_date, end_date, data_format):
+    import csv
+
+    with open(os.path.join(app.config['DATA_LOCATION'], '2015-SMP1-086.csv'), 'r') as f:
+        reader = csv.reader(f)
+        cols = reader.next()
+        units = reader.next()
+
+        col_indices = []
+        try:
+            time_index = cols.index('TimeStamp')
+            for field in fields:
+                col_indices.append(cols.index(field))
+        except ValueError as e:
+            return ', '.join(cols)
+
+        if data_format == 'html':
+            rows = ['<table border="1">']
+
+            row = []
+            row.append('<thead><tr>')
+            row.append('<th>Time</th>')
+            for i in col_indices:
+                row.append('<th>{}</th>'.format(cols[i]))
+            row.append('</tr></thead>')
+            rows.append(''.join(row))
+
+            row.append('<tbody>')
+            for csv_row in reader:
+                row = []
+                row_time = date_parser(csv_row[time_index])
+                if row_time > end_date:
+                    break
+                if row_time >= start_date:
+                    row.append('<tr>')
+                    row.append('<td>{}</td>'.format(str(row_time)))
+                    for i in col_indices:
+                        row.append('<td>{}</td>'.format(csv_row[i]))
+                    row.append('</tr>')
+                    rows.append(''.join(row))
+            row.append('</tbody>')
+            rows.append('</table>')
+
+            return '\n'.join(rows)
+        elif data_format == 'json':
+            rows = ['{"header": [']
+
+            row = []
+            row.append('"Time"')
+            for i in col_indices:
+                row.append('"{}"'.format(cols[i]))
+            rows.append(','.join(row))
+            rows.append('], "data": [')
+
+            data_rows = []
+            for csv_row in reader:
+                row = []
+                row_time = date_parser(csv_row[time_index])
+                if row_time > end_date:
+                    break
+                if row_time >= start_date:
+                    row.append('"{}"'.format(str(row_time)))
+                    for i in col_indices:
+                        row.append('"{}"'.format(csv_row[i]))
+                    data_rows.append('[' + ','.join(row) + ']')
+            rows.append(','.join(data_rows))
+            rows.append(']}')
+
+            return ''.join(rows)
+
+
+
+@app.route('/get_data')
+def get_data():
+    start = timer()
+    data_format = request.args.get('data_format', 'json')
+    parser = request.args.get('parser', 'csv')
+
+    fields = request.args.getlist('field')
+    start_date_ts = request.args.get('start_date')
+    end_date_ts = request.args.get('end_date')
+    start_date = date_parser(start_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
+    end_date = date_parser(end_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
+
+    if parser == 'pandas':
+        payload =  parse_csv_pandas(fields, start_date, end_date, data_format)
+    elif parser == 'csv':
+        payload =  parse_csv_csv(fields, start_date, end_date, data_format)
+
+    parsed = timer()
+    print(parsed - start)
+
+    return payload
 
 if __name__ == '__main__':
     app.run()
