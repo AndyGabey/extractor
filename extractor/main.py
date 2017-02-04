@@ -34,9 +34,9 @@ def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
 
 @app.route('/')
 def index():
-    ds = DataSet.query.first()
-    datasets = DataSet.query.all()
-    return render_template('index.html', name=ds.name, datasets=datasets)
+    #ds = DataSet.query.first()
+    #datasets = DataSet.query.all()
+    return render_template('index.html')
 
 
 @app.route('/login')
@@ -46,8 +46,6 @@ def login():
 
 @app.route('/get_data')
 def get_data():
-    Session = sessionmaker(bind=engine)
-    session = Session()
     data_format = request.args.get('data_format', 'json')
 
     fields = request.args.getlist('field')

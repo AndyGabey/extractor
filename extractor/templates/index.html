@@ -1,13 +1,350 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    <head>
-	<title>Data Extractor</title>
-    </head>
-    <body>
-	<h1>Data Extractor</h1>
-	<p>{{ name }}</p>
-	{% for dataset in datasets %}
-	<p>{{ dataset.name }}</p>
-	{% endfor %}
-    </body>
+<head>
+<meta charset="utf-8">
+<title>METFiDAS-3 Data Extractor -- University of Reading</title>
+<style type="text/css">
+#left_panel
+	{
+		left: 2.5vw;
+		top: 2.5vh;
+		width: 45vw;
+		background-color: rgba(255,255,0,0.2);
+		position: absolute;
+		height: 100%;
+	}
+#right_panel
+	{
+		left: 50vw;
+		top: 2.5vh;
+		width: 45vw;
+		background-color: rgba(255,0,0,0.2);
+		height: 200px;
+		position: absolute;
+		overflow: scroll;
+	}
+#left_panel div span
+	{
+		width: 50%;
+		background-color: rgba(255,0,255,0.6);
+	}
+#left_panel div
+	{
+		width: 100%;
+		background-color: rgba(0,0,255,0.6);
+	}
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+// Checks a string to see if it in a valid date format
+// of (D)D/(M)M/(YY)YY and returns true/false
+function isValidDate(dateArray) {
+   
+    //var dateArray = s.split(/[\.|\/|-]/);
+      
+		  // correct month value
+	dateArray = dateArray.slice(1);
+	dateArray[1] = dateArray[1] - 1;
+
+	// correct year value
+	if (dateArray[2].length<4) {
+		// correct year value
+		dateArray[2] = (parseInt(dateArray[2]) < 50) ? 2000 + parseInt(dateArray[2]) : 1900 + parseInt(dateArray[2]);
+	}
+
+	var testDate = new Date(dateArray[2], dateArray[1], dateArray[0]);
+	if (testDate.getDate()!=dateArray[0] || testDate.getMonth()!=dateArray[1] || testDate.getFullYear()!=dateArray[2]) {
+		return false;
+	} else {
+		return true;
+	}
+}
+// Compares two dates in array form and see if Date2 is larger than Date1.
+// Date arrays must be in (H)H (D)D (M)M YYYY
+function compareDates(dateArrayOne,dateArrayTwo) {
+	
+	var dateOne = new Date(dateArrayOne[3],dateArrayOne[2]-1,dateArrayOne[1],dateArrayOne[0]),
+		dateTwo = new Date(dateArrayTwo[3],dateArrayTwo[2]-1,dateArrayTwo[1],dateArrayTwo[0]);
+		
+	if (dateOne >= dateTwo) return false
+	else return true
+}
+
+// Compares a given day in array form (dateArray) with the current time.
+// Date array must be in (H)H (D)D (M)M YYYY
+function compareDateWithNow(dateArray) {
+	
+	var d = new Date(dateArray[3],dateArray[2]-1,dateArray[1],dateArray[0]);
+	var dnow = new Date();
+		
+	if (d > dnow) return false
+	else return true
+}
+
+// This function auto-lists all the days in a month (01-31) and put them into the 
+// selection fields.
+function autoListDays() {
+		
+		var day = "";
+		for (var i = 1; i < 32; i++)
+			{
+				day += '<option value="'+i.toString()+'">'+i.toString()+'</option>'
+			}
+	
+		$("#startD").html(day);
+		$("#endD").html(day);
+	}
+	
+// This function auto-lists all the hours in a day (00-23) and put them into the 
+// selection fields.
+function autoListHours() {
+		var hours = "";
+		for (var i = 0; i < 24; i++)
+			{
+				hours += '<option value="'+i.toString()+'">'+i.toString()+'</option>'
+			}
+			
+		$("#startH").html(hours);
+		$("#endH").html(hours);
+	}
+
+// Add leading zeros to a number (num) to match a certain length (size).
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+// Retrieve the current time based on users' clock and return as a string of 
+// HH:MM:SS DD/MM/YYYY.
+function getTimeForLog() {
+
+	var d = new Date();
+	
+	return "["+pad(d.getUTCHours(),2) + ":" + pad(d.getUTCMinutes(),2) + ":" + 
+				pad(d.getUTCSeconds(),2) + " " + pad(d.getUTCDate(),2) + "/" + 
+				pad(d.getUTCMonth()+1,2) + "/" + d.getUTCFullYear().toString()+"]";
+
+}
+
+// Log a message in the designated div.
+function logMessage(str) {
+	$("#right_panel").append(getTimeForLog()+" "+str+"<br>");
+	//$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
+}
+
+// Wrapper function to perform sanity check for Step 1.
+function checkStepOne() {
+		$("#check_step_one").prop('disabled',true);
+		logMessage("Initialising input sanity check...");
+		
+		// Error status
+		var err = 0;
+		
+		// Check if user has selected the type of data to extract. Return an error 
+		// message if false.
+		var dataType = $("#type_aws").val();
+		
+		if (dataType == "")
+			{
+				logMessage("Please choose the type of data to extract.");
+				err = 1; 
+			}
+		
+		// Retrieve user's input dates from the form.
+		var startDateArray = new Array($("#startH").val(),$("#startD").val(),$("#startM").val(),$("#startY").val()),
+			endDateArray = new Array($("#endH").val(),$("#endD").val(),$("#endM").val(),$("#endY").val());
+		
+		
+		// Check for errors in the input dates.
+		if (!isValidDate(startDateArray))
+			{
+				logMessage("Invalid start date. Please check again.");
+				err = 1;
+			}
+		if (!isValidDate(endDateArray))
+			{
+				logMessage("Invalid end date. Please check again.");
+				err = 1;
+			}
+		if (!compareDates(startDateArray,endDateArray))
+			{
+				logMessage("Start date is later than or equal to end date. Please check again.");
+				err = 1;
+			}
+		if (!compareDateWithNow(startDateArray))
+			{
+				logMessage("Start date is in the future! Please check again.");
+				err = 1;
+			}
+		if (!compareDateWithNow(endDateArray))
+			{
+				logMessage("End date is in the future! Please check again.");
+				err = 1;
+			}
+		
+		// Retrieve user-selected variable categories.
+		
+		var varCat = $('input[name="var_type"]:checked');
+		//Return error messages if none of the variable categories is selected.
+		
+		if (varCat.length == 0)
+			{
+				logMessage("No variable category is checked. Please choose at least 1 category.");
+				err = 1; 
+			}
+		
+		// Routine if the input passes the sanity check.
+		if (!err)
+			{
+				logMessage("Input sanity check passed.");
+			}
+		
+		// Add a horizontal break.
+		$("#right_panel").append("<hr>");
+		
+		// Scroll down to the last log.
+		$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
+		
+		// Re-enable the check button.
+		$("#check_step_one").prop('disabled',false);
+	}
+	
+// Initialise after document is fully loaded.
+$(function(){
+	autoListDays();
+	autoListHours();
+	
+	$("#check_step_one").click(checkStepOne);
+	
+});
+</script>
+</head>
+<body>
+<div id="left_panel">
+Step 1: Choose the type and date-range of data.
+<div id="datatype">
+Please select the type of data to extract.
+<select id="type_aws">
+<option value="">---</option>
+<optgroup label="AWS logger output">
+<option value="1sec_Level1">1-sec "instantaneous" logger output</option>
+<option value="5min_Level1">5-min averaged logger output</option>
+<option value="5min_Level1_maxmin">5-min max/min logger output</option>
+</optgroup>
+<optgroup label="AWS processed output">
+<option value="5min_Level2" checked>5-min WMO-standard processed output</option>
+<option value="5min_Level2_maxmin">5-min max/min processed output</option>
+<option value="1hour_Level2">1-hour WMO-standard processed output</option>
+<option value="1hour_Level2_maxmin">1-hour max/min processed output</option>
+</optgroup>
+<optgroup label="Climate observations">
+<option value="climat0900">0900 UTC METFiDAS climate observation - no data thrown back</option>
+</optgroup>
+<optgroup label="Sonic licor">
+<option value="soniclicor_Level1">0.1-sec sonic licor output</option>
+</optgroup>
+<optgroup label="Vertical profiles">
+<option value="Vertical_profiles">Vertical profiles of wind and temperature</option>
+</optgroup>
+<optgroup label="Eddy covariances">
+<option value="eddy_cov">Eddy covariances - 30-min averages</option>
+</optgroup>
+<optgroup label="Cloud base average">
+<option value="cloudbase_5min">Cloud base averages at 5-minute intervals</option>
+<option value="cloudbase_1min">Cloud base averages at 1-minute intervals</option>
+</optgroup>
+</select>
+</div>
+<div id="start_date">Please select the start date.
+<select id="startY">
+<option value="2017">2017</option>
+<option value="2016">2016</option>
+<option value="2015">2015</option>
+<option value="2014">2014</option>
+</select>
+<select id="startM">
+<option value="1">Jan</option>
+<option value="2">Feb</option>
+<option value="3">Mar</option>
+<option value="4">Apr</option>
+<option value="5">May</option>
+<option value="6">Jun</option>
+<option value="7">Jul</option>
+<option value="8">Aug</option>
+<option value="9">Sep</option>
+<option value="10">Oct</option>
+<option value="11">Nov</option>
+<option value="12">Dec</option>
+</select>
+<select id="startD">
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+<option value="04">04</option>
+</select>
+<select id="startH">
+<option value="00">00</option>
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+</select>
+</div>
+<div id="end_date"><span>Please select the end date.</span>
+<span>
+<select id="endY">
+<option value="2017">2017</option>
+<option value="2016">2016</option>
+<option value="2015">2015</option>
+<option value="2014">2014</option>
+</select>
+<select id="endM">
+<option value="1">Jan</option>
+<option value="2">Feb</option>
+<option value="3">Mar</option>
+<option value="4">Apr</option>
+<option value="5">May</option>
+<option value="6">Jun</option>
+<option value="7">Jul</option>
+<option value="8">Aug</option>
+<option value="9">Sep</option>
+<option value="10">Oct</option>
+<option value="11">Nov</option>
+<option value="12">Dec</option>
+</select>
+<select id="endD">
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+<option value="04">04</option>
+</select>
+<select id="endH">
+<option value="00">00</option>
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+</select>
+</span>
+</div>
+<div id="vtype">
+Please choose the variable categories.
+<input type="checkbox" name="var_type" value="temp">Temperature</input>
+<input type="checkbox" name="var_type" value="rain">Rainfall</input>
+<input type="checkbox" name="var_type" value="rad">Sun/Radiation</input>
+<input type="checkbox" name="var_type" value="wind">Wind</input>
+<input type="checkbox" name="var_type" value="pres">Pressure</input>
+</div>
+<div><input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input></div>
+Step 2
+<div id="missing_value_options">
+<select id="missing">
+<option value="blank">Blank/Empty</option>
+<option value="9999.9">9999.9</option>
+<option value="x">x</option>
+</select>
+</div>
+</div>
+<div id="right_panel">
+</div>
+</body>
 </html>
