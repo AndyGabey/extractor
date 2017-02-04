@@ -39,10 +39,9 @@
 // Checks a string to see if it in a valid date format
 // of (D)D/(M)M/(YY)YY and returns true/false
 function isValidDate(dateArray) {
-   
     //var dateArray = s.split(/[\.|\/|-]/);
       
-		  // correct month value
+	// correct month value
 	dateArray = dateArray.slice(1);
 	dateArray[1] = dateArray[1] - 1;
 
@@ -62,7 +61,6 @@ function isValidDate(dateArray) {
 // Compares two dates in array form and see if Date2 is larger than Date1.
 // Date arrays must be in (H)H (D)D (M)M YYYY
 function compareDates(dateArrayOne,dateArrayTwo) {
-	
 	var dateOne = new Date(dateArrayOne[3],dateArrayOne[2]-1,dateArrayOne[1],dateArrayOne[0]),
 		dateTwo = new Date(dateArrayTwo[3],dateArrayTwo[2]-1,dateArrayTwo[1],dateArrayTwo[0]);
 		
@@ -73,7 +71,6 @@ function compareDates(dateArrayOne,dateArrayTwo) {
 // Compares a given day in array form (dateArray) with the current time.
 // Date array must be in (H)H (D)D (M)M YYYY
 function compareDateWithNow(dateArray) {
-	
 	var d = new Date(dateArray[3],dateArray[2]-1,dateArray[1],dateArray[0]);
 	var dnow = new Date();
 		
@@ -84,29 +81,28 @@ function compareDateWithNow(dateArray) {
 // This function auto-lists all the days in a month (01-31) and put them into the 
 // selection fields.
 function autoListDays() {
-		
-		var day = "";
-		for (var i = 1; i < 32; i++)
-			{
-				day += '<option value="'+i.toString()+'">'+i.toString()+'</option>'
-			}
-	
-		$("#startD").html(day);
-		$("#endD").html(day);
-	}
+	var day = "";
+	for (var i = 1; i < 32; i++)
+		{
+			day += '<option value="'+pad(i,2)+'">'+pad(i,2)+'</option>';
+		}
+
+	$("#startD").html(day);
+	$("#endD").html(day);
+}
 	
 // This function auto-lists all the hours in a day (00-23) and put them into the 
 // selection fields.
 function autoListHours() {
-		var hours = "";
-		for (var i = 0; i < 24; i++)
-			{
-				hours += '<option value="'+i.toString()+'">'+i.toString()+'</option>'
-			}
-			
-		$("#startH").html(hours);
-		$("#endH").html(hours);
-	}
+	var hours = "";
+	for (var i = 0; i < 24; i++)
+		{
+			hours += '<option value="'+pad(i,2)+'">'+pad(i,2)+'</option>';
+		}
+		
+	$("#startH").html(hours);
+	$("#endH").html(hours);
+}
 
 // Add leading zeros to a number (num) to match a certain length (size).
 function pad(num, size) {
@@ -135,80 +131,80 @@ function logMessage(str) {
 
 // Wrapper function to perform sanity check for Step 1.
 function checkStepOne() {
-		$("#check_step_one").prop('disabled',true);
-		logMessage("Initialising input sanity check...");
-		
-		// Error status
-		var err = 0;
-		
-		// Check if user has selected the type of data to extract. Return an error 
-		// message if false.
-		var dataType = $("#type_aws").val();
-		
-		if (dataType == "")
-			{
-				logMessage("Please choose the type of data to extract.");
-				err = 1; 
-			}
-		
-		// Retrieve user's input dates from the form.
-		var startDateArray = new Array($("#startH").val(),$("#startD").val(),$("#startM").val(),$("#startY").val()),
-			endDateArray = new Array($("#endH").val(),$("#endD").val(),$("#endM").val(),$("#endY").val());
-		
-		
-		// Check for errors in the input dates.
-		if (!isValidDate(startDateArray))
-			{
-				logMessage("Invalid start date. Please check again.");
-				err = 1;
-			}
-		if (!isValidDate(endDateArray))
-			{
-				logMessage("Invalid end date. Please check again.");
-				err = 1;
-			}
-		if (!compareDates(startDateArray,endDateArray))
-			{
-				logMessage("Start date is later than or equal to end date. Please check again.");
-				err = 1;
-			}
-		if (!compareDateWithNow(startDateArray))
-			{
-				logMessage("Start date is in the future! Please check again.");
-				err = 1;
-			}
-		if (!compareDateWithNow(endDateArray))
-			{
-				logMessage("End date is in the future! Please check again.");
-				err = 1;
-			}
-		
-		// Retrieve user-selected variable categories.
-		
-		var varCat = $('input[name="var_type"]:checked');
-		//Return error messages if none of the variable categories is selected.
-		
-		if (varCat.length == 0)
-			{
-				logMessage("No variable category is checked. Please choose at least 1 category.");
-				err = 1; 
-			}
-		
-		// Routine if the input passes the sanity check.
-		if (!err)
-			{
-				logMessage("Input sanity check passed.");
-			}
-		
-		// Add a horizontal break.
-		$("#right_panel").append("<hr>");
-		
-		// Scroll down to the last log.
-		$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
-		
-		// Re-enable the check button.
-		$("#check_step_one").prop('disabled',false);
-	}
+	$("#check_step_one").prop('disabled',true);
+	logMessage("Initialising input sanity check...");
+	
+	// Error status
+	var err = 0;
+	
+	// Check if user has selected the type of data to extract. Return an error 
+	// message if false.
+	var dataType = $("#type_aws").val();
+	
+	if (dataType == "")
+		{
+			logMessage("Please choose the type of data to extract.");
+			err = 1; 
+		}
+	
+	// Retrieve user's input dates from the form.
+	var startDateArray = new Array($("#startH").val(),$("#startD").val(),$("#startM").val(),$("#startY").val()),
+		endDateArray = new Array($("#endH").val(),$("#endD").val(),$("#endM").val(),$("#endY").val());
+	
+	
+	// Check for errors in the input dates.
+	if (!isValidDate(startDateArray))
+		{
+			logMessage("Invalid start date. Please check again.");
+			err = 1;
+		}
+	if (!isValidDate(endDateArray))
+		{
+			logMessage("Invalid end date. Please check again.");
+			err = 1;
+		}
+	if (!compareDates(startDateArray,endDateArray))
+		{
+			logMessage("Start date is later than or equal to end date. Please check again.");
+			err = 1;
+		}
+	if (!compareDateWithNow(startDateArray))
+		{
+			logMessage("Start date is in the future! Please check again.");
+			err = 1;
+		}
+	if (!compareDateWithNow(endDateArray))
+		{
+			logMessage("End date is in the future! Please check again.");
+			err = 1;
+		}
+	
+	// Retrieve user-selected variable categories.
+	
+	var varCat = $('input[name="var_type"]:checked');
+	//Return error messages if none of the variable categories is selected.
+	
+	if (varCat.length == 0)
+		{
+			logMessage("No variable category is checked. Please choose at least 1 category.");
+			err = 1; 
+		}
+	
+	// Routine if the input passes the sanity check.
+	if (!err)
+		{
+			logMessage("Input sanity check passed.");
+		}
+	
+	// Add a horizontal break.
+	$("#right_panel").append("<hr>");
+	
+	// Scroll down to the last log.
+	$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
+	
+	// Re-enable the check button.
+	$("#check_step_one").prop('disabled',false);
+}
 	
 // Initialise after document is fully loaded.
 $(function(){
