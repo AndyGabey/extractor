@@ -2,6 +2,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     DATA_LOCATION = 'demo_data/metfidas'
+    DB_LOCATION = 'sqlite:////tmp/extractor.db'
 
 
 class ProductionConfig(Config):
