@@ -87,7 +87,6 @@ class Variable(Base):
     units = Column(String(100))
     vartype = Column(String(100))
 
-
     def __init__(self, var, long_name, units, vartype):
         self.var = var
         self.long_name = long_name
@@ -96,3 +95,20 @@ class Variable(Base):
 
     def __repr__(self):
         return '<Variable {}>'.format(self.long_name)
+
+
+class UserToken(Base):
+    __tablename__ = 'user_tokens'
+
+    id = Column(Integer, primary_key=True)
+    token = Column(String(10))
+    expiry_date = Column(DateTime)
+    notes = Column(String)
+
+    def __init__(self, token, expiry_date, notes):
+        self.token = token
+        self.expiry_date = expiry_date
+        self.notes = notes
+
+    def __repr__(self):
+        return '<UserToken {}>'.format(self.token)

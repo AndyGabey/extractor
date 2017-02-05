@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>Data Extractor|User Tokens</title>
+    </head>
+    <body>
+	<h1>User Tokens</h1>
+
+	<table id="user_tokens" border="1">
+	    <thead>
+		<tr>
+		    <th>ID</th>
+		    <th>Token</th>
+		    <th>Expiry</th>
+		    <th>Notes</th>
+		    <th></th>
+		</tr>
+	    </thead>
+	    <tbody>
+		{% for token in user_tokens %}
+		<tr>
+		    <td>{{ token.id }}</td>
+		    <td>{{ token.token }}</td>
+		    <td>{{ token.expiry_date }}</td>
+		    <td>{{ token.notes }}</td>
+		    <td>
+			<form action="{{ url_for('delete_token', token_id=token.id) }}" method="POST">
+			    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			    <input type="submit" value="Delete token"/>
+			</form>
+		    </td>
+		</tr>
+		{% endfor %}
+		</tr>
+	    </tbody>
+	</table>
+
+	<form action="{{ url_for('create_token') }}" method="POST">
+	    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+	    <input type="submit" value="Create token" />
+	</form>
+    </body>
+</html>
+

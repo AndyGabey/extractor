@@ -1,4 +1,5 @@
 import os
+import datetime as dt
 from timeit import default_timer as timer
 
 import flask
@@ -8,7 +9,7 @@ from flask_login import login_required, login_user, logout_user
 from extractor import app, login_manager
 from extractor.utils import parse_csv_csv, parse_csv_pandas, date_parser, is_safe_url
 from extractor.database import db_session
-from extractor.models import User, Dataset, Variable
+from extractor.models import User, Dataset, Variable, UserToken
 from extractor.forms import LoginForm, DatasetForm
 
 
@@ -63,7 +64,6 @@ def logout():
 def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
-        import datetime as dt
         ds = Dataset(dt.datetime(2017, 1, 1), dt.datetime.now(),
                      5, form.label.data, form.instrument.data, 
                      '/some/file/path/{year}/', 
@@ -119,11 +119,45 @@ def users():
     return render_template('users.html', users=users)
     
 
+@app.route('/user_tokens')
+@login_required
+def user_tokens():
+    user_tokens = UserToken.query.all()
+    return render_template('user_tokens.html', user_tokens=user_tokens)
+    
+
+@app.route('/user_token/create', methods=['POST'])
+@login_required
+def create_token():
+    import uuid
+    token = UserToken(uuid.uuid4().hex[:10], dt.datetime.now(), '')
+    db_session.add(token)
+    db_session.commit()
+    return flask.redirect(flask.url_for('user_tokens'))
+    
+
+
+@app.route('/user_token/<token_id>/delete', methods=['POST'])
+@login_required
+def delete_token(token_id):
+    token = UserToken.query.get(token_id)
+    db_session.delete(token)
+    db_session.commit()
+    return flask.redirect(flask.url_for('user_tokens'))
+    
+
+
 @app.route('/dataset/<dataset>/get_data')
 def get_data(dataset):
     start = timer()
     print(dataset)
     data_format = request.args.get('data_format', 'json')
+    token_str = request.args.get('token', 'none')
+    if token_str != 'none':
+        token = UserToken.query.filter_by(token=token_str).one()
+    else:
+        token = None
+
     parser = request.args.get('parser', 'csv')
 
     fields = request.args.getlist('field')
@@ -131,6 +165,9 @@ def get_data(dataset):
     end_date_ts = request.args.get('end_date')
     start_date = date_parser(start_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
     end_date = date_parser(end_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
+
+    if not token and (end_date - start_date > dt.timedelta(hours=6)):
+        return 'No token supplied and more than 6 hours of data requested'
 
     csv_file = os.path.join(app.config['DATA_LOCATION'], '2015-SMP1-086.csv')
 
