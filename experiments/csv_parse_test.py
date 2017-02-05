@@ -1,12 +1,14 @@
 import os
 import sys
+import datetime as dt
 from timeit import default_timer as timer
 
 import psutil
 
 DATAFILE = '../demo_data/metfidas/2015-SMP1-086.csv'
+DATAFILE_HDF = '../demo_data/metfidas/csv.z1.hdf'
 
-expts = ['pandas', 'csv', 'manual']
+expts = ['pandas', 'csv', 'manual', 'pandas_preproc']
 
 # Thanks: 
 # http://fa.bianp.net/blog/2013/different-ways-to-get-memory-consumption-or-lessons-learned-from-memory_profiler/
@@ -25,29 +27,41 @@ def main(expt):
     print('Expt: ' + expt)
     print_mem('Base usage')
     start = timer()
-    cols = ['RH', 'P']
+    cols = ['RH', 'P','Sdur', 'Td', 'Tconc', 'Tgrass', 'Tsoil', 'TSoil5', 'TSoil10']
     if expt not in expts:
         raise Exception('Unknown expt')
 
     if expt == 'pandas':
         res = test_pandas(cols)
+    elif expt == 'pandas_preproc':
+        res = test_pandas_preproc(cols)
     elif expt == 'csv':
         res = test_csv(cols)
     elif expt == 'manual':
         res = test_manual(cols)
     print_mem('CSV parsed')
-    outfile = 'parse_csv_{}.json'.format(expt)
+    outfile = 'parse_csv_{}.csv'.format(expt)
     with open(outfile, 'w') as f:
         f.write(res)
     end = timer()
     print('Ran in {0:.3f} s'.format(end - start))
 
+def f(ts):
+    return dt.datetime.strptime(ts, '%d/%m/%Y %H:%M:%S')
 
 def test_pandas(cols):
     import pandas as pd
     print_mem('Libs loaded')
-    df = pd.read_csv(DATAFILE)
-    return df[cols].to_json()
+    df = pd.read_csv(DATAFILE, skiprows=[1], parse_dates=[0], date_parser=f)
+
+    return df[cols].to_csv()
+
+
+def test_pandas_preproc(cols):
+    import pandas as pd
+    print_mem('Libs loaded')
+    df = pd.read_hdf(DATAFILE_HDF, 'metfidas')
+    return df[cols].to_csv()
 
 
 def test_csv(cols):
@@ -63,10 +77,12 @@ def test_csv(cols):
                 col_indices.append(i)
         reader.next()
 
-        for row in reader:
+        for csv_row in reader:
+            row = []
             for i in col_indices:
-                rows.append(row[i])
-    return ','.join(rows)
+                row.append(csv_row[i])
+            rows.append(','.join(row))
+    return '\n'.join(rows)
 
 
 def test_manual(cols):

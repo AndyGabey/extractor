@@ -5,3 +5,5 @@ extractor/host_config.txt
 extractor/venv
 demo_data
 extractor/extractor.db
+experiments/*.json
+experiments/*.csv
