@@ -1,5 +1,13 @@
 import datetime as dt
 
+from urlparse import urlparse, urljoin
+from flask import request, url_for
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
 
 def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
     return dt.datetime.strptime(timestamp, fmt)

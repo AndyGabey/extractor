@@ -5,5 +5,14 @@
     </head>
     <body>
 	<h1>Login</h1>
+	{% from "_formhelpers.html" import render_field %}
+	<form method="post">
+	     {{ form.csrf_token }}
+	    <dl>
+		{{ render_field(form.name) }}
+		{{ render_field(form.password) }}
+	    </dl>
+	    <p><input type="submit" value="Login">
+	</form>
     </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-	<title>Data Extractor|datasets</title>
+	<title>Data Extractor|Datasets</title>
     </head>
     <body>
 	<h1>Datasets</h1>
@@ -13,7 +13,7 @@
 	    <tr><td>{{ ds_name }}</td><td>{{ ds_value }}</td><td><a href="{{url_for('dataset', dataset=ds_value)}}">{{ ds_name }}</a></td></tr>
 	    {% endfor %}
 	    </tbody>
-	</select>
+	</table>
     </body>
 </html>
 
