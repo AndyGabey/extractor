@@ -7,10 +7,9 @@ from flask_login import login_required, login_user, logout_user
 
 from extractor import app, login_manager
 from extractor.utils import parse_csv_csv, parse_csv_pandas, date_parser, is_safe_url
-from extractor.datasets import DATASETS
 from extractor.database import db_session
-from extractor.models import User
-from extractor.forms import LoginForm
+from extractor.models import User, Dataset, Variable
+from extractor.forms import LoginForm, DatasetForm
 
 
 @login_manager.user_loader
@@ -21,7 +20,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('index.html', datasets=DATASETS)
+    return render_template('index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -52,21 +51,65 @@ def login():
     return flask.render_template('login.html', form=form)
 
 
-@app.route("/logout")
+@app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return flask.redirect('/')
 
 
+@app.route('/dataset/create', methods=['GET', 'POST'])
+@login_required
+def create_dataset():
+    form = DatasetForm()
+    if form.validate_on_submit():
+        import datetime as dt
+        ds = Dataset(dt.datetime(2017, 1, 1), dt.datetime.now(),
+                     5, form.label.data, form.instrument.data, 
+                     '/some/file/path/{year}/', 
+                     'TimeStamp' , '%d%m', 'Time', '%s')
+        db_session.add(ds)
+        db_session.commit()
+
+        return flask.redirect(flask.url_for('datasets'))
+    return render_template('edit_dataset.html', form=form)
+    
+
+@app.route('/dataset/<dataset_name>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_dataset(dataset_name):
+    ds = Dataset.query.filter_by(label=dataset_name).one()
+    form = DatasetForm(obj=ds)
+
+    if form.validate_on_submit():
+        form.populate_obj(ds)
+        db_session.commit()
+
+        return flask.redirect(flask.url_for('datasets'))
+    return render_template('edit_dataset.html', form=form)
+    
+
+@app.route('/dataset/<dataset_name>/delete', methods=['POST'])
+@login_required
+def delete_dataset(dataset_name):
+    print(request.method)
+    ds = Dataset.query.filter_by(label=dataset_name).one()
+    db_session.delete(ds)
+    db_session.commit()
+
+    return flask.redirect(flask.url_for('datasets'))
+    
+
 @app.route('/datasets')
 def datasets():
-    dataset_list = []
-    for k, v in DATASETS.items():
-        for ds_value, ds_name in v.items():
-            dataset_list.append((ds_name, ds_value))
+    datasets = Dataset.query.all()
+    return render_template('datasets.html', datasets=datasets)
+    
 
-    return render_template('datasets.html', datasets=dataset_list)
+@app.route('/dataset/<dataset_name>/')
+def dataset(dataset_name):
+    dataset = Dataset.query.filter_by(label=dataset_name).one()
+    return render_template('dataset.html', dataset=dataset)
     
 
 @app.route('/users')
@@ -74,15 +117,6 @@ def datasets():
 def users():
     users = User.query.all()
     return render_template('users.html', users=users)
-    
-
-@app.route('/dataset/<dataset>/')
-def dataset(dataset):
-    for k, v in DATASETS.items():
-        if dataset in v:
-            return render_template('dataset.html', ds_name=v[dataset], ds_value=dataset)
-
-    return 'Unknown dataset'
     
 
 @app.route('/dataset/<dataset>/get_data')

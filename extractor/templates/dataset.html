@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-	<title>Data Extractor|dataset</title>
+	<title>Data Extractor|Dataset</title>
     </head>
     <body>
 	<h1>Dataset</h1>
 	<ul>
-	    <li>{{ ds_name }}</li>
-	    <li>{{ ds_value }}</li>
-	    <li><a href="{{ url_for('get_data', dataset=ds_value) }}">get data</a></li>
+	    <li>{{ dataset.label }}</li>
+	    <li>{{ dataset.instrument }}</li>
+	    <li><a href="{{ url_for('get_data', dataset=dataset.label) }}">get data</a></li>
 	</ul>
     </body>
 </html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>Data Extractor|Dataset</title>
+    </head>
+    <body>
+	<h1>Dataset</h1>
+	{% from "_formhelpers.html" import render_field %}
+	<form method="post">
+	    {{ form.csrf_token }}
+	    <dl>
+		{{ render_field(form.label) }}
+		{{ render_field(form.instrument) }}
+	    </dl>
+	    <p><input type="submit" value="Submit">
+	</form>
+    </body>
+</html>
