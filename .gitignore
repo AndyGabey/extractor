@@ -7,3 +7,4 @@ demo_data
 extractor/extractor.db
 experiments/*.json
 experiments/*.csv
+extractor.egg-info/

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>Data Extractor|datasets</title>
+    </head>
+    <body>
+	<h1>Datasets</h1>
+
+	<table id="datasets" border="1">
+	    <thead><tr><th>Name</th><th>Value</th><th>URL</th></tr></thead>
+	    <tbody>
+	    {% for ds_name, ds_value in datasets %}
+	    <tr><td>{{ ds_name }}</td><td>{{ ds_value }}</td><td><a href="{{url_for('dataset', dataset=ds_value)}}">{{ ds_name }}</a></td></tr>
+	    {% endfor %}
+	    </tbody>
+	</select>
+    </body>
+</html>
+
