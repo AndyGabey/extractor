@@ -106,10 +106,26 @@ def datasets():
     return render_template('datasets.html', datasets=datasets)
     
 
+@app.route('/datasets.json')
+def datasets_json():
+    datasets = Dataset.query.all()
+    return flask.jsonify(datasets=[ds.label for ds in datasets])
+
+    
+
 @app.route('/dataset/<dataset_name>/')
 def dataset(dataset_name):
     dataset = Dataset.query.filter_by(label=dataset_name).one()
     return render_template('dataset.html', dataset=dataset)
+
+    
+@app.route('/dataset/<dataset_name>.json')
+def dataset_json(dataset_name):
+    dataset = Dataset.query.filter_by(label=dataset_name).one()
+    dataset_dict = {'label': dataset.label,
+                    'instrument': dataset.instrument,
+                    'variables': [{'var': v.var, 'long_name': v.long_name} for v in dataset.variables]}
+    return flask.jsonify(dataset=dataset_dict)
     
 
 @app.route('/users')
