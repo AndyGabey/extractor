@@ -15,7 +15,6 @@ from extractor.forms import LoginForm
 
 @login_manager.user_loader
 def load_user(user_id):
-    # print('load_user')
     user = User.query.get(user_id)
     return user
 
@@ -32,14 +31,12 @@ def login():
     # handle this for us, and we use a custom LoginForm to validate.
     form = LoginForm()
 
-    # print(form.validate())
-    # print(form.errors)
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
 
         user = User.query.filter_by(name=form.name.data).one()
-        if user.password != form.password.data:
+        if not user.check_password(form.password.data):
             return flask.abort(400)
         login_user(user)
 
