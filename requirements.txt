@@ -5,7 +5,6 @@ cffi==1.9.1
 click==6.7
 decorator==4.0.11
 enum34==1.1.6
--e git+https://github.com/AndyGabey/extractor@3cfaffdb2e73258438c1b163ff1143ae16418666#egg=extractor
 Flask==0.12
 Flask-Login==0.4.0
 flask-shell-ipython==0.2.2

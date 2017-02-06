@@ -1,1 +1,1 @@
-config.DevelopmentConfig
+extractor.config.DevelopmentConfig
