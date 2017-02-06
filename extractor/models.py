@@ -44,10 +44,12 @@ class Dataset(Base):
     __tablename__ = 'datasets'
 
     id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    long_name = Column(String(100))
+
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     time_res = Column(Integer)
-    label = Column(String(100))
     instrument = Column(String(100))
     file_pattern = Column(String(100))
     date_col_name = Column(String(100))
@@ -60,13 +62,14 @@ class Dataset(Base):
                              secondary=association_table,
                              backref='datasets')
 
-    def __init__(self, start_date, end_date, time_res, label, 
+    def __init__(self, name, long_name, start_date, end_date, time_res,
                  instrument, file_pattern, date_col_name, date_pattern, 
                  time_col_name, time_pattern):
+        self.name = name
+        self.long_name = long_name
         self.start_date = start_date
         self.end_date = end_date
         self.time_res = time_res
-        self.label = label
         self.instrument = instrument
         self.file_pattern = file_pattern
         self.date_col_name = date_col_name
@@ -75,7 +78,7 @@ class Dataset(Base):
         self.time_pattern = time_pattern
 
     def __repr__(self):
-        return '<Dataset {}>'.format(self.label)
+        return '<Dataset {}>'.format(self.name)
 
 
 class Variable(Base):

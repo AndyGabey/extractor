@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 import datetime as dt
 from timeit import default_timer as timer
 
@@ -22,6 +23,12 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/data_extractor')
+def data_extractor():
+    datasets = Dataset.query.all()
+    return render_template('data_extractor.html', datasets=datasets)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -65,7 +72,7 @@ def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
         ds = Dataset(dt.datetime(2017, 1, 1), dt.datetime.now(),
-                     5, form.label.data, form.instrument.data, 
+                     5, form.name.data, form.instrument.data, 
                      '/some/file/path/{year}/', 
                      'TimeStamp' , '%d%m', 'Time', '%s')
         db_session.add(ds)
@@ -78,7 +85,7 @@ def create_dataset():
 @app.route('/dataset/<dataset_name>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_dataset(dataset_name):
-    ds = Dataset.query.filter_by(label=dataset_name).one()
+    ds = Dataset.query.filter_by(name=dataset_name).one()
     form = DatasetForm(obj=ds)
 
     if form.validate_on_submit():
@@ -89,11 +96,22 @@ def edit_dataset(dataset_name):
     return render_template('edit_dataset.html', form=form)
     
 
+@app.route('/dataset/<dataset_name>/vars.json')
+def get_dataset_vars(dataset_name):
+    ds = Dataset.query.filter_by(name=dataset_name).one()
+    variables = defaultdict(list)
+    for var in ds.variables:
+        variables[var.vartype].append({'var': var.var,
+                                       'long_name': var.long_name,
+                                        'units': var.units})
+
+    return flask.jsonify(variables)
+
 @app.route('/dataset/<dataset_name>/delete', methods=['POST'])
 @login_required
 def delete_dataset(dataset_name):
     print(request.method)
-    ds = Dataset.query.filter_by(label=dataset_name).one()
+    ds = Dataset.query.filter_by(name=dataset_name).one()
     db_session.delete(ds)
     db_session.commit()
 
@@ -109,20 +127,20 @@ def datasets():
 @app.route('/datasets.json')
 def datasets_json():
     datasets = Dataset.query.all()
-    return flask.jsonify(datasets=[ds.label for ds in datasets])
+    return flask.jsonify(datasets=[ds.name for ds in datasets])
 
     
 
 @app.route('/dataset/<dataset_name>/')
 def dataset(dataset_name):
-    dataset = Dataset.query.filter_by(label=dataset_name).one()
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
     return render_template('dataset.html', dataset=dataset)
 
     
 @app.route('/dataset/<dataset_name>.json')
 def dataset_json(dataset_name):
-    dataset = Dataset.query.filter_by(label=dataset_name).one()
-    dataset_dict = {'label': dataset.label,
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    dataset_dict = {'name': dataset.name,
                     'instrument': dataset.instrument,
                     'variables': [{'var': v.var, 'long_name': v.long_name} for v in dataset.variables]}
     return flask.jsonify(dataset=dataset_dict)

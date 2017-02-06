@@ -23,6 +23,11 @@ import random
 
 # 27-30.09.2015 - Some code re-installed after original lost on corrupted disk without a system backup
 
+DATATYPES = ["1sec_Level1", "5min_Level1", "5min_Level1_maxmin", "5min_Level2", \
+                    "5min_Level2_maxmin", "1hour_Level2", "1hour_Level2_maxmin", "climat0900", \
+                    "soniclicor_Level1", "Vertical_profiles", "eddy_cov", "cloudbase_5min", \
+                    "cloudbase_1min"]
+
 def main():
 
   print "Content-type: text/html"
@@ -40,10 +45,7 @@ def main():
     print '<h3>Perform the data extraction...</h3>'
   
     # copy the required datafile to /tmp and open it
-    if data_type in ["1sec_Level1", "5min_Level1", "5min_Level1_maxmin", "5min_Level2", \
-                    "5min_Level2_maxmin", "1hour_Level2", "1hour_Level2_maxmin", "climat0900", \
-                    "soniclicor_Level1", "Vertical_profiles", "eddy_cov", "cloudbase_5min", \
-                    "cloudbase_1min"]:
+    if data_type in DATATYPES:
       null=general_data_extractor(dateform,data_type)
 
     print '<h3>...extraction completed</h3>'
@@ -1394,4 +1396,6 @@ def show_data_type(dateform):
   print '<font color="blue">Data type chosen: ',x,'<font color="black"></p>'
   return strval
 #======================
-main()
+
+if __name__ == '__main__':
+  main()

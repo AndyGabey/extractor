@@ -12,6 +12,7 @@
 		    <th>Name</th>
 		    <th>Value</th>
 		    <th>URL</th>
+		    <th>Vars</th>
 		    {% if current_user.is_authenticated %}
 		    <th></th>
 		    <th></th>
@@ -21,15 +22,16 @@
 	    <tbody>
 		{% for dataset in datasets %}
 		<tr>
-		    <td>{{ dataset.label }}</td>
+		    <td>{{ dataset.name }}</td>
 		    <td>{{ dataset.instrument }}</td>
-		    <td><a href="{{url_for('dataset', dataset_name=dataset.label)}}">{{ dataset.label }}</a></td>
+		    <td><a href="{{url_for('dataset', dataset_name=dataset.name)}}">{{ dataset.name }}</a></td>
+		    <td><a href="{{url_for('get_dataset_vars', dataset_name=dataset.name)}}">Variables</a></td>
 		    {% if current_user.is_authenticated %}
 		    <td>
-			<a href="{{url_for('edit_dataset', dataset_name=dataset.label)}}">Edit {{ dataset.label }}</a>
+			<a href="{{url_for('edit_dataset', dataset_name=dataset.name)}}">Edit {{ dataset.name }}</a>
 		    </td>
 		    <td>
-			<form action="{{ url_for('delete_dataset', dataset_name=dataset.label) }}" method="POST">
+			<form action="{{ url_for('delete_dataset', dataset_name=dataset.name) }}" method="POST">
 			    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 			    <input type="submit" value="Delete dataset"/>
 			</form>

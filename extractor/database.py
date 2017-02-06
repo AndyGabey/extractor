@@ -22,13 +22,21 @@ def init_db(populate=False):
 
     if populate:
         import datetime as dt
+        import simplejson
+
         user = extractor.models.User('Mark', 'markmuetz@gmail.com', 'dummypw')
         db_session.add(user)
 
-        ds = extractor.models.Dataset(dt.datetime(2017, 1, 1), dt.datetime.now(),
-                                      5, 'AWS', 'PrecipMaster3000', 
-                                      '/some/file/path/{year}/', 
-                                      'TimeStamp' , '%d%m', 'Time', '%s')
-        db_session.add(ds)
+        with open('extractor/import_data/datasets.json', 'r') as f:
+            datasets = simplejson.load(f)
+        for ds in datasets:
+            dataset = extractor.models.Dataset(ds['name'], ds['longname'], dt.datetime(2017, 1, 1), dt.datetime.now(),
+                                               5, 'instrument', 
+                                               '/some/file/path/{year}/', 
+                                               'TimeStamp' , '%d%m', 'Time', '%s')
+            for var, varlong, vartype in ds['variables']:
+                variable = extractor.models.Variable(var, varlong, '', vartype)
+                dataset.variables.append(variable)
+            db_session.add(dataset)
         db_session.commit()
 

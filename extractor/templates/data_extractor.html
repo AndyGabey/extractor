@@ -204,76 +204,86 @@ function checkStepOne() {
 	if (!err)
 		{
 			logMessage("Input sanity check passed.");
+
+			logMessage("Requesting json");
+			$.getJSON( "/dataset/"+dataType+"/vars.json", function( data ) {
+				logMessage("json received");
+				console.debug(data)
+				console.debug(data["typerain"])
+
+				// Begin constructing the variable table dynamically.
+				var tableHTML = '<span style="width: 100%; text-align: center;">Available variables</span><br><table>'+"\n<thead><tr>";
+				
+				// Start with the headers.
+				for (var i = 0; i < varCat.length; i++)
+					{
+						tableHTML += "<th>"+varCat[i].value+"</th>";
+					}
+				
+				tableHTML += "</tr></thead>\n<tbody><tr>";
+				
+				for (var i = 0; i < varCat.length; i++)
+					{
+						// fake ajax return for now. This will change to some sort of server
+						// return in the future.
+				    
+						
+						// The start of the table cell.
+						tableHTML += "<td>";
+						
+						// Generate a random number for the fake number of variables.
+					        console.debug(varCat[i]);
+					        console.debug(varCat[i].value);
+						var vars = data[varCat[i].value];
+						var numOfVar = vars.length;
+						
+						// In the future a list of available variables for each category will
+						// be returned from the serve. Currently, fake variable names are 
+						// created in the loop. The following loop will simply push each of
+						// the variables into the relevant column.
+						if (numOfVar > 0)
+							{
+								for (var j = 0; j < numOfVar; j++)
+									{
+										// Fake variable name.
+										var varName = vars[j]["var"];
+										
+										// Add the variable checkbox to the table.
+										tableHTML += '<input type="checkbox" name="var" value="'+varName+'" vartype="'+varCat[i].value+'">'+varName+'</input>';
+										
+										// Add new line html tag if it is not the last var.
+										if (j < numOfVar-1) tableHTML += "<br>";
+									}
+							}
+						else
+							{
+								// If this is no variable, say so.
+								tableHTML += "No variables.";
+							}
+						
+						// The end of the table cell.
+						tableHTML += "</td>";
+					}
+				
+				tableHTML += "</tr></tbody>\n<tfoot><tr>";
+				
+				// Generate the check / uncheck buttons dynamically
+				for (var i = 0; i < varCat.length; i++)
+					{	
+						tableHTML += '<td><input type="button" class="check_all_var" value="Check all" target="'+varCat[i].value+'"></input><br><input type="button" class="uncheck_all_var" value="Uncheck all" target="'+varCat[i].value+'"></input></td>';
+					}
+				
+				// Complete table
+				tableHTML += "</tr></tfoot></table>";
+				
+				// Add table to the correct div.
+				$("#variables").html(tableHTML);
+				
+				// Check / Uncheck all  functionalities upon clicks on buttons for temp variables. 
+				$(".check_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",true);});
+				$(".uncheck_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",false);});
+			});
 			
-			var tmpReturn = [];
-			
-			// Begin constructing the variable table dynamically.
-			var tableHTML = '<span style="width: 100%; text-align: center;">Available variables</span><br><table>'+"\n<thead><tr>";
-			
-			// Start with the headers.
-			for (var i = 0; i < varCat.length; i++)
-				{
-					tableHTML += "<th>"+varCat[i].value+"</th>";
-				}
-			
-			tableHTML += "</tr></thead>\n<tbody><tr>";
-			
-			for (var i = 0; i < varCat.length; i++)
-				{
-					// fake ajax return for now. This will change to some sort of server
-					// return in the future.
-					
-					// The start of the table cell.
-					tableHTML += "<td>";
-					
-					// Generate a random number for the fake number of variables.
-					var numOfVar = Math.floor(Math.random()*10);
-					
-					// In the future a list of available variables for each category will
-					// be returned from the serve. Currently, fake variable names are 
-					// created in the loop. The following loop will simply push each of
-					// the variables into the relevant column.
-					if (numOfVar > 0)
-						{
-							for (var j = 0; j < numOfVar; j++)
-								{
-									// Fake variable name.
-									var varName = varCat[i].value + j.toString();
-									
-									// Add the variable checkbox to the table.
-									tableHTML += '<input type="checkbox" name="var" value="'+varName+'" vartype="'+varCat[i].value+'">'+varName+'</input>';
-									
-									// Add new line html tag if it is not the last var.
-									if (j < numOfVar-1) tableHTML += "<br>";
-								}
-						}
-					else
-						{
-							// If this is no variable, say so.
-							tableHTML += "No variables.";
-						}
-					
-					// The end of the table cell.
-					tableHTML += "</td>";
-				}
-			
-			tableHTML += "</tr></tbody>\n<tfoot><tr>";
-			
-			// Generate the check / uncheck buttons dynamically
-			for (var i = 0; i < varCat.length; i++)
-				{	
-					tableHTML += '<td><input type="button" class="check_all_var" value="Check all" target="'+varCat[i].value+'"></input><br><input type="button" class="uncheck_all_var" value="Uncheck all" target="'+varCat[i].value+'"></input></td>';
-				}
-			
-			// Complete table
-			tableHTML += "</tr></tfoot></table>";
-			
-			// Add table to the correct div.
-			$("#variables").html(tableHTML);
-			
-			// Check / Uncheck all  functionalities upon clicks on buttons for temp variables. 
-			$(".check_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",true);});
-			$(".uncheck_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",false);});
 		}
 	
 	// Add a horizontal break.
@@ -310,12 +320,8 @@ Please select the type of data to extract.
 
 <select id="type_aws">
     <option value="">---</option>
-    {% for ds_name, ds_options in datasets.items() %}
-    <optgroup label="{{ ds_name }}">
-	{% for opt_value, opt_name in ds_options.items() %}
-	<option value="{{ opt_value }}">{{ opt_name }}</option>
-	{% endfor %}
-    </optgroup>
+    {% for dataset in datasets %}
+    <option value="{{ dataset.name }}">{{ dataset.long_name }}</option>
     {% endfor %}
 </select>
 
@@ -392,11 +398,11 @@ Please select the type of data to extract.
 </div>
 <div id="vtype">
 Please choose the variable categories.<br>
-<input type="checkbox" name="var_type" value="temp">Temperature</input>
-<input type="checkbox" name="var_type" value="prec">Rainfall</input>
-<input type="checkbox" name="var_type" value="rad">Sun/Radiation</input>
-<input type="checkbox" name="var_type" value="wind">Wind</input>
-<input type="checkbox" name="var_type" value="pres">Pressure</input>
+<input type="checkbox" name="var_type" value="typetemp">Temperature</input>
+<input type="checkbox" name="var_type" value="typerain">Rainfall</input>
+<input type="checkbox" name="var_type" value="typesrad">Sun/Radiation</input>
+<input type="checkbox" name="var_type" value="typewind">Wind</input>
+<input type="checkbox" name="var_type" value="typepres">Pressure</input>
 <input type="button" id="check_all_vartypes" value="Check all"></input>
 <input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input>
 </div>
