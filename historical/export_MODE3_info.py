@@ -3,6 +3,7 @@ import os
 import sys
 import simplejson
 from cStringIO import StringIO
+import datetime as dt
 
 import MODE3 as m3
 
@@ -19,11 +20,11 @@ def export(filename, data):
 
 
 def get_datatype_vars():
-    datatype_vars = []
+    datasets = []
     for dt in m3.DATATYPES:
         var, varlong, vartype = m3.define_vars(dt, False)
-        datatype_vars.append({'name': dt, 'variables': zip(var, varlong, vartype)})
-    return datatype_vars
+        datasets.append({'name': dt, 'variables': zip(var, varlong, vartype)})
+    return datasets
 
 
 def get_datatype_longnames():
@@ -44,12 +45,131 @@ def get_datatype_longnames():
         longnames[line[value_end:line.find('"', value_end + 2)]] = line[input_end + 1:]
     return longnames
 
+def gen_dir_file(data_type, dtuple, ymd_file):
+    # Copied from MODE3.py.
+    # Changed indentation.
+    #dtuple=d.timetuple()
+    #ymd_file=int(dtuple[0])*10000+int(dtuple[1])*100+int(dtuple[2])
+    datadir, datafile = '', ''
+
+    if data_type=="eddy_cov" and ymd_file >= 20150923:
+        datadir='/home/webbie/micromet/LUMA/RUAO'
+        datafile='ReadingFlux_'+str(dtuple[0]).zfill(3)+str(dtuple[7]).zfill(3)+'.csv'
+    elif data_type=="cloudbase_5min" and ymd_file >= 20150319:
+        datadir='/export/its/labs/Ceilometer-Incoming/Level2/5min/'+str(dtuple[0])
+        datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_5min.csv'
+    elif data_type=="cloudbase_1min":
+        datadir='/export/its/labs/Ceilometer-Incoming/Level2/1min/'+str(dtuple[0])
+        datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_1min.csv'
+    elif data_type=="climat0900":
+        if ymd_file >= 20150416:
+            # datadir='/export/labserver/data/METFiDAS-3/Level2/climat'
+            datadir='/export/its/labs/METFiDAS-Incoming/Level2/climat'
+            datafile=str(dtuple[0])+'climat.csv'
+        elif ymd_file >= 20140901:
+            datadir='/export/its/labs/labserver_files/METFiDAS-3/Level2/climat'
+            datafile=str(dtuple[0])+'climat.csv'
+    elif data_type=="Vertical_profiles":
+        if ymd_file >= 20150819:
+            # datadir='/export/labserver/data/METFiDAS-3/Level2/climat'
+            datadir='/export/its/labs/METFiDAS-Incoming/Level2/profile/'+str(dtuple[0])
+            datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_UTprofile.csv'
+    else:
+        if ymd_file >= 20150429:
+            if data_type=="1sec_Level1":
+                # datadir='/export/labserver/data/METFiDAS-3/Level1/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-SMP1-'+str(dtuple[7]).zfill(3)+'.csv'
+            elif data_type=="5min_Level1":
+                # datadir='/export/labserver/data/METFiDAS-3/Level1/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-AVG5-'+str(dtuple[7]).zfill(3)+'.csv'
+            elif data_type=="5min_Level1_maxmin":
+                # datadir='/export/labserver/data/METFiDAS-3/Level1/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-MMX5-'+str(dtuple[7]).zfill(3)+'.csv'
+            elif data_type=="5min_Level2":
+                # datadir='/export/labserver/data/METFiDAS-3/Level2/5min/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level2/5min/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_5min.csv'
+            elif data_type=="5min_Level2_maxmin":
+                # datadir='/export/labserver/data/METFiDAS-3/Level2/5min/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level2/5min/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_5min_maxmin.csv'
+            elif data_type=="1hour_Level2":
+                # datadir='/export/labserver/data/METFiDAS-3/Level2/1hour/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level2/1hour/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_1hour.csv'
+            elif data_type=="1hour_Level2_maxmin":
+                # datadir='/export/labserver/data/METFiDAS-3/Level2/1hour/'+str(dtuple[0])
+                datadir='/export/its/labs/METFiDAS-Incoming/Level2/1hour/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_1hour_maxmin.csv'
+            elif data_type=="soniclicor_Level1":
+                datadir='/export/its/labs/SonicLicor-Incoming/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-SMP-'+str(dtuple[7]).zfill(3)+'.csv'
+        elif ymd_file >= 20140901:
+            if data_type=="1sec_Level1":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-SMP1-'+str(dtuple[7]).zfill(3)+'.csv'
+            elif data_type=="5min_Level1":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-AVG5-'+str(dtuple[7]).zfill(3)+'.csv'
+            elif data_type=="5min_Level1_maxmin":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level1/'+str(dtuple[0])
+                datafile=str(dtuple[0]).zfill(3)+'-MMX5-'+str(dtuple[7]).zfill(3)+'.csv'
+            elif data_type=="5min_Level2":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level2/5min/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_5min.csv'
+            elif data_type=="5min_Level2_maxmin":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level2/5min/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_5min_maxmin.csv'
+            elif data_type=="1hour_Level2":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level2/1hour/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_1hour.csv'
+            elif data_type=="1hour_Level2_maxmin":
+                datadir='/export/its/labs/labserver_files/METFiDAS-3/Level2/1hour/'+str(dtuple[0])
+                datafile=str(dtuple[0])+str(dtuple[1]).zfill(2)+str(dtuple[2]).zfill(2)+'_1hour_maxmin.csv'
+    return datadir, datafile
+
 
 if __name__ == '__main__':
-    datatype_vars = get_datatype_vars()
+    datasets = get_datatype_vars()
 
     longnames = get_datatype_longnames()
 
-    for dt in datatype_vars:
-        dt['longname'] = longnames[dt['name']]
-    export('datasets', datatype_vars)
+    for ds in datasets:
+        ds['longname'] = longnames[ds['name']]
+    export('datasets', datasets)
+
+    dtuple = ('{year}', '{month}', '{day}', '{hour}', '{minute}', '{second}', '{wday}', '{yday}')
+    ymd_breaks = [
+        20150923,
+        20150319,
+        20150416,
+        20140901,
+        20150819,
+        20150429,
+        20140901]
+
+    for ds in datasets:
+        print(ds['name'])
+        datadir_set = set()
+        datafile_set = set()
+
+
+        for ymd in ymd_breaks:
+            datadir, datafile = gen_dir_file(ds['name'], dtuple, ymd - 1)
+            datadir_set |= set([datadir])
+            datafile_set |= set([datafile])
+
+            datadir, datafile = gen_dir_file(ds['name'], dtuple, ymd)
+            datadir_set |= set([datadir])
+            datafile_set |= set([datafile])
+        if '' in datadir_set:
+            datadir_set.remove('')
+        if '' in datafile_set:
+            datafile_set.remove('')
+
+        print(datadir_set)
+        print(datafile_set)
+
