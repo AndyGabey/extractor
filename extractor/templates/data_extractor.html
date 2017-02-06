@@ -402,34 +402,7 @@ Please choose the variable categories.<br>
 </div>
 <div><input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input></div>
 Step 2
-<div id="variables"><span style="width: 100%; text-align: center;">Available variables</span><br>
-<table>
-<thead>
-<tr><th>Temperature</th><th>Precipitation</th><th>Sun/Radiation</th><th>Wind</th><th>Pressure</th></tr>
-</thead>
-<tbody>
-<tr><td><input type="checkbox" name="var" value="T" vartype="temp">2-metre temperature</input></td><td><input type="checkbox" name="var" value="RF" vartype="prec">Accumulated rainfall</input></td><td><input type="checkbox" name="var" value="solar" vartype="rad">Solar radiation</input></td><td><input type="checkbox" name="var" value="U10" vartype="wind">10-metre wind</input></td><td><input type="checkbox" name="var" value="mslp" vartype="pres">Mean sea level pressure</input></td></tr>
-</tbody>
-<tfoot>
-<tr>
-<td>
-<input type="button" id="check_all_temp_var" value="Check all"></input><br><input type="button" id="uncheck_all_temp_var" value="Uncheck all"></input>
-</td>
-<td>
-<input type="button" id="check_all_prec_var" value="Check all"></input><br><input type="button" id="uncheck_all_prec_var" value="Uncheck all"></input>
-</td>
-<td>
-<input type="button" id="check_all_rad_var" value="Check all"></input><br><input type="button" id="uncheck_all_rad_var" value="Uncheck all"></input>
-</td>
-<td>
-<input type="button" id="check_all_wind_var" value="Check all"></input><br><input type="button" id="uncheck_all_wind_var" value="Uncheck all"></input>
-</td>
-<td>
-<input type="button" id="check_all_pres_var" value="Check all"></input><br><input type="button" id="uncheck_all_pres_var" value="Uncheck all"></input>
-</td>
-</tfoot>
-</table>
-</div>
+<div id="variables"></div>
 <div id="missing_value_options">
 Please select a value for the missing data. 
 <select id="missing">
