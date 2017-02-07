@@ -1,281 +1,11 @@
 [
   {
-    "variables": [
-      [
-        "RH",
-        "Relative humidity",
-        "typetemp"
-      ],
-      [
-        "Sdur",
-        "1sec sunshine",
-        "typesrad"
-      ],
-      [
-        "Td",
-        "Dry bulb temperature",
-        "typetemp"
-      ],
-      [
-        "Tconc",
-        "Concrete temperature",
-        "typetemp"
-      ],
-      [
-        "Tgrass",
-        "Grass temperature",
-        "typetemp"
-      ],
-      [
-        "Tsoil",
-        "Bare soil temperature",
-        "typetemp"
-      ],
-      [
-        "TSoil5",
-        "5cm soil temperatrure",
-        "typetemp"
-      ],
-      [
-        "TSoil10",
-        "10cm soil temperature",
-        "typetemp"
-      ],
-      [
-        "TSoil20",
-        "20cm soil temperature",
-        "typetemp"
-      ],
-      [
-        "TSoil30",
-        "30cm soil temperature",
-        "typetemp"
-      ],
-      [
-        "TSoil50",
-        "50cm soil temperature",
-        "typetemp"
-      ],
-      [
-        "TSoil100",
-        "100cm soil temperature",
-        "typetemp"
-      ],
-      [
-        "Sb",
-        "Direct beam solar radiation",
-        "typesrad"
-      ],
-      [
-        "Tw",
-        "Measured wet bulb temperature",
-        "typetemp"
-      ],
-      [
-        "Ch28",
-        "Channel 28",
-        "typenull"
-      ],
-      [
-        "Rn",
-        "Net radiative heat flux",
-        "typesrad"
-      ],
-      [
-        "Sg",
-        "Global solar radiation",
-        "typesrad"
-      ],
-      [
-        "Sd",
-        "Diffuse solar radiation",
-        "typesrad"
-      ],
-      [
-        "Ch32",
-        "Channel 32",
-        "typenull"
-      ],
-      [
-        "Ch33",
-        "Channel 33",
-        "typenull"
-      ],
-      [
-        "G",
-        "Ground heat flux",
-        "typesrad"
-      ],
-      [
-        "PG",
-        "Potential gradient",
-        "typenull"
-      ],
-      [
-        "R38",
-        "R38",
-        "typenull"
-      ],
-      [
-        "iCP",
-        "Corrugated plate current",
-        "typenull"
-      ],
-      [
-        "iFP",
-        "Flat plate current",
-        "typenull"
-      ],
-      [
-        "Dirn5",
-        "5m wind direction",
-        "typewind"
-      ],
-      [
-        "U2",
-        "2m wind speed",
-        "typewind"
-      ],
-      [
-        "U5",
-        "5m wind speed",
-        "typewind"
-      ],
-      [
-        "Rain",
-        "1sec rainfall",
-        "typerain"
-      ],
-      [
-        "P",
-        "Station pressure",
-        "typepres"
-      ],
-      [
-        "Dirn10",
-        "10m wind direction",
-        "typewind"
-      ],
-      [
-        "U10",
-        "10m wind speed",
-        "typewind"
-      ],
-      [
-        "Sdw",
-        "Shortwave-down",
-        "typesrad"
-      ],
-      [
-        "Suw",
-        "Shortwave-up",
-        "typesrad"
-      ],
-      [
-        "Ldw(uc)",
-        "Longwave-down(uncorrected)",
-        "typesrad"
-      ],
-      [
-        "Luw(uc)",
-        "Longwave-up(uncorrected)",
-        "typesrad"
-      ],
-      [
-        "CNR4T",
-        "CNR4 radiometer temp",
-        "typesrad"
-      ],
-      [
-        "Sb(csd3)",
-        "Sb(csd3)",
-        "typesrad"
-      ],
-      [
-        "PointDischarge",
-        "PointDischarge",
-        "typenull"
-      ],
-      [
-        "U0.56",
-        "0.56m wind",
-        "typewind"
-      ],
-      [
-        "U0.8",
-        "0.8m wind",
-        "typewind"
-      ],
-      [
-        "U1.12",
-        "1.12m wind",
-        "typewind"
-      ],
-      [
-        "U1.6",
-        "1.6m wind",
-        "typewind"
-      ],
-      [
-        "U2.24",
-        "2.24m wind",
-        "typewind"
-      ],
-      [
-        "U3.2",
-        "3.2m wind",
-        "typewind"
-      ],
-      [
-        "U4.48",
-        "4.48m wind",
-        "typewind"
-      ],
-      [
-        "U6.4",
-        "6.4m wind",
-        "typewind"
-      ],
-      [
-        "T0.56",
-        "0.56m temperature",
-        "typetemp"
-      ],
-      [
-        "T1.12",
-        "1.12m temperature",
-        "typetemp"
-      ],
-      [
-        "T2.24",
-        "2.24m temperature",
-        "typetemp"
-      ],
-      [
-        "T4.48",
-        "4.48m temperature",
-        "typetemp"
-      ],
-      [
-        "U",
-        "Propeller U",
-        "typewind"
-      ],
-      [
-        "V",
-        "Propellor V",
-        "typewind"
-      ],
-      [
-        "W",
-        "Propellor W",
-        "typewind"
-      ]
+    "datafile": "{year}-SMP1-{yday}.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level1/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level1/{year}"
     ],
     "name": "1sec_Level1",
-    "longname": "1-sec \"instantaneous\" logger output"
-  },
-  {
     "variables": [
       [
         "RH",
@@ -548,10 +278,304 @@
         "typewind"
       ]
     ],
-    "name": "5min_Level1",
-    "longname": "5-min averaged logger output"
+    "longname": "1-sec \"instantaneous\" logger output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
   },
   {
+    "datafile": "{year}-AVG5-{yday}.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level1/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level1/{year}"
+    ],
+    "name": "5min_Level1",
+    "variables": [
+      [
+        "RH",
+        "Relative humidity",
+        "typetemp"
+      ],
+      [
+        "Sdur",
+        "1sec sunshine",
+        "typesrad"
+      ],
+      [
+        "Td",
+        "Dry bulb temperature",
+        "typetemp"
+      ],
+      [
+        "Tconc",
+        "Concrete temperature",
+        "typetemp"
+      ],
+      [
+        "Tgrass",
+        "Grass temperature",
+        "typetemp"
+      ],
+      [
+        "Tsoil",
+        "Bare soil temperature",
+        "typetemp"
+      ],
+      [
+        "TSoil5",
+        "5cm soil temperatrure",
+        "typetemp"
+      ],
+      [
+        "TSoil10",
+        "10cm soil temperature",
+        "typetemp"
+      ],
+      [
+        "TSoil20",
+        "20cm soil temperature",
+        "typetemp"
+      ],
+      [
+        "TSoil30",
+        "30cm soil temperature",
+        "typetemp"
+      ],
+      [
+        "TSoil50",
+        "50cm soil temperature",
+        "typetemp"
+      ],
+      [
+        "TSoil100",
+        "100cm soil temperature",
+        "typetemp"
+      ],
+      [
+        "Sb",
+        "Direct beam solar radiation",
+        "typesrad"
+      ],
+      [
+        "Tw",
+        "Measured wet bulb temperature",
+        "typetemp"
+      ],
+      [
+        "Ch28",
+        "Channel 28",
+        "typenull"
+      ],
+      [
+        "Rn",
+        "Net radiative heat flux",
+        "typesrad"
+      ],
+      [
+        "Sg",
+        "Global solar radiation",
+        "typesrad"
+      ],
+      [
+        "Sd",
+        "Diffuse solar radiation",
+        "typesrad"
+      ],
+      [
+        "Ch32",
+        "Channel 32",
+        "typenull"
+      ],
+      [
+        "Ch33",
+        "Channel 33",
+        "typenull"
+      ],
+      [
+        "G",
+        "Ground heat flux",
+        "typesrad"
+      ],
+      [
+        "PG",
+        "Potential gradient",
+        "typenull"
+      ],
+      [
+        "R38",
+        "R38",
+        "typenull"
+      ],
+      [
+        "iCP",
+        "Corrugated plate current",
+        "typenull"
+      ],
+      [
+        "iFP",
+        "Flat plate current",
+        "typenull"
+      ],
+      [
+        "Dirn5",
+        "5m wind direction",
+        "typewind"
+      ],
+      [
+        "U2",
+        "2m wind speed",
+        "typewind"
+      ],
+      [
+        "U5",
+        "5m wind speed",
+        "typewind"
+      ],
+      [
+        "Rain",
+        "1sec rainfall",
+        "typerain"
+      ],
+      [
+        "P",
+        "Station pressure",
+        "typepres"
+      ],
+      [
+        "Dirn10",
+        "10m wind direction",
+        "typewind"
+      ],
+      [
+        "U10",
+        "10m wind speed",
+        "typewind"
+      ],
+      [
+        "Sdw",
+        "Shortwave-down",
+        "typesrad"
+      ],
+      [
+        "Suw",
+        "Shortwave-up",
+        "typesrad"
+      ],
+      [
+        "Ldw(uc)",
+        "Longwave-down(uncorrected)",
+        "typesrad"
+      ],
+      [
+        "Luw(uc)",
+        "Longwave-up(uncorrected)",
+        "typesrad"
+      ],
+      [
+        "CNR4T",
+        "CNR4 radiometer temp",
+        "typesrad"
+      ],
+      [
+        "Sb(csd3)",
+        "Sb(csd3)",
+        "typesrad"
+      ],
+      [
+        "PointDischarge",
+        "PointDischarge",
+        "typenull"
+      ],
+      [
+        "U0.56",
+        "0.56m wind",
+        "typewind"
+      ],
+      [
+        "U0.8",
+        "0.8m wind",
+        "typewind"
+      ],
+      [
+        "U1.12",
+        "1.12m wind",
+        "typewind"
+      ],
+      [
+        "U1.6",
+        "1.6m wind",
+        "typewind"
+      ],
+      [
+        "U2.24",
+        "2.24m wind",
+        "typewind"
+      ],
+      [
+        "U3.2",
+        "3.2m wind",
+        "typewind"
+      ],
+      [
+        "U4.48",
+        "4.48m wind",
+        "typewind"
+      ],
+      [
+        "U6.4",
+        "6.4m wind",
+        "typewind"
+      ],
+      [
+        "T0.56",
+        "0.56m temperature",
+        "typetemp"
+      ],
+      [
+        "T1.12",
+        "1.12m temperature",
+        "typetemp"
+      ],
+      [
+        "T2.24",
+        "2.24m temperature",
+        "typetemp"
+      ],
+      [
+        "T4.48",
+        "4.48m temperature",
+        "typetemp"
+      ],
+      [
+        "U",
+        "Propeller U",
+        "typewind"
+      ],
+      [
+        "V",
+        "Propellor V",
+        "typewind"
+      ],
+      [
+        "W",
+        "Propellor W",
+        "typewind"
+      ]
+    ],
+    "longname": "5-min averaged logger output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
+  },
+  {
+    "datafile": "{year}-MMX5-{yday}.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level1/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level1/{year}"
+    ],
+    "name": "5min_Level1_maxmin",
     "variables": [
       [
         "RH[min]",
@@ -1574,10 +1598,19 @@
         "typetemp"
       ]
     ],
-    "name": "5min_Level1_maxmin",
-    "longname": "5-min max/min logger output"
+    "longname": "5-min max/min logger output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
   },
   {
+    "datafile": "{year}{month}{day}_5min.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level2/5min/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level2/5min/{year}"
+    ],
+    "name": "5min_Level2",
     "variables": [
       [
         "Td",
@@ -1800,10 +1833,19 @@
         "typesrad"
       ]
     ],
-    "name": "5min_Level2",
-    "longname": "5-min WMO-standard processed output"
+    "longname": "5-min WMO-standard processed output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
   },
   {
+    "datafile": "{year}{month}{day}_5min_maxmin.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level2/5min/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level2/5min/{year}"
+    ],
+    "name": "5min_Level2_maxmin",
     "variables": [
       [
         "Td_max",
@@ -2326,10 +2368,19 @@
         "typesrad"
       ]
     ],
-    "name": "5min_Level2_maxmin",
-    "longname": "5-min max/min processed output"
+    "longname": "5-min max/min processed output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
   },
   {
+    "datafile": "{year}{month}{day}_1hour.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level2/1hour/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level2/1hour/{year}"
+    ],
+    "name": "1hour_Level2",
     "variables": [
       [
         "Td",
@@ -2562,10 +2613,19 @@
         "typesrad"
       ]
     ],
-    "name": "1hour_Level2",
-    "longname": "1-hour WMO-standard processed output"
+    "longname": "1-hour WMO-standard processed output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
   },
   {
+    "datafile": "{year}{month}{day}_1hour_maxmin.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level2/1hour/{year}",
+      "/export/its/labs/METFiDAS-Incoming/Level2/1hour/{year}"
+    ],
+    "name": "1hour_Level2_maxmin",
     "variables": [
       [
         "Td_max",
@@ -2848,10 +2908,19 @@
         "typepres"
       ]
     ],
-    "name": "1hour_Level2_maxmin",
-    "longname": "1-hour max/min processed output"
+    "longname": "1-hour max/min processed output",
+    "datadir_ymds": [
+      20140901,
+      20150429
+    ]
   },
   {
+    "datafile": "{year}climat.csv",
+    "datadirs": [
+      "/export/its/labs/labserver_files/METFiDAS-3/Level2/climat",
+      "/export/its/labs/METFiDAS-Incoming/Level2/climat"
+    ],
+    "name": "climat0900",
     "variables": [
       [
         "Td_09",
@@ -2979,10 +3048,18 @@
         "typewind"
       ]
     ],
-    "name": "climat0900",
-    "longname": "0900 UTC climat observation - no data thrown back"
+    "longname": "0900 UTC climat observation - no data thrown back",
+    "datadir_ymds": [
+      20140901,
+      20150416
+    ]
   },
   {
+    "datafile": "{year}-SMP-{yday}.csv",
+    "datadirs": [
+      "/export/its/labs/SonicLicor-Incoming/Level1/{year}"
+    ],
+    "name": "soniclicor_Level1",
     "variables": [
       [
         "U",
@@ -3020,10 +3097,17 @@
         "typepres"
       ]
     ],
-    "name": "soniclicor_Level1",
-    "longname": "0.1-sec sonic licor output"
+    "longname": "0.1-sec sonic licor output",
+    "datadir_ymds": [
+      20150429
+    ]
   },
   {
+    "datafile": "{year}{month}{day}_UTprofile.csv",
+    "datadirs": [
+      "/export/its/labs/METFiDAS-Incoming/Level2/profile/{year}"
+    ],
+    "name": "Vertical_profiles",
     "variables": [
       [
         "U0.56",
@@ -3101,10 +3185,17 @@
         "typetemp"
       ]
     ],
-    "name": "Vertical_profiles",
-    "longname": "Vertical profiles of wind and temperature"
+    "longname": "Vertical profiles of wind and temperature",
+    "datadir_ymds": [
+      20150819
+    ]
   },
   {
+    "datafile": "ReadingFlux_{year}{yday}.csv",
+    "datadirs": [
+      "/home/webbie/micromet/LUMA/RUAO"
+    ],
+    "name": "eddy_cov",
     "variables": [
       [
         "q",
@@ -3212,51 +3303,65 @@
         "typenull"
       ]
     ],
-    "name": "eddy_cov",
-    "longname": "Eddy covariances - 30-min averages"
+    "longname": "Eddy covariances - 30-min averages",
+    "datadir_ymds": [
+      20150923
+    ]
   },
   {
-    "variables": [
-      [
-        "Base1_mean",
-        "Base1_mean",
-        "typenull"
-      ],
-      [
-        "Base1_sd",
-        "Base1_sd",
-        "typenull"
-      ],
-      [
-        "Base2_mean",
-        "Base2_mean",
-        "typenull"
-      ],
-      [
-        "Base2_sd",
-        "Base2_sd",
-        "typenull"
-      ],
-      [
-        "Base3_mean",
-        "Base3_mean",
-        "typenull"
-      ],
-      [
-        "Base3_sd",
-        "Base3_sd",
-        "typenull"
-      ],
-      [
-        "Base1_min",
-        "Base1_min",
-        "typenull"
-      ]
+    "datafile": "{year}{month}{day}_5min.csv",
+    "datadirs": [
+      "/export/its/labs/Ceilometer-Incoming/Level2/5min/{year}"
     ],
     "name": "cloudbase_5min",
-    "longname": "Cloud base averages at 5 minute intervals"
+    "variables": [
+      [
+        "Base1_mean",
+        "Base1_mean",
+        "typenull"
+      ],
+      [
+        "Base1_sd",
+        "Base1_sd",
+        "typenull"
+      ],
+      [
+        "Base2_mean",
+        "Base2_mean",
+        "typenull"
+      ],
+      [
+        "Base2_sd",
+        "Base2_sd",
+        "typenull"
+      ],
+      [
+        "Base3_mean",
+        "Base3_mean",
+        "typenull"
+      ],
+      [
+        "Base3_sd",
+        "Base3_sd",
+        "typenull"
+      ],
+      [
+        "Base1_min",
+        "Base1_min",
+        "typenull"
+      ]
+    ],
+    "longname": "Cloud base averages at 5 minute intervals",
+    "datadir_ymds": [
+      20150319
+    ]
   },
   {
+    "datafile": "{year}{month}{day}_1min.csv",
+    "datadirs": [
+      "/export/its/labs/Ceilometer-Incoming/Level2/1min/{year}"
+    ],
+    "name": "cloudbase_1min",
     "variables": [
       [
         "Base1_mean",
@@ -3289,7 +3394,9 @@
         "typenull"
       ]
     ],
-    "name": "cloudbase_1min",
-    "longname": "Cloud base averages at 1 minute intervals"
+    "longname": "Cloud base averages at 1 minute intervals",
+    "datadir_ymds": [
+      20140900
+    ]
   }
 ]

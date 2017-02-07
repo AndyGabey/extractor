@@ -51,6 +51,7 @@ class Dataset(Base):
     end_date = Column(DateTime)
     time_res = Column(Integer)
     instrument = Column(String(100))
+    level = Column(Integer)
     file_pattern = Column(String(100))
     date_col_name = Column(String(100))
     date_pattern = Column(String(100))
@@ -63,7 +64,7 @@ class Dataset(Base):
                              backref='datasets')
 
     def __init__(self, name, long_name, start_date, end_date, time_res,
-                 instrument, file_pattern, date_col_name, date_pattern, 
+                 instrument, level, file_pattern, date_col_name, date_pattern, 
                  time_col_name, time_pattern):
         self.name = name
         self.long_name = long_name
@@ -71,6 +72,7 @@ class Dataset(Base):
         self.end_date = end_date
         self.time_res = time_res
         self.instrument = instrument
+        self.level = level
         self.file_pattern = file_pattern
         self.date_col_name = date_col_name
         self.date_pattern = date_pattern

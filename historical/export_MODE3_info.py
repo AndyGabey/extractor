@@ -139,8 +139,6 @@ if __name__ == '__main__':
 
     for ds in datasets:
         ds['longname'] = longnames[ds['name']]
-    export('datasets', datasets)
-
     dtuple = ('{year}', '{month}', '{day}', '{hour}', '{minute}', '{second}', '{wday}', '{yday}')
     ymd_breaks = [
         20150923,
@@ -153,23 +151,33 @@ if __name__ == '__main__':
 
     for ds in datasets:
         print(ds['name'])
-        datadir_set = set()
-        datafile_set = set()
+        datadirs = []
+        datafiles = []
+
+        datadir_ymds = []
+        datafile_ymds = []
 
 
-        for ymd in ymd_breaks:
-            datadir, datafile = gen_dir_file(ds['name'], dtuple, ymd - 1)
-            datadir_set |= set([datadir])
-            datafile_set |= set([datafile])
+        for ymd_break in sorted(ymd_breaks):
+            for ymd in [ymd_break - 1, ymd_break]:
+                datadir, datafile = gen_dir_file(ds['name'], dtuple, ymd)
+                if datadir and datadir not in datadirs:
+                    datadirs.append(datadir)
+                    datadir_ymds.append(ymd)
+                if datafile and datafile not in datafiles:
+                    datafiles.append(datafile)
+                    datafile_ymds.append(ymd)
 
-            datadir, datafile = gen_dir_file(ds['name'], dtuple, ymd)
-            datadir_set |= set([datadir])
-            datafile_set |= set([datafile])
-        if '' in datadir_set:
-            datadir_set.remove('')
-        if '' in datafile_set:
-            datafile_set.remove('')
+        print(datadirs)
+        print(datadir_ymds)
+        print(datafiles)
+        print(datafile_ymds)
+        ds['datadirs'] = datadirs
+        ds['datadir_ymds'] = datadir_ymds
+        if len(datafiles) != 1:
+            raise Exception('unexpected datafile length')
+        ds['datafile'] = datafiles[0]
 
-        print(datadir_set)
-        print(datafile_set)
+    export('datasets', datasets)
+
 

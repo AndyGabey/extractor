@@ -181,10 +181,10 @@ def delete_token(token_id):
     
 
 
-@app.route('/dataset/<dataset>/get_data')
-def get_data(dataset):
+@app.route('/dataset/<dataset_name>/get_data')
+def get_data(dataset_name):
     start = timer()
-    print(dataset)
+    ds = Dataset.query.filter_by(name=dataset_name).one()
     data_format = request.args.get('data_format', 'json')
     token_str = request.args.get('token', 'none')
     if token_str != 'none':
@@ -200,10 +200,21 @@ def get_data(dataset):
     start_date = date_parser(start_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
     end_date = date_parser(end_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
 
+    start_date_tuple = start_date.timetuple()
+
     if not token and (end_date - start_date > dt.timedelta(hours=6)):
         return 'No token supplied and more than 6 hours of data requested'
 
-    csv_file = os.path.join(app.config['DATA_LOCATION'], '2015-SMP1-086.csv')
+    fmt_dict = {'year': start_date.year,
+                'month': start_date.month,
+                'day': start_date.day,
+                'yday': str(start_date_tuple.tm_yday).zfill(3)}
+    print(ds.file_pattern)
+    csv_file = ds.file_pattern.format(**fmt_dict)
+    if not os.path.exists(csv_file):
+        raise Exception('Path {} does not exist'.format(csv_file))
+
+    #csv_file = os.path.join(app.config['DATA_LOCATION'], 'metfidas', '2015-SMP1-086.csv')
 
     if parser == 'pandas':
         payload =  parse_csv_pandas(csv_file, fields, start_date, end_date, data_format)

@@ -33,6 +33,7 @@ python-dateutil==2.6.0
 pytz==2016.10
 scandir==1.4
 simplegeneric==0.8.1
+simplejson==3.10.0
 six==1.10.0
 SQLAlchemy==1.1.5
 tables==3.3.0

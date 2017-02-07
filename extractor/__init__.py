@@ -7,8 +7,7 @@ from flask_wtf.csrf import CSRFProtect
 login_manager = LoginManager()
 # Create flask object and configure based on site specific host_config.txt
 app = Flask(__name__)
-dir_path = os.path.dirname(os.path.realpath(__file__))
-config = open(os.path.join(dir_path, 'host_config.txt'), 'r').read().strip()
+config = open(os.path.join(app.root_path, 'host_config.txt'), 'r').read().strip()
 app.config.from_object(config)
 app.secret_key = 'secret123changethis_to_something_a_bit_h@rd3r_2_guest??'
 

@@ -1,8 +1,8 @@
 class Config(object):
     DEBUG = False
     TESTING = False
-    DATA_LOCATION = 'demo_data/metfidas'
-    DB_LOCATION = 'sqlite:////tmp/extractor.db'
+    DATA_LOCATION = 'demo_data'
+    DB_NAME = 'extractor.db'
 
 
 class ProductionConfig(Config):
