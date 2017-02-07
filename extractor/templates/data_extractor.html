@@ -45,6 +45,11 @@
 	{
 		width: 100%;
 	}
+#variables table .vars
+	{
+		text-align: left;
+		vertical-align: top;
+	}
 </style>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
@@ -205,9 +210,17 @@ function checkStepOne() {
 		{
 			logMessage("Input sanity check passed.");
 
-			logMessage("Requesting json");
+			
+			
+			
+			// Need another json to look at the user database to determine what data level
+			// the user can retrieve.
+			
+			logMessage("User can access level 2 data.");
+			
+			logMessage("Requesting lists of available variables from server.");
 			$.getJSON( "/dataset/"+dataType+"/vars.json", function( data ) {
-				logMessage("json received");
+				logMessage("Information received.");
 				console.debug(data)
 				console.debug(data["typerain"])
 
@@ -229,20 +242,23 @@ function checkStepOne() {
 				    
 						
 						// The start of the table cell.
-						tableHTML += "<td>";
+						tableHTML += '<td class="vars">';
 						
 						// Generate a random number for the fake number of variables.
 					        console.debug(varCat[i]);
 					        console.debug(varCat[i].value);
 						var vars = data[varCat[i].value];
-						var numOfVar = vars.length;
+						
+						if (vars)
+							{
+								var numOfVar = vars.length;
 						
 						// In the future a list of available variables for each category will
 						// be returned from the serve. Currently, fake variable names are 
 						// created in the loop. The following loop will simply push each of
 						// the variables into the relevant column.
-						if (numOfVar > 0)
-							{
+						//if (numOfVar > 0)
+							//{
 								for (var j = 0; j < numOfVar; j++)
 									{
 										// Fake variable name.
@@ -270,7 +286,7 @@ function checkStepOne() {
 				// Generate the check / uncheck buttons dynamically
 				for (var i = 0; i < varCat.length; i++)
 					{	
-						tableHTML += '<td><input type="button" class="check_all_var" value="Check all" target="'+varCat[i].value+'"></input><br><input type="button" class="uncheck_all_var" value="Uncheck all" target="'+varCat[i].value+'"></input></td>';
+						tableHTML += '<td class="foot"><input type="button" class="check_all_var" value="Check all" target="'+varCat[i].value+'"></input><br><input type="button" class="uncheck_all_var" value="Uncheck all" target="'+varCat[i].value+'"></input></td>';
 					}
 				
 				// Complete table
@@ -282,18 +298,29 @@ function checkStepOne() {
 				// Check / Uncheck all  functionalities upon clicks on buttons for temp variables. 
 				$(".check_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",true);});
 				$(".uncheck_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",false);});
+				
+				// Add a horizontal break.
+				$("#right_panel").append("<hr>");
+	
+				// Scroll down to the last log.
+				$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
+	
+				// Re-enable the check button.
+				$("#check_step_one").prop('disabled',false);
 			});
 			
 		}
+	else
+		{
+			// Add a horizontal break.
+			$("#right_panel").append("<hr>");
 	
-	// Add a horizontal break.
-	$("#right_panel").append("<hr>");
+			// Scroll down to the last log.
+			$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
 	
-	// Scroll down to the last log.
-	$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
-	
-	// Re-enable the check button.
-	$("#check_step_one").prop('disabled',false);
+			// Re-enable the check button.
+			$("#check_step_one").prop('disabled',false);
+		}
 		
 }
 	
