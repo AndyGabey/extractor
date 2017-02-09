@@ -10,97 +10,82 @@ def is_safe_url(target):
            ref_url.netloc == test_url.netloc
 
 def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
-    return dt.datetime.strptime(timestamp, fmt)
+    try:
+        return dt.datetime.strptime(timestamp, fmt)
+    except (ValueError, TypeError):
+        return None
 
 
-def parse_csv_pandas(csv_file, fields, start_date, end_date, data_format):
+def parse_csv_pandas(csv_file, variables, start_date, end_date):
     import numpy as np
     import pandas as pd
 
     try:
         df = pd.read_csv(csv_file, skiprows=[1], parse_dates=[0], date_parser=date_parser)
-        for field in fields:
-            if field not in df.columns:
+        for var in variables:
+            if var not in df.columns:
                 msg_fmt = 'Field {} not recognized, please pick from {}'
-                raise Exception(msg_fmt.format(field, ', '.join(df.columns)))
-        df_requested = df[fields]
+                raise Exception(msg_fmt.format(var, ', '.join(df.columns)))
+        df_requested = df[variables]
     except Exception as e:
         return str(e)
 
-    if data_format == 'json':
-        return df_requested.loc[(df['TimeStamp'] >= start_date) & 
-                                (df['TimeStamp'] <= end_date)].to_json()
-    elif data_format == 'html':
-        return df_requested.loc[(df['TimeStamp'] >= start_date) & 
-                                (df['TimeStamp'] <= end_date)].to_html()
+    return df_requested.loc[(df['TimeStamp'] >= start_date) & 
+                            (df['TimeStamp'] <= end_date)]
 
 
-def parse_csv_csv(csv_file, fields, start_date, end_date, data_format):
+def parse_csv_csv(csv_file, variables, start_date, end_date):
     import csv
 
     with open(csv_file, 'r') as f:
         reader = csv.reader(f)
-        cols = reader.next()
-        units = reader.next()
+        header = reader.next()
+        all_units = reader.next()
 
         col_indices = []
         try:
-            time_index = cols.index('TimeStamp')
-            for field in fields:
-                col_indices.append(cols.index(field))
+            if 'TimeStamp' in header and 'Time' in header:
+                date_index = header.index('TimeStamp')
+                time_index = header.index('Time')
+                split_time = True
+            else:
+                datetime_index = header.index('TimeStamp')
+                split_time = False
+
+            for var in variables:
+                col_indices.append(header.index(var))
         except ValueError as e:
-            return ', '.join(cols)
+            return ', '.join(header)
 
-        if data_format == 'html':
-            rows = ['<table border="1">']
+        cols = ['TimeStamp']
+        units = ['timestamp']
+        for i in col_indices:
+            cols.append(header[i])
+            units.append(all_units[i])
 
+        rows = []
+
+        for csv_row in reader:
             row = []
-            row.append('<thead><tr>')
-            row.append('<th>Time</th>')
-            for i in col_indices:
-                row.append('<th>{}</th>'.format(cols[i]))
-            row.append('</tr></thead>')
-            rows.append(''.join(row))
+            if split_time:
+                time = csv_row[time_index]
+                if time[:2] == '24':
+                    time = '00' + time[2:]
+                    add_time = dt.timedelta(days=1)
+                else:
+                    add_time = dt.timedelta(days=0)
+                timestamp = '{} {}'.format(csv_row[date_index], time)
+                row_time = date_parser(timestamp, '%Y%m%d %H%M') + add_time
+            else:
+                timestamp = csv_row[datetime_index]
+                row_time = date_parser(timestamp)
 
-            row.append('<tbody>')
-            for csv_row in reader:
-                row = []
-                row_time = date_parser(csv_row[time_index])
-                if row_time > end_date:
-                    break
-                if row_time >= start_date:
-                    row.append('<tr>')
-                    row.append('<td>{}</td>'.format(str(row_time)))
-                    for i in col_indices:
-                        row.append('<td>{}</td>'.format(csv_row[i]))
-                    row.append('</tr>')
-                    rows.append(''.join(row))
-            row.append('</tbody>')
-            rows.append('</table>')
+            if row_time > end_date:
+                break
+            if row_time >= start_date:
+                row.append(str(row_time))
+                for i in col_indices:
+                    row.append(csv_row[i])
+                rows.append(row)
 
-            return '\n'.join(rows)
-        elif data_format == 'json':
-            rows = ['{"header": [']
-
-            row = []
-            row.append('"Time"')
-            for i in col_indices:
-                row.append('"{}"'.format(cols[i]))
-            rows.append(','.join(row))
-            rows.append('], "data": [')
-
-            data_rows = []
-            for csv_row in reader:
-                row = []
-                row_time = date_parser(csv_row[time_index])
-                if row_time > end_date:
-                    break
-                if row_time >= start_date:
-                    row.append('"{}"'.format(str(row_time)))
-                    for i in col_indices:
-                        row.append('"{}"'.format(csv_row[i]))
-                    data_rows.append('[' + ','.join(row) + ']')
-            rows.append(','.join(data_rows))
-            rows.append(']}')
-
-            return ''.join(rows)
+        return cols, units, rows

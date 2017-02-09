@@ -7,6 +7,8 @@ import flask
 from flask import request, render_template
 from flask_login import login_required, login_user, logout_user
 
+from sqlalchemy.orm import exc
+
 from extractor import app, login_manager
 from extractor.utils import parse_csv_csv, parse_csv_pandas, date_parser, is_safe_url
 from extractor.database import db_session
@@ -14,11 +16,38 @@ from extractor.models import User, Dataset, Variable, UserToken
 from extractor.forms import LoginForm, DatasetForm
 
 
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, hint='', status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        self.hint = hint
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+
+
+@app.errorhandler(400)
+def page_not_found(e):
+    print(e)
+    return render_template('400.html'), 400
+
 @login_manager.user_loader
 def load_user(user_id):
     user = User.query.get(user_id)
     return user
 
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = flask.make_response(render_template('invalid_usage.html', error=error))
+    response.status_code = error.status_code
+    return response
 
 @app.route('/')
 def index():
@@ -178,48 +207,115 @@ def delete_token(token_id):
     db_session.delete(token)
     db_session.commit()
     return flask.redirect(flask.url_for('user_tokens'))
-    
 
 
 @app.route('/dataset/<dataset_name>/get_data')
 def get_data(dataset_name):
     start = timer()
-    ds = Dataset.query.filter_by(name=dataset_name).one()
+    try:
+        ds = Dataset.query.filter_by(name=dataset_name).one()
+    except exc.NoResultFound:
+        datasets = [d[0] for d in Dataset.query.with_entities(Dataset.name).all()]
+        print(datasets)
+        raise InvalidUsage('Dataset {} does not exist'.format(dataset_name),
+                           'Available datasets are:w {}'.format(', '.join(datasets)),
+                           404)
+
     data_format = request.args.get('data_format', 'json')
     token_str = request.args.get('token', 'none')
     if token_str != 'none':
-        token = UserToken.query.filter_by(token=token_str).one()
+        try:
+            token = UserToken.query.filter_by(token=token_str).one()
+        except exc.NoResultFound:
+            raise InvalidUsage('Token {} not found'.format(token_str))
     else:
         token = None
-
     parser = request.args.get('parser', 'csv')
 
-    fields = request.args.getlist('field')
+    variables = request.args.getlist('var')
+    if not variables:
+        raise InvalidUsage('No variables selected')
+
+    now = dt.datetime.now()
     start_date_ts = request.args.get('start_date')
-    end_date_ts = request.args.get('end_date')
     start_date = date_parser(start_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
+    if not start_date_ts or not start_date:
+        now_formatted = now.strftime('%Y-%m-%d-%H:%M:%S')
+        raise InvalidUsage('Please enter a valid start date in form: %Y-%m-%d-%H:%M:%S',
+                           'e.g. {} for now'.format(now_formatted))
+
+    end_date_ts = request.args.get('end_date')
     end_date = date_parser(end_date_ts, fmt='%Y-%m-%d-%H:%M:%S')
+    if not end_date_ts or not end_date:
+        now_formatted = now.strftime('%Y-%m-%d-%H:%M:%S')
+        raise InvalidUsage('Please enter a valid end date in form: %Y-%m-%d-%H:%M:%S',
+                           'e.g. {} for now'.format(now_formatted))
+
+    if start_date > now or end_date > now:
+        raise InvalidUsage('Both start and end date must be before now')
 
     start_date_tuple = start_date.timetuple()
 
-    if not token and (end_date - start_date > dt.timedelta(hours=6)):
+    if False and not token and (end_date - start_date > dt.timedelta(hours=6)):
         return 'No token supplied and more than 6 hours of data requested'
 
-    fmt_dict = {'year': start_date.year,
-                'month': start_date.month,
-                'day': start_date.day,
-                'yday': str(start_date_tuple.tm_yday).zfill(3)}
-    print(ds.file_pattern)
-    csv_file = ds.file_pattern.format(**fmt_dict)
-    if not os.path.exists(csv_file):
-        raise Exception('Path {} does not exist'.format(csv_file))
+    file_date = dt.datetime(start_date.year, start_date.month, start_date.day)
+    rows = []
+    while file_date < end_date:
+        fmt_dict = {'year': file_date.year,
+                    'month': str(file_date.month).zfill(2),
+                    'day': str(file_date.day).zfill(2),
+                    'yday': str(start_date_tuple.tm_yday).zfill(3)}
 
-    #csv_file = os.path.join(app.config['DATA_LOCATION'], 'metfidas', '2015-SMP1-086.csv')
+        csv_file = ds.file_pattern.format(**fmt_dict)
+        if not os.path.exists(csv_file):
+            raise Exception('Path {} does not exist'.format(csv_file))
 
-    if parser == 'pandas':
-        payload =  parse_csv_pandas(csv_file, fields, start_date, end_date, data_format)
-    elif parser == 'csv':
-        payload =  parse_csv_csv(csv_file, fields, start_date, end_date, data_format)
+        cols, units, curr_rows = parse_csv_csv(csv_file, variables, start_date, end_date)
+        rows.extend(curr_rows)
+        file_date += dt.timedelta(days=1)
+
+    if data_format == 'html':
+        html_rows = ['<table border="1">']
+
+        header_row = []
+        header_row.append('<thead><tr>')
+        for col in cols:
+            header_row.append('<th>{}</th>'.format(col))
+        header_row.append('</tr></thead>')
+        html_rows.append(''.join(header_row))
+
+        html_rows.append('<tbody>')
+        for row in rows:
+            html_row = []
+            html_row.append('<tr>')
+            for cell in row:
+                html_row.append('<td>{}</td>'.format(cell))
+            html_row.append('</tr>')
+            html_rows.append(''.join(html_row))
+        html_rows.append('</tbody>')
+        html_rows.append('</table>')
+
+        payload = '\n'.join(html_rows)
+
+    elif data_format == 'json':
+        json_rows = ['{"header": [']
+
+        header_row = []
+        for col in cols:
+            header_row.append('"{}"'.format(col))
+        json_rows.append(','.join(header_row))
+        json_rows.append('], "data": [')
+
+        json_data_rows = []
+        for row in rows:
+            json_row = []
+            for cell in row:
+                json_row.append('"{}"'.format(cell))
+            json_data_rows.append('[' + ','.join(json_row) + ']')
+        json_rows.append(','.join(json_data_rows))
+        json_rows.append(']}')
+        payload = ''.join(json_rows)
 
     parsed = timer()
     print(parsed - start)
