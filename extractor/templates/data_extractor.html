@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <title>METFiDAS-3 Data Extractor -- University of Reading</title>
 <style type="text/css">
+body
+	{
+		font-size: 14px;
+	}
 #left_panel
 	{
 		left: 2.5vw;
@@ -11,15 +15,15 @@
 		width: 55vw;
 		background-color: rgba(255,255,0,0.2);
 		position: absolute;
-		height: 100%;
+		height: 25vh;
 	}
 #right_panel
 	{
 		left: 60vw;
 		top: 2.5vh;
-		width: 45vw;
+		width: 35vw;
 		background-color: rgba(255,0,0,0.2);
-		height: 200px;
+		height: 25vh;
 		position: absolute;
 		overflow: scroll;
 		padding: 5px;
@@ -37,6 +41,13 @@
 		background-color: rgba(0,0,255,0.2);
 		padding: 5px;
 	}
+#database
+	{
+		top: 30vh;
+		left: 2.5vw;
+		width: 95vw;
+		position: absolute;
+	}
 #variables
 	{
 		text-align: center;
@@ -44,11 +55,48 @@
 #variables table
 	{
 		width: 100%;
+		font-size: 12px;
 	}
 #variables table .vars
 	{
+		width: 20%;
+	}
+#variables table .scrollable
+	{
 		text-align: left;
 		vertical-align: top;
+		width: 100%;
+		height: 40vh;
+		overflow: auto;
+		background-color: red;
+	}
+#footer
+	{
+		left: 2.5vw;
+		bottom: 2.5vh;
+		width: 95vw;
+		height: 10vh;
+		position: absolute;
+		background-color: red;
+		padding: 5px;
+	}
+#missing_value_options
+	{
+		width: 30%;
+		position: absolute;
+		bottom: 5px;
+		left: 5px;
+	}
+#final
+	{
+		left: 30vw;
+		width: 70%;
+		position: absolute;
+		bottom: 5px;
+	}
+#final input[name="url"]
+	{
+		width: 85%;
 	}
 </style>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -146,6 +194,18 @@ function logMessage(str) {
 	//$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
 }
 
+// Log divider
+function divideLog() {
+	// Add a horizontal break.
+	$("#right_panel").append("<hr>");
+
+	// Scroll down to the last log.
+	$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
+
+	// Re-enable the check button.
+	$("#check_step_one").prop('disabled',false);
+}
+
 // Wrapper function to perform sanity check for Step 1.
 function checkStepOne() {
 	$("#check_step_one").prop('disabled',true);
@@ -226,27 +286,37 @@ function checkStepOne() {
 
 				// Begin constructing the variable table dynamically.
 				var tableHTML = '<span style="width: 100%; text-align: center;">Available variables</span><br><table>'+"\n<thead><tr>";
-				
+
 				// Start with the headers.
 				for (var i = 0; i < varCat.length; i++)
 					{
-						tableHTML += "<th>"+varCat[i].value+"</th>";
+						// Changed typeX to long name of X.
+						// A more elegant method might be needed later!
+						var catName = varCat[i].value;
+				
+						if (catName == "typerain") var longName = "Precipitation";
+						else if (catName == "typetemp") var longName = "Temperature";
+						else if (catName == "typewind") var longName = "Wind";
+						else if (catName == "typesrad") var longName = "Radiation";
+						else if (catName == "typepres") var longName = "Pressure";
+						else var longName = varCat[i].value;
+						
+						tableHTML += "<th>"+longName+"</th>";
 					}
 				
-				tableHTML += "</tr></thead>\n<tbody><tr>";
+				tableHTML += '</tr></thead>\n<tbody><tr">';
 				
 				for (var i = 0; i < varCat.length; i++)
 					{
 						// fake ajax return for now. This will change to some sort of server
 						// return in the future.
-				    
-						
+
 						// The start of the table cell.
-						tableHTML += '<td class="vars">';
+						tableHTML += '<td class="vars"><div class="scrollable">';
 						
 						// Generate a random number for the fake number of variables.
-					        console.debug(varCat[i]);
-					        console.debug(varCat[i].value);
+					    //console.debug(varCat[i]);
+					    //console.debug(varCat[i].value);
 						var vars = data[varCat[i].value];
 						
 						if (vars)
@@ -265,7 +335,7 @@ function checkStepOne() {
 										var varName = vars[j]["long_name"];
 										
 										// Add the variable checkbox to the table.
-										tableHTML += '<input type="checkbox" name="var" value="'+varName+'" vartype="'+varCat[i].value+'">'+varName+'</input>';
+										tableHTML += '<input type="checkbox" name="var" value="'+vars[j]["var"]+'" vartype="'+varCat[i].value+'">'+varName+'</input>';
 										
 										// Add new line html tag if it is not the last var.
 										if (j < numOfVar-1) tableHTML += "<br>";
@@ -278,7 +348,7 @@ function checkStepOne() {
 							}
 						
 						// The end of the table cell.
-						tableHTML += "</td>";
+						tableHTML += "</div></td>";
 					}
 				
 				tableHTML += "</tr></tbody>\n<tfoot><tr>";
@@ -295,35 +365,72 @@ function checkStepOne() {
 				// Add table to the correct div.
 				$("#variables").html(tableHTML);
 				
+				$("#variables table .scrollable").css("height","40vh");
+				$("#variables table .scrollable").css("overflowY","scroll");
+				
 				// Check / Uncheck all  functionalities upon clicks on buttons for temp variables. 
 				$(".check_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",true);});
 				$(".uncheck_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",false);});
 				
-				// Add a horizontal break.
-				$("#right_panel").append("<hr>");
-	
-				// Scroll down to the last log.
-				$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
-	
-				// Re-enable the check button.
-				$("#check_step_one").prop('disabled',false);
+				divideLog();
 			});
 			
 		}
 	else
 		{
-			// Add a horizontal break.
-			$("#right_panel").append("<hr>");
-	
-			// Scroll down to the last log.
-			$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
-	
-			// Re-enable the check button.
-			$("#check_step_one").prop('disabled',false);
+			divideLog();
 		}
 		
 }
+
+// Function to generate the HTTP API URL
+// http://127.0.0.1:5000/get_data?start_date=2015-03-27-00:00:11&end_date=2015-03-27-00:00:21&field=P&field=RH&data_format=html
+function generateURL() {
+
+	var fields = $('input[name="var"]:checked');
 	
+	if (fields.length > 0)
+		{
+			var url = "http://127.0.0.1:5000/get_data?";
+	
+			// Append dataset to API
+			url += "dataset="+$("#type_aws").val();
+	
+			// Append start date to API
+			url += "&start_date="+$("#startY").val()+"-"+pad($("#startM").val(),2)+
+					"-"+$("#startD").val()+"-"+$("#startH").val()+":00:00";
+			
+			// Append end date to API
+			url += "&end_date="+$("#endY").val()+"-"+pad($("#endM").val(),2)+
+					"-"+$("#endD").val()+"-"+$("#endH").val()+":00:00";
+
+			// Append all fields to API
+			var fields = $('input[name="var"]:checked');
+	
+			for (var i = 0; i < fields.length; i++)
+				{
+					url += "&field="+fields[i].value;
+				}
+	
+			// Append missing data option to API
+			url += "&missing="+$("#missing").val();
+	
+			// Append data output format to API
+			url += "&data_format="+$("#output_format").val();
+	
+			// Display the URL in the text field
+			$("#direct_url").val(url);
+		}
+	else
+		{
+			logMessage("No variable is selected. Nothing to retrieve.");
+			divideLog();
+		}
+
+}
+function retrieveData() {
+
+}
 // Initialise after document is fully loaded.
 $(function(){
 	// Auto-put the days and hours into the selection field in start/end times. 
@@ -336,6 +443,11 @@ $(function(){
 	
 	// Initiate check routine upon clicking on button.
 	$("#check_step_one").click(checkStepOne);
+	
+	$("#retrieve_data").click(function(){
+		generateURL();
+		retrieveData();
+	});
 });
 </script>
 </head>
@@ -343,17 +455,15 @@ $(function(){
 <div id="left_panel">
 Step 1: Choose the type and date-range of data.
 <div id="datatype">
-Please select the type of data to extract.
-
+Select the type of data to extract.
 <select id="type_aws">
     <option value="">---</option>
     {% for dataset in datasets %}
     <option value="{{ dataset.name }}">{{ dataset.long_name }}</option>
     {% endfor %}
 </select>
-
 </div>
-<div id="start_date">Please select the start date.
+<div id="start_date">Select the start date.
 <select id="startY">
 <option value="2017">2017</option>
 <option value="2016">2016</option>
@@ -387,7 +497,7 @@ Please select the type of data to extract.
 <option value="03">03</option>
 </select>
 </div>
-<div id="end_date"><span>Please select the end date.</span>
+<div id="end_date"><span>Select the end date.</span>
 <span>
 <select id="endY">
 <option value="2017">2017</option>
@@ -424,7 +534,7 @@ Please select the type of data to extract.
 </span>
 </div>
 <div id="vtype">
-Please choose the variable categories.<br>
+Choose the variable categories.<br>
 <input type="checkbox" name="var_type" value="typetemp">Temperature</input>
 <input type="checkbox" name="var_type" value="typerain">Rainfall</input>
 <input type="checkbox" name="var_type" value="typesrad">Sun/Radiation</input>
@@ -434,19 +544,35 @@ Please choose the variable categories.<br>
 <input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input>
 </div>
 <div><input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input></div>
-Step 2
+</div>
+<div id="right_panel"></div>
+<div id="database">
 <div id="variables"></div>
+</div>
+<div id="footer">Step 3<br>
 <div id="missing_value_options">
-Please select a value for the missing data. 
+Select a value for the missing data. 
 <select id="missing">
 <option value="blank">Blank/Empty</option>
 <option value="9999.9">9999.9</option>
 <option value="x">x</option>
 </select>
+<br>
+Select the output format.
+<select id="output_format">
+<option value="html" selected>Web Page (HTML)</option>
+<option value="csv">Comma Separated Values (CSV)</option>
+<option value="json">JavaScript Object Notation (JSON)</option>
+<option value="netcdf">NetCDF</option>
+</select>
+</div>
+<div id="final">
+<input type="button" id="retrieve_data" value="Retrieve data"></input>
+<br>
+HTTP API URL: <input type="text" name="url" id="direct_url"></input>
 </div>
 </div>
-<div id="right_panel">
-</div>
+
 </body>
 </html>
 
