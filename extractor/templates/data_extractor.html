@@ -383,18 +383,18 @@ function checkStepOne() {
 		
 }
 
-// Function to generate the HTTP API URL
-// http://127.0.0.1:5000/get_data?start_date=2015-03-27-00:00:11&end_date=2015-03-27-00:00:21&field=P&field=RH&data_format=html
+// Function to generate the HTTP API URL, e.g.:
+// http://127.0.0.1:5000/dataset/1sec_Level1/get_data?&start_date=2016-12-01-00:00:00&end_date=2016-12-01-04:00:00&var=T0.56&missing=blank&data_format=html
 function generateURL() {
 
 	var fields = $('input[name="var"]:checked');
 	
 	if (fields.length > 0)
 		{
-			var url = "http://127.0.0.1:5000/get_data?";
+			var url = "http://127.0.0.1:5000/dataset/";
 	
 			// Append dataset to API
-			url += "dataset="+$("#type_aws").val();
+			url += $("#type_aws").val() + "/get_data?"
 	
 			// Append start date to API
 			url += "&start_date="+$("#startY").val()+"-"+pad($("#startM").val(),2)+
@@ -409,7 +409,7 @@ function generateURL() {
 	
 			for (var i = 0; i < fields.length; i++)
 				{
-					url += "&field="+fields[i].value;
+					url += "&var="+fields[i].value;
 				}
 	
 			// Append missing data option to API
@@ -420,6 +420,8 @@ function generateURL() {
 	
 			// Display the URL in the text field
 			$("#direct_url").val(url);
+			return url;
+
 		}
 	else
 		{
@@ -428,8 +430,8 @@ function generateURL() {
 		}
 
 }
-function retrieveData() {
-
+function retrieveData(url) {
+        window.location.href = url;
 }
 // Initialise after document is fully loaded.
 $(function(){
@@ -445,8 +447,11 @@ $(function(){
 	$("#check_step_one").click(checkStepOne);
 	
 	$("#retrieve_data").click(function(){
+		var url = generateURL();
+		retrieveData(url);
+	});
+	$("#generate_url").click(function(){
 		generateURL();
-		retrieveData();
 	});
 });
 </script>
@@ -567,6 +572,7 @@ Select the output format.
 </select>
 </div>
 <div id="final">
+<input type="button" id="generate_url" value="Generate URL"></input>
 <input type="button" id="retrieve_data" value="Retrieve data"></input>
 <br>
 HTTP API URL: <input type="text" name="url" id="direct_url"></input>
