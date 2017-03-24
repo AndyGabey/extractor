@@ -9,11 +9,11 @@ from flask_login import login_required, login_user, logout_user
 
 from sqlalchemy.orm import exc
 
-from extractor import app, login_manager
-from extractor.utils import parse_csv_csv, parse_csv_pandas, date_parser, is_safe_url
-from extractor.database import db_session
-from extractor.models import User, Dataset, Variable, UserToken
-from extractor.forms import LoginForm, DatasetForm
+from Extractor import app, login_manager
+from Extractor.utils import parse_csv_csv, parse_csv_pandas, date_parser, is_safe_url
+from Extractor.database import db_session
+from Extractor.models import User, Dataset, Variable, UserToken
+from Extractor.forms import LoginForm, DatasetForm
 
 
 class InvalidUsage(Exception):

@@ -16,8 +16,8 @@ csrf = CSRFProtect(app)
 
 login_manager.login_view = "login"
 
-import extractor.views
-from extractor.database import db_session
+import Extractor.views
+from Extractor.database import db_session
 
 
 @app.teardown_appcontext

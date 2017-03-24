@@ -1,10 +1,11 @@
 .*.swp
 *.pyc
 venv
-extractor/host_config.txt
+Extractor/host_config.txt
 extractor/venv
 demo_data
-extractor/extractor.db
+Extractor/extractor.db
 experiments/*.json
 experiments/*.csv
 extractor.egg-info/
+Extractor.egg-info/

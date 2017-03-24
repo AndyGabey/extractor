@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from extractor import app
+from Extractor import app
 
 db_string = 'sqlite:///' + os.path.join(app.root_path, app.config['DB_NAME'])
 engine = create_engine(db_string, convert_unicode=True)
@@ -17,7 +17,7 @@ def init_db(drop_all=False, populate=False):
     # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
-    import extractor.models
+    import Extractor.models
     if drop_all:
         Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -30,7 +30,7 @@ def populate_db(delete_all=False):
     import datetime as dt
     import simplejson
 
-    from extractor.models import User, Dataset, Variable, UserToken
+    from Extractor.models import User, Dataset, Variable, UserToken
 
     if delete_all:
         User.query.delete()
@@ -41,7 +41,7 @@ def populate_db(delete_all=False):
     user = User('Mark', 'markmuetz@gmail.com', 'dummypw')
     db_session.add(user)
 
-    with open('extractor/import_data/datasets.json', 'r') as f:
+    with open('Extractor/import_data/datasets.json', 'r') as f:
         datasets = simplejson.load(f)
 
     for ds in datasets:

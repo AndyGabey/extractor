@@ -3,7 +3,7 @@ import bcrypt
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-from extractor.database import Base
+from Extractor.database import Base
 
 class User(Base):
     __tablename__ = 'users'

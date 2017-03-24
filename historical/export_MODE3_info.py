@@ -7,7 +7,7 @@ import datetime as dt
 
 import MODE3 as m3
 
-IMPORT_DIR = '../extractor/import_data'
+IMPORT_DIR = '../Extractor/import_data'
 
 
 def export(filename, data):
