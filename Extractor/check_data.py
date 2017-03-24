@@ -1,6 +1,6 @@
 import os
 import re
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, OrderedDict
 
 PATTERNS = {
     'metfidas': [
@@ -37,6 +37,21 @@ PATTERNS = {
         # '/mnt/data/labserver_files/METFiDAS-3/Level2/5min/2014/20140831_5min_maxmin.csv',
         ('ls9', re.compile('/mnt/data/labserver_files/METFiDAS-3/Level2/5min/(?P<year>\d{4})/(?P<date>\d{8})_5min_maxmin.csv')),
     ],
+    'SonicLicor-Incoming': [
+        # '/mnt/data/SonicLicor-Incoming/Level1/2015/2015-SMP-223.csv'
+        ('sli1', re.compile('/mnt/data/SonicLicor-Incoming/Level1/(?P<year>\d{4})/(?P<year2>\d{4})-SMP-(?P<doy>\d{3}).csv')),
+    ],
+    'Ceilometer-Incoming': [
+        # '/mnt/data/Ceilometer-Incoming/Level2/1min/2016/20160604_1min.csv'
+        ('ci1', re.compile('/mnt/data/Ceilometer-Incoming/Level2/1min/(?P<year>\d{4})/(?P<date>\d{8})_1min.csv')),
+        # '/mnt/data/Ceilometer-Incoming/Level2/5min/2014/20140501_5min.csv'
+        ('ci2', re.compile('/mnt/data/Ceilometer-Incoming/Level2/5min/(?P<year>\d{4})/(?P<date>\d{8})_5min.csv')),
+    ],
+    'LUMA': [
+        # '/mnt/data/LUMA/RUAO/ReadingFlux_2015259.csv'
+        ('luma1', re.compile('/mnt/data/LUMA/RUAO/ReadingFlux_(?P<date_doy>\d{7}).csv')),
+    ],
+
 }
 
 
@@ -73,6 +88,7 @@ def check_path(instrument_patterns, path):
             return name, pattern, match
     return name, None, None
 
+
 def check_path_format(instrument_paths):
     pattern_matches = defaultdict(list)
     unmatched = defaultdict(list)
@@ -89,9 +105,10 @@ def check_path_format(instrument_paths):
                 # print('  Unmatched: {}'.format(path))
                 unmatched[instrument].append(path)
             pattern_matches['{}:{}'.format(instrument, name)].append(match)
+        print('  Unmatched count: {}'.format(len(unmatched[instrument])))
     return pattern_matches, unmatched
-            
 
 
-
-
+def check_date_parse(pattern_matches):
+    for name, matches in pattern_matches.items():
+        print(name)
