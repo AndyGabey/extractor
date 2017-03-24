@@ -254,21 +254,22 @@ def get_data(dataset_name):
     if start_date > now or end_date > now:
         raise InvalidUsage('Both start and end date must be before now')
 
-    start_date_tuple = start_date.timetuple()
-
     if False and not token and (end_date - start_date > dt.timedelta(hours=6)):
         return 'No token supplied and more than 6 hours of data requested'
 
     file_date = dt.datetime(start_date.year, start_date.month, start_date.day)
     rows = []
     while file_date < end_date:
+        file_date_tuple = file_date.timetuple()
+
         fmt_dict = {'year': file_date.year,
                     'month': str(file_date.month).zfill(2),
                     'day': str(file_date.day).zfill(2),
-                    'yday': str(start_date_tuple.tm_yday).zfill(3)}
+                    'yday': str(file_date_tuple.tm_yday).zfill(3)}
 
         csv_file = ds.file_pattern.format(**fmt_dict)
         if not os.path.exists(csv_file):
+            return 'uh-oh'
             raise Exception('Path {} does not exist'.format(csv_file))
 
         cols, units, curr_rows = parse_csv_csv(csv_file, variables, start_date, end_date)
