@@ -5,17 +5,21 @@ from collections import Counter, defaultdict, OrderedDict
 PATTERNS = {
     'metfidas': [
         # '/mnt/data/metfidas/Level1/2015/2015-AVG5-104.csv'
-        ('metfidas1', re.compile('/mnt/data/metfidas/Level1/(?P<year>\d{4})/(?P<filename>.*).csv')),
+        ('metfidas1', re.compile('/mnt/data/metfidas/Level1/(?P<year>\d{4})/(?P<year2>\d{4})-AVG5-(?P<doy>\d{3}).csv')),
+        # '/mnt/data/metfidas/Level1/2015/2015-SMP1-104.csv'
+        ('metfidas2', re.compile('/mnt/data/metfidas/Level1/(?P<year>\d{4})/(?P<year2>\d{4})-SMP1-(?P<doy>\d{3}).csv')),
+        # '/mnt/data/metfidas/Level1/2015/2015-MMX5-104.csv'
+        ('metfidas3', re.compile('/mnt/data/metfidas/Level1/(?P<year>\d{4})/(?P<year2>\d{4})-MMX5-(?P<doy>\d{3}).csv')),
         # '/mnt/data/metfidas/Level2/1hour/2015/20150415_1hour.csv'
-        ('metfidas2', re.compile('/mnt/data/metfidas/Level2/1hour/(?P<year>\d{4})/(?P<date>\d{8})_1hour.csv')),
+        ('metfidas4', re.compile('/mnt/data/metfidas/Level2/1hour/(?P<year>\d{4})/(?P<date>\d{8})_1hour.csv')),
         # '/mnt/data/metfidas/Level2/1hour/2015/20150415_1hour_maxmin.csv'
-        ('metfidas3', re.compile('/mnt/data/metfidas/Level2/1hour/(?P<year>\d{4})/(?P<date>\d{8})_1hour_maxmin.csv')),
+        ('metfidas5', re.compile('/mnt/data/metfidas/Level2/1hour/(?P<year>\d{4})/(?P<date>\d{8})_1hour_maxmin.csv')),
         # '/mnt/data/metfidas/Level2/5min/2015/20150415_5min.csv',
-        ('metfidas4', re.compile('/mnt/data/metfidas/Level2/5min/(?P<year>\d{4})/(?P<date>\d{8})_5min.csv')),
+        ('metfidas6', re.compile('/mnt/data/metfidas/Level2/5min/(?P<year>\d{4})/(?P<date>\d{8})_5min.csv')),
         # '/mnt/data/metfidas/Level2/5min/2015/20150415_5min_maxmin.csv'
-        ('metfidas5', re.compile('/mnt/data/metfidas/Level2/5min/(?P<year>\d{4})/(?P<date>\d{8})_5min_maxmin.csv')),
+        ('metfidas7', re.compile('/mnt/data/metfidas/Level2/5min/(?P<year>\d{4})/(?P<date>\d{8})_5min_maxmin.csv')),
         # '/mnt/data/metfidas/Level2/profile/2015/20150819_UTprofile.csv'
-        ('metfidas6', re.compile('/mnt/data/metfidas/Level2/profile/(?P<year>\d{4})/(?P<date>\d{8})_UTprofile.csv')),
+        ('metfidas8', re.compile('/mnt/data/metfidas/Level2/profile/(?P<year>\d{4})/(?P<date>\d{8})_UTprofile.csv')),
     ],
     'labserver_files': [
         # '/mnt/data/labserver_files/METFiDAS/data/processed/derived/2005/2005D220.csv'
