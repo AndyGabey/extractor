@@ -4,7 +4,7 @@ venv
 Extractor/host_config.txt
 extractor/venv
 demo_data
-Extractor/db
+Extractor/db/extractor.db*
 experiments/*.json
 experiments/*.csv
 extractor.egg-info/

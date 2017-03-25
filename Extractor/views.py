@@ -174,7 +174,6 @@ def datasets_json():
     datasets = Dataset.query.all()
     return flask.jsonify(datasets=[ds.name for ds in datasets])
 
-    
 
 @app.route('/dataset/<dataset_name>/')
 def dataset(dataset_name):
