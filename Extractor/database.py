@@ -62,6 +62,7 @@ def populate_db(delete_all=False):
             time_pattern = mapping[ds['name']]['time_pattern']
         else:
             time_pattern = '%Y%m%d %H%M'
+        print(time_pattern)
         dataset = Dataset(ds['name'], ds['longname'], dt.datetime(2017, 1, 1), None,
                           5, 'instrument', level, newpath_tpl, 
                           'TimeStamp' , '%d%m', 'Time', time_pattern)

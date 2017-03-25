@@ -17,7 +17,12 @@ def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
     try:
         return dt.datetime.strptime(timestamp, fmt)
     except (ValueError, TypeError):
-        return None
+        midnight24 = '24:00:00'
+        midnight00 = '00:00:00'
+        if midnight24 in timestamp:
+            return dt.datetime.strptime(timestamp.replace(midnight24, midnight00), fmt) + dt.timedelta(days=1)
+        else:
+            raise
 
 
 def parse_csv(csv_file, variables, start_date, end_date, date_fmt='%Y%m%d %H%M'):
@@ -43,6 +48,9 @@ def parse_csv(csv_file, variables, start_date, end_date, date_fmt='%Y%m%d %H%M')
             date_index = header.index('Date')
             time_index = header.index('Time')
             split_time = True
+        elif 'TIME' in header:
+            datetime_index = header.index('TIME')
+            split_time = False
 
         for var in variables:
             if var in header:

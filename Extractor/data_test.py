@@ -4,7 +4,7 @@ from Extractor.models import Dataset, Variable
 from Extractor.data_extractor import DataExtractor
 
 DATES = {
-        'soniclicor_Level1': (dt.datetime(2016, 1, 1), dt.datetime(2016, 1, 5)),
+        'soniclicor_Level1': (dt.datetime(2016, 1, 1, 23), dt.datetime(2016, 1, 2, 1)),
         'Vertical_profiles': (dt.datetime(2016, 1, 1), dt.datetime(2016, 1, 5)),
         'eddy_cov': (dt.datetime(2016, 1, 1), dt.datetime(2016, 1, 5)),
         'cloudbase_5min': (dt.datetime(2016, 1, 1), dt.datetime(2016, 1, 5)),

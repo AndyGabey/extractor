@@ -3,16 +3,19 @@ mapping =  {
             'datafile': '{year}-SMP1-{yday}.csv',
             'datadir': 'labserver_files/METFiDAS-3/Level1/{year}',
             'longname': '1-sec \"instantaneous\" logger output',
+            'time_pattern': '%d/%m/%Y %H:%M:%S',
             },
         '5min_Level1': {
             'datafile': '{year}-AVG5-{yday}.csv',
             'datadir': 'labserver_files/METFiDAS-3/Level1/{year}',
             'longname': '5-min averaged logger output',
+            'time_pattern': '%d/%m/%Y %H:%M:%S',
             },
         '5min_Level1_maxmin': {
             'datafile': '{year}-MMX5-{yday}.csv',
             'datadir': 'labserver_files/METFiDAS-3/Level1/{year}',
             'longname': '5-min max/min logger output',
+            'time_pattern': '%d/%m/%Y %H:%M:%S',
             },
         '5min_Level2': {
             'datafile': '{year}{month}{day}_5min.csv',
@@ -52,8 +55,9 @@ mapping =  {
             },
         'eddy_cov': {
             'datafile': 'ReadingFlux_{year}{yday}.csv',
-            'datadir': 'micromet/LUMA/RUAO',
+            'datadir': 'LUMA/RUAO',
             'longname': 'Eddy covariances - 30-min averages',
+            'time_pattern': '%Y-%m-%d %H:%M:%S'
             },
         'cloudbase_5min': {
             'datafile': '{year}{month}{day}_5min.csv',
