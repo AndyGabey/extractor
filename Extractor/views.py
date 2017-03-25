@@ -100,8 +100,9 @@ def logout():
 def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
-        ds = Dataset(dt.datetime(2017, 1, 1), dt.datetime.now(),
-                     5, form.name.data, form.instrument.data, 
+        ds = Dataset(form.label.data, form.label.data, 
+                     dt.datetime(2017, 1, 1), dt.datetime.now(),
+                     5, form.label.data, form.instrument.data, 
                      '/some/file/path/{year}/', 
                      'TimeStamp' , '%d%m', 'Time', '%s')
         db_session.add(ds)
