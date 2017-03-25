@@ -87,7 +87,7 @@ def create_dataset():
         raise
         ds = Dataset(form.name.data, form.long_name.data, 
                      dt.datetime(2017, 1, 1), dt.datetime.now(),
-                     5, form.label.data, form.instrument.data, 
+                     5, form.name.data, form.instrument.data, 
                      '/some/file/path/{year}/', 
                      'TimeStamp' , '%d%m', 'Time', '%s')
         db_session.add(ds)

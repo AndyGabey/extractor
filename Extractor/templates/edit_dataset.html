@@ -9,8 +9,6 @@
 	<form method="post">
 	    {{ form.csrf_token }}
 	    <dl>
-		{{ render_field(form.label) }}
-		{{ render_field(form.instrument) }}
 		{{ render_field(form.name) }}
 		{{ render_field(form.long_name) }}
 		{{ render_field(form.start_date) }}
