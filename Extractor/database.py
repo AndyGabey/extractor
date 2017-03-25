@@ -6,7 +6,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from Extractor import app
 from Extractor.utils import DATE_FMT
-from Extractor.dataset_path_mapping import mapping
 
 db_string = 'sqlite:///' + os.path.join(app.root_path, app.config['DB_NAME'])
 engine = create_engine(db_string, convert_unicode=True)
