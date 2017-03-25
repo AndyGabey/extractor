@@ -122,8 +122,18 @@ def edit_var(dataset_name, var_name):
         form.populate_obj(var)
         db_session.commit()
 
-        return flask.redirect(flask.url_for('get_dataset_vars'))
+        return flask.redirect(flask.url_for('get_dataset_vars', dataset_name=dataset.name))
     return render_template('edit_var.html', form=form)
+    
+@app.route('/dataset/<dataset_name>/<var_name>/delete', methods=['POST'])
+@login_required
+def delete_var(dataset_name, var_name):
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    var = Variable.query.filter_by(dataset=dataset, var=var_name).one()
+    db_session.delete(var)
+    db_session.commit()
+
+    return flask.redirect(flask.url_for('get_dataset_vars', dataset_name=dataset.name))
     
 
 @app.route('/dataset/<dataset_name>/vars')
