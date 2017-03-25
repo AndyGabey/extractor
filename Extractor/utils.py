@@ -20,20 +20,29 @@ def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
         return None
 
 
-def parse_csv(csv_file, variables, start_date, end_date):
+def parse_csv(csv_file, variables, start_date, end_date, date_fmt='%Y%m%d %H%M'):
     with open(csv_file, 'r') as f:
         reader = csv.reader(f)
         header = reader.next()
         all_units = reader.next()
 
         col_data = []
-        if 'TimeStamp' in header and 'Time' in header:
-            date_index = header.index('TimeStamp')
+        if 'TimeStamp' in header:
+            if 'Time' in header:
+                date_index = header.index('TimeStamp')
+                time_index = header.index('Time')
+                split_time = True
+            elif 'hhmm' in header:
+                date_index = header.index('TimeStamp')
+                time_index = header.index('hhmm')
+                split_time = True
+            else:
+                datetime_index = header.index('TimeStamp')
+                split_time = False
+        elif 'Date' in header and 'Time' in header:
+            date_index = header.index('Date')
             time_index = header.index('Time')
             split_time = True
-        else:
-            datetime_index = header.index('TimeStamp')
-            split_time = False
 
         for var in variables:
             if var in header:
@@ -63,11 +72,14 @@ def parse_csv(csv_file, variables, start_date, end_date):
                 else:
                     add_time = dt.timedelta(days=0)
                 timestamp = '{} {}'.format(csv_row[date_index], time)
-                row_time = date_parser(timestamp, '%Y%m%d %H%M') + add_time
+                row_time = date_parser(timestamp, date_fmt) + add_time
             else:
                 timestamp = csv_row[datetime_index]
-                row_time = date_parser(timestamp)
+                row_time = date_parser(timestamp, date_fmt)
 
+            if row_time is None:
+                raise InvalidUsage('Could not parse time: {} with: {}'.format(timestamp, date_fmt))
+            # print(row_time)
             if row_time > end_date:
                 break
             if row_time >= start_date:

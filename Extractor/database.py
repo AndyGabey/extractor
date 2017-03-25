@@ -5,6 +5,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from Extractor import app
+from Extractor.dataset_path_mapping import mapping
 
 db_string = 'sqlite:///' + os.path.join(app.root_path, app.config['DB_NAME'])
 engine = create_engine(db_string, convert_unicode=True)
@@ -45,10 +46,11 @@ def populate_db(delete_all=False):
         datasets = simplejson.load(f)
 
     for ds in datasets:
-        path_tpl = os.path.join(ds['datadirs'][-1], ds['datafile'])
-        relpath_tpl = os.path.relpath(path_tpl, '/export/its/labs')
-        newpath_tpl = os.path.join(app.config['DATA_LOCATION'], 'Extractor', relpath_tpl)
-        print(path_tpl)
+        #path_tpl = os.path.join(ds['datadirs'][-1], ds['datafile'])
+        #relpath_tpl = os.path.relpath(path_tpl, '/export/its/labs')
+        #print(path_tpl)
+        relpath_tpl = os.path.join(mapping[ds['name']]['datadir'], mapping[ds['name']]['datafile']) 
+        newpath_tpl = os.path.join(app.config['DATA_LOCATION'], relpath_tpl)
         print(relpath_tpl)
         print(newpath_tpl)
         level = 0
@@ -56,9 +58,13 @@ def populate_db(delete_all=False):
             level = 1
         elif 'Level2' in newpath_tpl:
             level = 2
+        if 'time_pattern' in mapping[ds['name']]:
+            time_pattern = mapping[ds['name']]['time_pattern']
+        else:
+            time_pattern = '%Y%m%d %H%M'
         dataset = Dataset(ds['name'], ds['longname'], dt.datetime(2017, 1, 1), None,
                           5, 'instrument', level, newpath_tpl, 
-                          'TimeStamp' , '%d%m', 'Time', '%s')
+                          'TimeStamp' , '%d%m', 'Time', time_pattern)
         for var, varlong, vartype in sorted(ds['variables'], key=lambda v: v[1]):
             variable = Variable(var, varlong, '', vartype)
             dataset.variables.append(variable)

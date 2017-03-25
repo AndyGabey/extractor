@@ -6,7 +6,7 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    DATA_LOCATION = '/mnt/data/metfidas'
+    DATA_LOCATION = '/mnt/data'
 
 
 class DevelopmentConfig(Config):

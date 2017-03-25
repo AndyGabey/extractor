@@ -4,13 +4,21 @@ from timeit import default_timer as timer
 
 from Extractor.utils import parse_csv, date_parser
 from Extractor.models import Dataset, UserToken
+from Extractor.exceptions import InvalidUsage
 
 
 class DataExtractor(object):
     def __init__(self, dataset_name, request):
         self.dataset_name = dataset_name
         self.request = request
+        self.date_fmt = None
         self.curr_csv_file = None
+
+    def __repr__(self):
+        return '<DataExtractor {}>'.format(self.dataset_name)
+
+    def __str__(self):
+        return '<DataExtractor {}>'.format(self.dataset_name)
 
     def load(self):
         # Load the requested dataset.
@@ -127,7 +135,8 @@ class DataExtractor(object):
             self.cols, self.units, curr_rows = parse_csv(csv_file, 
                                                          self.variables, 
                                                          self.start_date, 
-                                                         self.end_date)
+                                                         self.end_date,
+                                                         self.dataset.time_pattern)
             self.rows.extend(curr_rows)
 
     def format_response(self):
