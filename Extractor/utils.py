@@ -1,7 +1,11 @@
 import datetime as dt
+import csv
 
 from urlparse import urlparse, urljoin
 from flask import request, url_for
+
+from Extractor.exceptions import InvalidUsage
+
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -16,52 +20,36 @@ def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
         return None
 
 
-def parse_csv_pandas(csv_file, variables, start_date, end_date):
-    import numpy as np
-    import pandas as pd
-
-    try:
-        df = pd.read_csv(csv_file, skiprows=[1], parse_dates=[0], date_parser=date_parser)
-        for var in variables:
-            if var not in df.columns:
-                msg_fmt = 'Field {} not recognized, please pick from {}'
-                raise Exception(msg_fmt.format(var, ', '.join(df.columns)))
-        df_requested = df[variables]
-    except Exception as e:
-        return str(e)
-
-    return df_requested.loc[(df['TimeStamp'] >= start_date) & 
-                            (df['TimeStamp'] <= end_date)]
-
-
-def parse_csv_csv(csv_file, variables, start_date, end_date):
-    import csv
-
+def parse_csv(csv_file, variables, start_date, end_date):
     with open(csv_file, 'r') as f:
         reader = csv.reader(f)
         header = reader.next()
         all_units = reader.next()
 
-        col_indices = []
-        try:
-            if 'TimeStamp' in header and 'Time' in header:
-                date_index = header.index('TimeStamp')
-                time_index = header.index('Time')
-                split_time = True
-            else:
-                datetime_index = header.index('TimeStamp')
-                split_time = False
+        col_data = []
+        if 'TimeStamp' in header and 'Time' in header:
+            date_index = header.index('TimeStamp')
+            time_index = header.index('Time')
+            split_time = True
+        else:
+            datetime_index = header.index('TimeStamp')
+            split_time = False
 
-            for var in variables:
-                col_indices.append(header.index(var))
-        except ValueError as e:
-            return ', '.join(header)
+        for var in variables:
+            if var in header:
+                col_data.append((header.index(var), var))
+            else:
+                col_data.append((None, var))
 
         cols = ['TimeStamp']
         units = ['timestamp']
-        for i in col_indices:
-            cols.append(header[i])
-            units.append(all_units[i])
+        for cd in col_data:
+            if cd[0] is not None:
+                cols.append(header[cd[0]])
+                units.append(all_units[cd[0]])
+            else:
+                cols.append(cd[1])
+                units.append('-')
 
         rows = []
 
@@ -84,8 +72,11 @@ def parse_csv_csv(csv_file, variables, start_date, end_date):
                 break
             if row_time >= start_date:
                 row.append(str(row_time))
-                for i in col_indices:
-                    row.append(csv_row[i])
+                for cd in col_data:
+                    if cd[0] is not None:
+                        row.append(csv_row[cd[0]])
+                    else:
+                        row.append(None)
                 rows.append(row)
 
         return cols, units, rows

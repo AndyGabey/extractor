@@ -2,7 +2,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     DATA_LOCATION = 'demo_data'
-    DB_NAME = 'extractor.db'
+    DB_NAME = 'db/extractor.db'
 
 
 class ProductionConfig(Config):

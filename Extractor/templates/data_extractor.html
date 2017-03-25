@@ -391,7 +391,7 @@ function generateURL() {
 	
 	if (fields.length > 0)
 		{
-			var url = "/dataset/";
+			var url = window.location.protocol + "//" + window.location.host + "/ext/dataset/";
 	
 			// Append dataset to API
 			url += $("#type_aws").val() + "/get_data?"
@@ -419,7 +419,7 @@ function generateURL() {
 			url += "&data_format="+$("#output_format").val();
 	
 			// Display the URL in the text field
-			$("#direct_url").val(url);
+																									              $("#direct_url").html('<a href="' + url + '">' + url + '</a>');
 			return url;
 
 		}
@@ -575,7 +575,7 @@ Select the output format.
 <input type="button" id="generate_url" value="Generate URL"></input>
 <input type="button" id="retrieve_data" value="Retrieve data"></input>
 <br>
-HTTP API URL: <input type="text" name="url" id="direct_url"></input>
+HTTP API URL: <div name="url" id="direct_url"></div>
 </div>
 </div>
 
