@@ -10,7 +10,6 @@
 	    <thead>
 		<tr>
 		    <th>Name</th>
-		    <th>Value</th>
 		    <th>URL</th>
 		    <th>Vars</th>
 		    {% if current_user.is_authenticated %}
@@ -23,7 +22,6 @@
 		{% for dataset in datasets %}
 		<tr>
 		    <td>{{ dataset.name }}</td>
-		    <td>{{ dataset.instrument }}</td>
 		    <td><a href="{{url_for('dataset', dataset_name=dataset.name)}}">{{ dataset.name }}</a></td>
 		    <td><a href="{{url_for('get_dataset_vars', dataset_name=dataset.name)}}">Variables</a></td>
 		    {% if current_user.is_authenticated %}

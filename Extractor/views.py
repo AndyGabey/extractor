@@ -12,7 +12,7 @@ from Extractor import app, login_manager
 from Extractor.utils import parse_csv, is_safe_url
 from Extractor.database import db_session
 from Extractor.models import User, Dataset, Variable, UserToken
-from Extractor.forms import LoginForm, DatasetForm
+from Extractor.forms import LoginForm, DatasetForm, VariableForm
 from Extractor.data_extractor import DataExtractor
 from Extractor.exceptions import InvalidUsage
 
@@ -85,12 +85,12 @@ def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
         raise
-        ds = Dataset(form.name.data, form.long_name.data, 
+        dataset = Dataset(form.name.data, form.long_name.data, 
                      dt.datetime(2017, 1, 1), dt.datetime.now(),
                      5, form.name.data, form.instrument.data, 
                      '/some/file/path/{year}/', 
                      'TimeStamp' , '%d%m', 'Time', '%s')
-        db_session.add(ds)
+        db_session.add(dataset)
         db_session.commit()
 
         return flask.redirect(flask.url_for('datasets'))
@@ -100,22 +100,42 @@ def create_dataset():
 @app.route('/dataset/<dataset_name>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_dataset(dataset_name):
-    ds = Dataset.query.filter_by(name=dataset_name).one()
-    form = DatasetForm(obj=ds)
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    form = DatasetForm(obj=dataset)
 
     if form.validate_on_submit():
-        form.populate_obj(ds)
+        form.populate_obj(dataset)
         db_session.commit()
 
         return flask.redirect(flask.url_for('datasets'))
     return render_template('edit_dataset.html', form=form)
     
 
-@app.route('/dataset/<dataset_name>/vars.json')
+@app.route('/dataset/<dataset_name>/<var_name>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_var(dataset_name, var_name):
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    var = Variable.query.filter_by(dataset=dataset, var=var_name).one()
+    form = VariableForm(obj=var)
+
+    if form.validate_on_submit():
+        form.populate_obj(var)
+        db_session.commit()
+
+        return flask.redirect(flask.url_for('get_dataset_vars'))
+    return render_template('edit_var.html', form=form)
+    
+
+@app.route('/dataset/<dataset_name>/vars')
 def get_dataset_vars(dataset_name):
-    ds = Dataset.query.filter_by(name=dataset_name).one()
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    return render_template('vars.html', dataset=dataset)
+
+@app.route('/dataset/<dataset_name>/vars.json')
+def get_dataset_vars_json(dataset_name):
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
     variables = defaultdict(list)
-    for var in ds.variables:
+    for var in dataset.variables:
         variables[var.vartype].append({'var': var.var,
                                        'long_name': var.long_name,
                                         'units': var.units})
@@ -126,8 +146,8 @@ def get_dataset_vars(dataset_name):
 @login_required
 def delete_dataset(dataset_name):
     print(request.method)
-    ds = Dataset.query.filter_by(name=dataset_name).one()
-    db_session.delete(ds)
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    db_session.delete(dataset)
     db_session.commit()
 
     return flask.redirect(flask.url_for('datasets'))

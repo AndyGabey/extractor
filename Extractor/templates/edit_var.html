@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>Data Extractor|Variable</title>
+    </head>
+    <body>
+	<h1>Variable</h1>
+	{% from "_formhelpers.html" import render_field %}
+	<form method="post">
+	    {{ form.csrf_token }}
+	    <dl>
+		{{ render_field(form.var) }}
+		{{ render_field(form.long_name) }}
+		{{ render_field(form.units) }}
+		{{ render_field(form.vartype) }}
+	    </dl>
+	    <p><input type="submit" value="Submit">
+	</form>
+    </body>
+</html>
+

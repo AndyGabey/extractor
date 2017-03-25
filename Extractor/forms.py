@@ -1,8 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateTimeField
+from wtforms import StringField, PasswordField, DateTimeField, SelectField
 from wtforms.validators import DataRequired
 
 from Extractor.utils import DATE_FMT
+
+VARTYPE_CHOICES = [
+        ('typenull', 'typenull'), 
+        ('typewind', 'typewind'), 
+        ('typepres', 'typepres'),
+        ('typetemp', 'typetemp'),
+        ('typerad', 'typerad'),
+]
 
 
 class LoginForm(FlaskForm):
@@ -20,3 +28,10 @@ class DatasetForm(FlaskForm):
     date_col_name = StringField('date_col_name', validators=[DataRequired()])
     time_col_name = StringField('time_col_name', validators=[])
     datetime_fmt = StringField('datetime_fmt', validators=[DataRequired()])
+
+
+class VariableForm(FlaskForm):
+    var = StringField('var', validators=[DataRequired()])
+    long_name = StringField('long_name', validators=[DataRequired()])
+    units = StringField('units', validators=[DataRequired()])
+    vartype = SelectField('vartype', choices=VARTYPE_CHOICES)
