@@ -1,0 +1,138 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "climat0900",
+  "variables": [
+    [
+      "U10max_0024",
+      "00-24 maximum wind gust at 10 m for yesterday",
+      "typewind"
+    ],
+    [
+      "TSoil10_09",
+      "0900 10 cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil100_09",
+      "0900 100 cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil20_09",
+      "0900 20 cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil30_09",
+      "0900 30 cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil5_09",
+      "0900 5 cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil50_09",
+      "0900 50 cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "Pmsl_09",
+      "0900 MSL pressure",
+      "typepres"
+    ],
+    [
+      "Tdew_der_09",
+      "0900 dew point derived",
+      "typetemp"
+    ],
+    [
+      "Td_09",
+      "0900 dry bulb temperature",
+      "typetemp"
+    ],
+    [
+      "RH_09",
+      "0900 relative humidity",
+      "typetemp"
+    ],
+    [
+      "VP_der_09",
+      "0900 vapour pressure derived",
+      "typetemp"
+    ],
+    [
+      "Twet_der_09",
+      "0900 wet bulb temperatures derived",
+      "typetemp"
+    ],
+    [
+      "Dirn10_09",
+      "0900 wind direction at 10 m",
+      "typewind"
+    ],
+    [
+      "U10_09",
+      "0900 wind speed at 10 m",
+      "typewind"
+    ],
+    [
+      "U2run_0909",
+      "2m run of wind for yesterday ending 0900",
+      "typewind"
+    ],
+    [
+      "U10run_0909",
+      "2m run of wind for yesterday ending 0900",
+      "typewind"
+    ],
+    [
+      "Tconc_0909",
+      "Concrete minimum temperature ending 0900",
+      "typetemp"
+    ],
+    [
+      "srad_0024",
+      "Global solar radiation accumulation for yesterday",
+      "typesrad"
+    ],
+    [
+      "Tgrass_0909",
+      "Grass minimum temperature ending 0900",
+      "typetemp"
+    ],
+    [
+      "Tx_0909",
+      "Maximum temperature for yesterday ending 0900",
+      "typetemp"
+    ],
+    [
+      "Tn_0909",
+      "Minimum temperature ending 0900",
+      "typetemp"
+    ],
+    [
+      "Rain_accum_0909",
+      "Rainfall for yesterday ending 0900",
+      "typerain"
+    ],
+    [
+      "Tsoil_0909",
+      "Soil minimum temperature ending 0900",
+      "typetemp"
+    ],
+    [
+      "Sdur_0024",
+      "Sunshine duration for yesterday",
+      "typesrad"
+    ]
+  ],
+  "time_col_name": "hhmm",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "0900 UTC climat observation - no data thrown back",
+  "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/climat/{year}climat.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y%m%d %H%M",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

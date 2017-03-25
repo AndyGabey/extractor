@@ -1,0 +1,1033 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "5min_Level1_maxmin",
+  "variables": [
+    [
+      "TSoil100[max%t]",
+      "100cm soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "TSoil100[max]",
+      "100cm soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "TSoil100[min%t]",
+      "100cm soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "TSoil100[min]",
+      "100cm soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "TSoil10[max%t]",
+      "10cm soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "TSoil10[max]",
+      "10cm soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "TSoil10[min%t]",
+      "10cm soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "TSoil10[min]",
+      "10cm soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "Dirn10[max%t]",
+      "10m wind direction[max t]",
+      "typewind"
+    ],
+    [
+      "Dirn10[max]",
+      "10m wind direction[max]",
+      "typewind"
+    ],
+    [
+      "Dirn10[min%t]",
+      "10m wind direction[min t]",
+      "typewind"
+    ],
+    [
+      "Dirn10[min]",
+      "10m wind direction[min]",
+      "typewind"
+    ],
+    [
+      "U10[max%t]",
+      "10m wind speed[max t]",
+      "typewind"
+    ],
+    [
+      "U10[max]",
+      "10m wind speed[max]",
+      "typewind"
+    ],
+    [
+      "U10[min%t]",
+      "10m wind speed[min t]",
+      "typewind"
+    ],
+    [
+      "U10[min]",
+      "10m wind speed[min]",
+      "typewind"
+    ],
+    [
+      "TSoil20[max%t]",
+      "20cm soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "TSoil20[max]",
+      "20cm soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "TSoil20[min%t]",
+      "20cm soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "TSoil20[min]",
+      "20cm soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "U2[max%t]",
+      "2m wind speed[max t]",
+      "typewind"
+    ],
+    [
+      "U2[max]",
+      "2m wind speed[max]",
+      "typewind"
+    ],
+    [
+      "U2[min%t]",
+      "2m wind speed[min t]",
+      "typewind"
+    ],
+    [
+      "U2[min]",
+      "2m wind speed[min]",
+      "typewind"
+    ],
+    [
+      "TSoil30[max%t]",
+      "30cm soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "TSoil30[max]",
+      "30cm soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "TSoil30[min%t]",
+      "30cm soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "TSoil30[min]",
+      "30cm soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "TSoil50[max%t]",
+      "50cm soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "TSoil50[max]",
+      "50cm soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "TSoil50[min%t]",
+      "50cm soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "TSoil50[min]",
+      "50cm soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "TSoil5[max%t]",
+      "5cm soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "TSoil5[max]",
+      "5cm soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "TSoil5[min%t]",
+      "5cm soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "TSoil5[min]",
+      "5cm soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "Dirn5[max%t]",
+      "5m wind direction[max t]",
+      "typewind"
+    ],
+    [
+      "Dirn5[max]",
+      "5m wind direction[max]",
+      "typewind"
+    ],
+    [
+      "Dirn5[min%t]",
+      "5m wind direction[min t]",
+      "typewind"
+    ],
+    [
+      "Dirn5[min]",
+      "5m wind direction[min]",
+      "typewind"
+    ],
+    [
+      "U5[max%t]",
+      "5m wind speed[max t]",
+      "typewind"
+    ],
+    [
+      "U5[max]",
+      "5m wind speed[max]",
+      "typewind"
+    ],
+    [
+      "U5[min%t]",
+      "5m wind speed[min t]",
+      "typewind"
+    ],
+    [
+      "U5[min]",
+      "5m wind speed[min]",
+      "typewind"
+    ],
+    [
+      "Rain[max%t]",
+      "5min rainfall[max t]",
+      "typerain"
+    ],
+    [
+      "Rain[max]",
+      "5min rainfall[max]",
+      "typerain"
+    ],
+    [
+      "Rain[min%t]",
+      "5min rainfall[min t]",
+      "typerain"
+    ],
+    [
+      "Rain[min]",
+      "5min rainfall[min]",
+      "typerain"
+    ],
+    [
+      "Sdur[max%t]",
+      "5min sunshine[max t]",
+      "typesrad"
+    ],
+    [
+      "Sdur[max]",
+      "5min sunshine[max]",
+      "typesrad"
+    ],
+    [
+      "Sdur[min%t]",
+      "5min sunshine[min t]",
+      "typesrad"
+    ],
+    [
+      "Sdur[min]",
+      "5min sunshine[min]",
+      "typesrad"
+    ],
+    [
+      "Tsoil[max%t]",
+      "Bare soil temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "Tsoil[max]",
+      "Bare soil temperature[max]",
+      "typetemp"
+    ],
+    [
+      "Tsoil[min%t]",
+      "Bare soil temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "Tsoil[min]",
+      "Bare soil temperature[min]",
+      "typetemp"
+    ],
+    [
+      "CNR4T[max%t]",
+      "CNR4T[max t]",
+      "typesrad"
+    ],
+    [
+      "CNR4T[max]",
+      "CNR4T[max]",
+      "typesrad"
+    ],
+    [
+      "CNR4T[min%t]",
+      "CNR4T[min t]",
+      "typesrad"
+    ],
+    [
+      "CNR4T[min]",
+      "CNR4T[min]",
+      "typesrad"
+    ],
+    [
+      "Ch28[max%t]",
+      "Ch28[max t]",
+      "typenull"
+    ],
+    [
+      "Ch28[max]",
+      "Ch28[max]",
+      "typenull"
+    ],
+    [
+      "Ch28[min%t]",
+      "Ch28[min t]",
+      "typenull"
+    ],
+    [
+      "Ch28[min]",
+      "Ch28[min]",
+      "typenull"
+    ],
+    [
+      "Ch32[max%t]",
+      "Ch32[max t]",
+      "typenull"
+    ],
+    [
+      "Ch32[max]",
+      "Ch32[max]",
+      "typenull"
+    ],
+    [
+      "Ch32[min%t]",
+      "Ch32[min t]",
+      "typenull"
+    ],
+    [
+      "Ch32[min]",
+      "Ch32[min]",
+      "typenull"
+    ],
+    [
+      "Ch33[max%t]",
+      "Ch33[max t]",
+      "typenull"
+    ],
+    [
+      "Ch33[max]",
+      "Ch33[max]",
+      "typenull"
+    ],
+    [
+      "Ch33[min%t]",
+      "Ch33[min t]",
+      "typenull"
+    ],
+    [
+      "Ch33[min]",
+      "Ch33[min]",
+      "typenull"
+    ],
+    [
+      "Tconc[max%t]",
+      "Concrete temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "Tconc[max]",
+      "Concrete temperature[max]",
+      "typetemp"
+    ],
+    [
+      "Tconc[min%t]",
+      "Concrete temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "Tconc[min]",
+      "Concrete temperature[min]",
+      "typetemp"
+    ],
+    [
+      "iCP[max%t]",
+      "Corrugated plate current[max t]",
+      "typenull"
+    ],
+    [
+      "iCP[max]",
+      "Corrugated plate current[max]",
+      "typenull"
+    ],
+    [
+      "iCP[min%t]",
+      "Corrugated plate current[min t]",
+      "typenull"
+    ],
+    [
+      "iCP[min]",
+      "Corrugated plate current[min]",
+      "typenull"
+    ],
+    [
+      "Sd[max%t]",
+      "Diffuse solar radiation[max t]",
+      "typesrad"
+    ],
+    [
+      "Sd[max]",
+      "Diffuse solar radiation[max]",
+      "typesrad"
+    ],
+    [
+      "Sd[min%t]",
+      "Diffuse solar radiation[min t]",
+      "typesrad"
+    ],
+    [
+      "Sd[min]",
+      "Diffuse solar radiation[min]",
+      "typesrad"
+    ],
+    [
+      "Sb[max%t]",
+      "Direct beam solar radiation[max t]",
+      "typesrad"
+    ],
+    [
+      "Sb[max]",
+      "Direct beam solar radiation[max]",
+      "typesrad"
+    ],
+    [
+      "Sb[min%t]",
+      "Direct beam solar radiation[min t]",
+      "typesrad"
+    ],
+    [
+      "Sb[min]",
+      "Direct beam solar radiation[min]",
+      "typesrad"
+    ],
+    [
+      "Td[max%t]",
+      "Dry bulb temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "Td[max]",
+      "Dry bulb temperature[max]",
+      "typetemp"
+    ],
+    [
+      "Td[min%t]",
+      "Dry bulb temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "Td[min]",
+      "Dry bulb temperature[min]",
+      "typetemp"
+    ],
+    [
+      "iFP[max%t]",
+      "Flat plate current[max t]",
+      "typenull"
+    ],
+    [
+      "iFP[max]",
+      "Flat plate current[max]",
+      "typenull"
+    ],
+    [
+      "iFP[min%t]",
+      "Flat plate current[min t]",
+      "typenull"
+    ],
+    [
+      "iFP[min]",
+      "Flat plate current[min]",
+      "typenull"
+    ],
+    [
+      "Sg[max%t]",
+      "Global solar radiation[max t]",
+      "typesrad"
+    ],
+    [
+      "Sg[max]",
+      "Global solar radiation[max]",
+      "typesrad"
+    ],
+    [
+      "Sg[min%t]",
+      "Global solar radiation[min t]",
+      "typesrad"
+    ],
+    [
+      "Sg[min]",
+      "Global solar radiation[min]",
+      "typesrad"
+    ],
+    [
+      "Tgrass[max%t]",
+      "Grass temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "Tgrass[max]",
+      "Grass temperature[max]",
+      "typetemp"
+    ],
+    [
+      "Tgrass[min%t]",
+      "Grass temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "Tgrass[min]",
+      "Grass temperature[min]",
+      "typetemp"
+    ],
+    [
+      "G[max%t]",
+      "Ground heat flux[max t]",
+      "typesrad"
+    ],
+    [
+      "G[max]",
+      "Ground heat flux[max]",
+      "typesrad"
+    ],
+    [
+      "G[min%t]",
+      "Ground heat flux[min t]",
+      "typesrad"
+    ],
+    [
+      "G[min]",
+      "Ground heat flux[min]",
+      "typesrad"
+    ],
+    [
+      "Ldw(uc)[max%t]",
+      "Ldw(uc)[max t]",
+      "typesrad"
+    ],
+    [
+      "Ldw(uc)[max]",
+      "Ldw(uc)[max]",
+      "typesrad"
+    ],
+    [
+      "Ldw(uc)[min%t]",
+      "Ldw(uc)[min t]",
+      "typesrad"
+    ],
+    [
+      "Ldw(uc)[min]",
+      "Ldw(uc)[min]",
+      "typesrad"
+    ],
+    [
+      "Luw(uc)[max%t]",
+      "Luw(uc)[max t]",
+      "typesrad"
+    ],
+    [
+      "Luw(uc)[max]",
+      "Luw(uc)[max]",
+      "typesrad"
+    ],
+    [
+      "Luw(uc)[min%t]",
+      "Luw(uc)[min t]",
+      "typesrad"
+    ],
+    [
+      "Luw(uc)[min]",
+      "Luw(uc)[min]",
+      "typesrad"
+    ],
+    [
+      "Tw[max%t]",
+      "Measured wet bulb temperature[max t]",
+      "typetemp"
+    ],
+    [
+      "Tw[max]",
+      "Measured wet bulb temperature[max]",
+      "typetemp"
+    ],
+    [
+      "Tw[min%t]",
+      "Measured wet bulb temperature[min t]",
+      "typetemp"
+    ],
+    [
+      "Tw[min]",
+      "Measured wet bulb temperature[min]",
+      "typetemp"
+    ],
+    [
+      "Rn[max%t]",
+      "Net radiative heat flux[max t]",
+      "typesrad"
+    ],
+    [
+      "Rn[max]",
+      "Net radiative heat flux[max]",
+      "typesrad"
+    ],
+    [
+      "Rn[min%t]",
+      "Net radiative heat flux[min t]",
+      "typesrad"
+    ],
+    [
+      "Rn[min]",
+      "Net radiative heat flux[min]",
+      "typesrad"
+    ],
+    [
+      "PointDischarge[max%t]",
+      "PointDischarge[max t]",
+      "typenull"
+    ],
+    [
+      "PointDischarge[max]",
+      "PointDischarge[max]",
+      "typenull"
+    ],
+    [
+      "PointDischarge[min%t]",
+      "PointDischarge[min t]",
+      "typenull"
+    ],
+    [
+      "PointDischarge[min]",
+      "PointDischarge[min]",
+      "typenull"
+    ],
+    [
+      "PG[max%t]",
+      "Potential gradient[max t]",
+      "typenull"
+    ],
+    [
+      "PG[max]",
+      "Potential gradient[max]",
+      "typenull"
+    ],
+    [
+      "PG[min%t]",
+      "Potential gradient[min t]",
+      "typenull"
+    ],
+    [
+      "PG[min]",
+      "Potential gradient[min]",
+      "typenull"
+    ],
+    [
+      "R38[max%t]",
+      "R38[max t]",
+      "typenull"
+    ],
+    [
+      "R38[max]",
+      "R38[max]",
+      "typenull"
+    ],
+    [
+      "R38[min%t]",
+      "R38[min t]",
+      "typenull"
+    ],
+    [
+      "R38[min]",
+      "R38[min]",
+      "typenull"
+    ],
+    [
+      "RH[max%t]",
+      "Relative humidity[max t]",
+      "typetemp"
+    ],
+    [
+      "RH[max]",
+      "Relative humidity[max]",
+      "typetemp"
+    ],
+    [
+      "RH[min%t]",
+      "Relative humidity[min t]",
+      "typetemp"
+    ],
+    [
+      "RH[min]",
+      "Relative humidity[min]",
+      "typetemp"
+    ],
+    [
+      "Sb(csd3)[max%t]",
+      "Sb(csd3)[max t]",
+      "typesrad"
+    ],
+    [
+      "Sb(csd3)[max]",
+      "Sb(csd3)[max]",
+      "typesrad"
+    ],
+    [
+      "Sb(csd3)[min%t]",
+      "Sb(csd3)[min t]",
+      "typesrad"
+    ],
+    [
+      "Sb(csd3)[min]",
+      "Sb(csd3)[min]",
+      "typesrad"
+    ],
+    [
+      "Sdw[max%t]",
+      "Sdw[max t]",
+      "typesrad"
+    ],
+    [
+      "Sdw[max]",
+      "Sdw[max]",
+      "typesrad"
+    ],
+    [
+      "Sdw[min%t]",
+      "Sdw[min t]",
+      "typesrad"
+    ],
+    [
+      "Sdw[min]",
+      "Sdw[min]",
+      "typesrad"
+    ],
+    [
+      "P[max%t]",
+      "Station pressure[max t]",
+      "typepres"
+    ],
+    [
+      "P[max]",
+      "Station pressure[max]",
+      "typepres"
+    ],
+    [
+      "P[min%t]",
+      "Station pressure[min t]",
+      "typepres"
+    ],
+    [
+      "P[min]",
+      "Station pressure[min]",
+      "typepres"
+    ],
+    [
+      "Suw[max%t]",
+      "Suw[max t]",
+      "typesrad"
+    ],
+    [
+      "Suw[max]",
+      "Suw[max]",
+      "typesrad"
+    ],
+    [
+      "Suw[min%t]",
+      "Suw[min t]",
+      "typesrad"
+    ],
+    [
+      "Suw[min]",
+      "Suw[min]",
+      "typesrad"
+    ],
+    [
+      "T0.56[max%t]",
+      "T0.56[max t]",
+      "typetemp"
+    ],
+    [
+      "T0.56[max]",
+      "T0.56[max]",
+      "typetemp"
+    ],
+    [
+      "T0.56[min%t]",
+      "T0.56[min t]",
+      "typetemp"
+    ],
+    [
+      "T0.56[min]",
+      "T0.56[min]",
+      "typetemp"
+    ],
+    [
+      "T1.12[max%t]",
+      "T1.12[max t]",
+      "typetemp"
+    ],
+    [
+      "T1.12[max]",
+      "T1.12[max]",
+      "typetemp"
+    ],
+    [
+      "T1.12[min%t]",
+      "T1.12[min t]",
+      "typetemp"
+    ],
+    [
+      "T1.12[min]",
+      "T1.12[min]",
+      "typetemp"
+    ],
+    [
+      "T2.24[max%t]",
+      "T2.24[max t]",
+      "typetemp"
+    ],
+    [
+      "T2.24[max]",
+      "T2.24[max]",
+      "typetemp"
+    ],
+    [
+      "T2.24[min%t]",
+      "T2.24[min t]",
+      "typetemp"
+    ],
+    [
+      "T2.24[min]",
+      "T2.24[min]",
+      "typetemp"
+    ],
+    [
+      "T4.48[max%t]",
+      "T4.48[max t]",
+      "typetemp"
+    ],
+    [
+      "T4.48[max]",
+      "T4.48[max]",
+      "typetemp"
+    ],
+    [
+      "T4.48[min%t]",
+      "T4.48[min t]",
+      "typetemp"
+    ],
+    [
+      "T4.48[min]",
+      "T4.48[min]",
+      "typetemp"
+    ],
+    [
+      "U0.56[max%t]",
+      "U0.56[max t]",
+      "typewind"
+    ],
+    [
+      "U0.56[max]",
+      "U0.56[max]",
+      "typewind"
+    ],
+    [
+      "U0.56[min%t]",
+      "U0.56[min t]",
+      "typewind"
+    ],
+    [
+      "U0.56[min]",
+      "U0.56[min]",
+      "typewind"
+    ],
+    [
+      "U0.8[max%t]",
+      "U0.8[max t]",
+      "typewind"
+    ],
+    [
+      "U0.8[max]",
+      "U0.8[max]",
+      "typewind"
+    ],
+    [
+      "U0.8[min%t]",
+      "U0.8[min t]",
+      "typewind"
+    ],
+    [
+      "U0.8[min]",
+      "U0.8[min]",
+      "typewind"
+    ],
+    [
+      "U1.12[max%t]",
+      "U1.12[max t]",
+      "typewind"
+    ],
+    [
+      "U1.12[max]",
+      "U1.12[max]",
+      "typewind"
+    ],
+    [
+      "U1.12[min%t]",
+      "U1.12[min t]",
+      "typewind"
+    ],
+    [
+      "U1.12[min]",
+      "U1.12[min]",
+      "typewind"
+    ],
+    [
+      "U1.6[max%t]",
+      "U1.6[max t]",
+      "typewind"
+    ],
+    [
+      "U1.6[max]",
+      "U1.6[max]",
+      "typewind"
+    ],
+    [
+      "U1.6[min%t]",
+      "U1.6[min t]",
+      "typewind"
+    ],
+    [
+      "U1.6[min]",
+      "U1.6[min]",
+      "typewind"
+    ],
+    [
+      "U2.24[max%t]",
+      "U2.24[max t]",
+      "typewind"
+    ],
+    [
+      "U2.24[max]",
+      "U2.24[max]",
+      "typewind"
+    ],
+    [
+      "U2.24[min%t]",
+      "U2.24[min t]",
+      "typewind"
+    ],
+    [
+      "U2.24[min]",
+      "U2.24[min]",
+      "typewind"
+    ],
+    [
+      "U3.2[max%t]",
+      "U3.2[max t]",
+      "typewind"
+    ],
+    [
+      "U3.2[max]",
+      "U3.2[max]",
+      "typewind"
+    ],
+    [
+      "U3.2[min%t]",
+      "U3.2[min t]",
+      "typewind"
+    ],
+    [
+      "U3.2[min]",
+      "U3.2[min]",
+      "typewind"
+    ],
+    [
+      "U4.48[max%t]",
+      "U4.48[max t]",
+      "typewind"
+    ],
+    [
+      "U4.48[max]",
+      "U4.48[max]",
+      "typewind"
+    ],
+    [
+      "U4.48[min%t]",
+      "U4.48[min t]",
+      "typewind"
+    ],
+    [
+      "U4.48[min]",
+      "U4.48[min]",
+      "typewind"
+    ],
+    [
+      "U6.4[max%t]",
+      "U6.4[max t]",
+      "typewind"
+    ],
+    [
+      "U6.4[max]",
+      "U6.4[max]",
+      "typewind"
+    ],
+    [
+      "U6.4[min%t]",
+      "U6.4[min t]",
+      "typewind"
+    ],
+    [
+      "U6.4[min]",
+      "U6.4[min]",
+      "typewind"
+    ]
+  ],
+  "time_col_name": "",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "5-min max/min logger output",
+  "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level1/{year}/{year}-MMX5-{yday}.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%d/%m/%Y %H:%M:%S",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

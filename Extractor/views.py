@@ -9,7 +9,7 @@ from flask_login import login_required, login_user, logout_user
 from sqlalchemy.orm import exc
 
 from Extractor import app, login_manager
-from Extractor.utils import parse_csv, date_parser, is_safe_url
+from Extractor.utils import parse_csv, is_safe_url
 from Extractor.database import db_session
 from Extractor.models import User, Dataset, Variable, UserToken
 from Extractor.forms import LoginForm, DatasetForm
@@ -84,7 +84,8 @@ def logout():
 def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
-        ds = Dataset(form.label.data, form.label.data, 
+        raise
+        ds = Dataset(form.name.data, form.long_name.data, 
                      dt.datetime(2017, 1, 1), dt.datetime.now(),
                      5, form.label.data, form.instrument.data, 
                      '/some/file/path/{year}/', 

@@ -1,4 +1,5 @@
 import datetime as dt
+from collections import Counter
 
 from Extractor.models import Dataset, Variable
 from Extractor.data_extractor import DataExtractor
@@ -12,6 +13,8 @@ DATES = {
         }
 
 exts = [DataExtractor(ds.name, None) for ds in Dataset.query.all()]
+not_floats = Counter()
+num_vals = 0
 for ext in exts:
     try:
         print(ext.dataset_name)
@@ -21,10 +24,34 @@ for ext in exts:
         else:
             dates = (dt.datetime(2015, 1, 1), dt.datetime(2015, 1, 3))
 
-        ext._set(dates[0], dates[1], ext.dataset.variables[1:3], None, 'json')
+        ext._set(dates[0], dates[1], [v.var for v in ext.dataset.variables], None, 'json')
         ext.generate_filelist()
         ext.extract_data()
         print('  Extracted data')
+        #print('  cols: {}'.format(ext.cols))
+        print('  # rows: {}'.format(len(ext.rows)))
+
+        for row in ext.rows:
+            if len(row) != len(ext.cols):
+                print('    Row wrong length: row: {}, cols: {}'.format(len(row), len(ext.cols)))
+            for cell in row[1:]:
+                try:
+                    val = float(cell)
+                    num_vals += 1
+                except:
+                    not_floats[cell] += 1
+
+        if False:
+            for row in ext.rows[:5]:
+                print('    {}'.format(row))
+            for row in ext.rows[-5:]:
+                print('    {}'.format(row))
     except Exception as e:
-        print('  PROBELM EXTRACTING DATA')
+        print('  PROBLEM EXTRACTING DATA')
         print('    {}'.format(e))
+
+print('################')
+print('Num values: {}'.format(num_vals))
+print('Unparsable as floats:')
+for cell, count in not_floats.most_common():
+    print('{}: {}'.format(cell, count))

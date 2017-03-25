@@ -1,0 +1,88 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "Vertical_profiles",
+  "variables": [
+    [
+      "T0.56",
+      "T0.56",
+      "typetemp"
+    ],
+    [
+      "T1.12",
+      "T1.12",
+      "typetemp"
+    ],
+    [
+      "T2.24",
+      "T2.24",
+      "typetemp"
+    ],
+    [
+      "T4.48",
+      "T4.48",
+      "typetemp"
+    ],
+    [
+      "U0.56",
+      "U0.56",
+      "typewind"
+    ],
+    [
+      "U0.8",
+      "U0.8",
+      "typewind"
+    ],
+    [
+      "U1.12",
+      "U1.12",
+      "typewind"
+    ],
+    [
+      "U1.6",
+      "U1.6",
+      "typewind"
+    ],
+    [
+      "U10",
+      "U10",
+      "typewind"
+    ],
+    [
+      "U2",
+      "U2",
+      "typewind"
+    ],
+    [
+      "U2.24",
+      "U2.24",
+      "typewind"
+    ],
+    [
+      "U3.2",
+      "U3.2",
+      "typewind"
+    ],
+    [
+      "U4.48",
+      "U4.48",
+      "typewind"
+    ],
+    [
+      "U5",
+      "U5",
+      "typewind"
+    ],
+    [
+      "U6.4",
+      "U6.4",
+      "typewind"
+    ]
+  ],
+  "time_col_name": "Time",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "Vertical profiles of wind and temperature",
+  "file_fmt": "/mnt/data/metfidas/Level2/profile/{year}/{year}{month}{day}_UTprofile.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y%m%d %H%M",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

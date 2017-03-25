@@ -1,0 +1,48 @@
+{
+  "date_col_name": "Date",
+  "name": "cloudbase_5min",
+  "variables": [
+    [
+      "Base1_mean",
+      "Base1_mean",
+      "typenull"
+    ],
+    [
+      "Base1_min",
+      "Base1_min",
+      "typenull"
+    ],
+    [
+      "Base1_sd",
+      "Base1_sd",
+      "typenull"
+    ],
+    [
+      "Base2_mean",
+      "Base2_mean",
+      "typenull"
+    ],
+    [
+      "Base2_sd",
+      "Base2_sd",
+      "typenull"
+    ],
+    [
+      "Base3_mean",
+      "Base3_mean",
+      "typenull"
+    ],
+    [
+      "Base3_sd",
+      "Base3_sd",
+      "typenull"
+    ]
+  ],
+  "time_col_name": "Time",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "Cloud base averages at 5 minute intervals",
+  "file_fmt": "/mnt/data/Ceilometer-Incoming/Level2/5min/{year}/{year}{month}{day}_5min.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y%m%d %H%M",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

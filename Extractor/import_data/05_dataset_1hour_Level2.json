@@ -1,0 +1,243 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "1hour_Level2",
+  "variables": [
+    [
+      "TSoil100",
+      "100cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil10",
+      "10cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "U10max_der",
+      "10m maximum wind gust",
+      "typewind"
+    ],
+    [
+      "U10max_accum_der",
+      "10m maximum wind gust since 0000UTC",
+      "typewind"
+    ],
+    [
+      "U10run_der",
+      "10m run of wind",
+      "typewind"
+    ],
+    [
+      "Dirn10",
+      "10m wind direction",
+      "typewind"
+    ],
+    [
+      "U10",
+      "10m wind speed",
+      "typewind"
+    ],
+    [
+      "Sdur",
+      "1hour sunshine",
+      "typesrad"
+    ],
+    [
+      "TSoil20",
+      "20cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "U2run_der",
+      "2m run of wind",
+      "typewind"
+    ],
+    [
+      "TSoil30",
+      "30cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil50",
+      "50cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil5",
+      "5cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "U5max_der",
+      "5m maximum wind gust",
+      "typewind"
+    ],
+    [
+      "U5max_accum_der",
+      "5m maximum wind gust since 0000UTC",
+      "typewind"
+    ],
+    [
+      "U5run_der",
+      "5m run of wind",
+      "typewind"
+    ],
+    [
+      "Dirn5",
+      "5m wind direction",
+      "typewind"
+    ],
+    [
+      "U5",
+      "5m wind speed",
+      "typewind"
+    ],
+    [
+      "Rain",
+      "5min rainfall",
+      "typerain"
+    ],
+    [
+      "Sg_accum_der",
+      "Accumulated global solar radiation since 0000UTC",
+      "typesrad"
+    ],
+    [
+      "Rain_accum_der",
+      "Accumulated rainfall since 0000UTC",
+      "typerain"
+    ],
+    [
+      "Sdur_accum_der",
+      "Accumulated sunshine since 0000UTC",
+      "typesrad"
+    ],
+    [
+      "TSoil",
+      "Bare soil temperature",
+      "typetemp"
+    ],
+    [
+      "CNR4T",
+      "CNR4 radiometer temp",
+      "typesrad"
+    ],
+    [
+      "Tconc",
+      "Concrete temperature",
+      "typetemp"
+    ],
+    [
+      "Tdew_der",
+      "Derived dew point",
+      "typetemp"
+    ],
+    [
+      "VP_der",
+      "Derived vapour pressure",
+      "typetemp"
+    ],
+    [
+      "Twet_der",
+      "Derived wet bulb temperature",
+      "typetemp"
+    ],
+    [
+      "Sd",
+      "Diffuse solar radiation",
+      "typesrad"
+    ],
+    [
+      "Sb",
+      "Direct beam solar radiation",
+      "typesrad"
+    ],
+    [
+      "Td",
+      "Dry bulb temperature",
+      "typetemp"
+    ],
+    [
+      "Sg",
+      "Global solar radiation",
+      "typesrad"
+    ],
+    [
+      "Tgrass",
+      "Grass temperature",
+      "typetemp"
+    ],
+    [
+      "G",
+      "Ground heat flux",
+      "typesrad"
+    ],
+    [
+      "Ldw",
+      "Longwave-down",
+      "typesrad"
+    ],
+    [
+      "Ldw(uc)",
+      "Longwave-down(uncorrected)",
+      "typesrad"
+    ],
+    [
+      "Luw",
+      "Longwave-up",
+      "typesrad"
+    ],
+    [
+      "Luw(uc)",
+      "Longwave-up(uncorrected)",
+      "typesrad"
+    ],
+    [
+      "Pmsl",
+      "MSL pressure",
+      "typepres"
+    ],
+    [
+      "Tw",
+      "Measured wet bulb temperature",
+      "typetemp"
+    ],
+    [
+      "Rn",
+      "Net radiative heat flux",
+      "typesrad"
+    ],
+    [
+      "RH",
+      "Relative humidity",
+      "typetemp"
+    ],
+    [
+      "Sb(csd3)",
+      "Sb(csd3)",
+      "typesrad"
+    ],
+    [
+      "Sdw",
+      "Shortwave-down",
+      "typesrad"
+    ],
+    [
+      "Suw",
+      "Shortwave-up",
+      "typesrad"
+    ],
+    [
+      "P",
+      "Station pressure",
+      "typepres"
+    ]
+  ],
+  "time_col_name": "Time",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "1-hour WMO-standard processed output",
+  "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/1hour/{year}/{year}{month}{day}_1hour.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y%m%d %H%M",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

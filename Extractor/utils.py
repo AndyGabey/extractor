@@ -6,6 +6,8 @@ from flask import request, url_for
 
 from Extractor.exceptions import InvalidUsage
 
+DATE_FMT = '%Y-%m-%d-%H:%M:%S'
+
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -13,44 +15,56 @@ def is_safe_url(target):
     return test_url.scheme in ('http', 'https') and \
            ref_url.netloc == test_url.netloc
 
-def date_parser(timestamp, fmt='%d/%m/%Y %H:%M:%S'):
+def date_parser(timestamp, fmt):
     try:
         return dt.datetime.strptime(timestamp, fmt)
     except (ValueError, TypeError):
-        midnight24 = '24:00:00'
-        midnight00 = '00:00:00'
-        if midnight24 in timestamp:
-            return dt.datetime.strptime(timestamp.replace(midnight24, midnight00), fmt) + dt.timedelta(days=1)
-        else:
-            raise
+        print('(timestamp, fmt): ({}, {})'.format(timestamp, fmt))
+        for midnight24, midnight00 in [('2400', '0000'),
+                                       ('24:00:00', '00:00:00')]:
+            if midnight24 in timestamp:
+                return dt.datetime.strptime(timestamp.replace(midnight24, midnight00), fmt) + dt.timedelta(days=1)
+        raise
 
 
-def parse_csv(csv_file, variables, start_date, end_date, date_fmt='%Y%m%d %H%M'):
+def parse_csv(csv_file, variables, start_date, end_date, date_col_name, time_col_name, datetime_fmt):
+    print(csv_file)
     with open(csv_file, 'r') as f:
         reader = csv.reader(f)
         header = reader.next()
         all_units = reader.next()
 
         col_data = []
-        if 'TimeStamp' in header:
-            if 'Time' in header:
-                date_index = header.index('TimeStamp')
-                time_index = header.index('Time')
-                split_time = True
-            elif 'hhmm' in header:
-                date_index = header.index('TimeStamp')
-                time_index = header.index('hhmm')
-                split_time = True
-            else:
-                datetime_index = header.index('TimeStamp')
-                split_time = False
-        elif 'Date' in header and 'Time' in header:
-            date_index = header.index('Date')
-            time_index = header.index('Time')
-            split_time = True
-        elif 'TIME' in header:
-            datetime_index = header.index('TIME')
-            split_time = False
+        if time_col_name != '':
+            split_datetime = True
+        else:
+            split_datetime = False
+
+        if split_datetime:
+            date_index = header.index(date_col_name)
+            time_index = header.index(time_col_name)
+        else:
+            datetime_index = header.index(date_col_name)
+
+        #if 'TimeStamp' in header:
+        #    if 'Time' in header:
+        #        date_index = header.index('TimeStamp')
+        #        time_index = header.index('Time')
+        #        split_time = True
+        #    elif 'hhmm' in header:
+        #        date_index = header.index('TimeStamp')
+        #        time_index = header.index('hhmm')
+        #        split_time = True
+        #    else:
+        #        datetime_index = header.index('TimeStamp')
+        #        split_time = False
+        #elif 'Date' in header and 'Time' in header:
+        #    date_index = header.index('Date')
+        #    time_index = header.index('Time')
+        #    split_time = True
+        #elif 'TIME' in header:
+        #    datetime_index = header.index('TIME')
+        #    split_time = False
 
         for var in variables:
             if var in header:
@@ -72,29 +86,24 @@ def parse_csv(csv_file, variables, start_date, end_date, date_fmt='%Y%m%d %H%M')
 
         for csv_row in reader:
             row = []
-            if split_time:
-                time = csv_row[time_index]
-                if time[:2] == '24':
-                    time = '00' + time[2:]
-                    add_time = dt.timedelta(days=1)
-                else:
-                    add_time = dt.timedelta(days=0)
-                timestamp = '{} {}'.format(csv_row[date_index], time)
-                row_time = date_parser(timestamp, date_fmt) + add_time
+            if split_datetime:
+                timestamp = '{} {}'.format(csv_row[date_index], csv_row[time_index])
             else:
                 timestamp = csv_row[datetime_index]
-                row_time = date_parser(timestamp, date_fmt)
 
-            if row_time is None:
-                raise InvalidUsage('Could not parse time: {} with: {}'.format(timestamp, date_fmt))
-            # print(row_time)
+            row_time = date_parser(timestamp, datetime_fmt)
+
             if row_time > end_date:
                 break
             if row_time >= start_date:
                 row.append(str(row_time))
                 for cd in col_data:
                     if cd[0] is not None:
-                        row.append(csv_row[cd[0]])
+                        try:
+                            val = float(csv_row[cd[0]])
+                            row.append(val)
+                        except ValueError:
+                            row.append(None)
                     else:
                         row.append(None)
                 rows.append(row)

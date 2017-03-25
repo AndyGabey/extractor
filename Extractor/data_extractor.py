@@ -2,7 +2,7 @@ import os
 import datetime as dt
 from timeit import default_timer as timer
 
-from Extractor.utils import parse_csv, date_parser
+from Extractor.utils import parse_csv, date_parser, DATE_FMT
 from Extractor.models import Dataset, UserToken
 from Extractor.exceptions import InvalidUsage
 
@@ -11,7 +11,6 @@ class DataExtractor(object):
     def __init__(self, dataset_name, request):
         self.dataset_name = dataset_name
         self.request = request
-        self.date_fmt = None
         self.curr_csv_file = None
 
     def __repr__(self):
@@ -57,19 +56,18 @@ class DataExtractor(object):
                 raise InvalidUsage('Variable not recognized: {}'.format(variable))
 
         now = dt.datetime.now()
-        date_fmt = '%Y-%m-%d-%H:%M:%S'
         start_date_ts = request.args.get('start_date')
-        start_date = date_parser(start_date_ts, fmt=date_fmt)
+        start_date = date_parser(start_date_ts, fmt=DATE_FMT)
         if not start_date_ts or not start_date:
-            now_formatted = now.strftime(date_fmt)
-            raise InvalidUsage('Please enter a valid start date in form: {}'.format(date_fmt),
+            now_formatted = now.strftime(DATE_FMT)
+            raise InvalidUsage('Please enter a valid start date in form: {}'.format(DATE_FMT),
                                'e.g. {} for now'.format(now_formatted))
 
         end_date_ts = request.args.get('end_date')
-        end_date = date_parser(end_date_ts, fmt=date_fmt)
+        end_date = date_parser(end_date_ts, fmt=DATE_FMT)
         if not end_date_ts or not end_date:
-            now_formatted = now.strftime(date_fmt)
-            raise InvalidUsage('Please enter a valid end date in form: {}'.format(date_fmt),
+            now_formatted = now.strftime(DATE_FMT)
+            raise InvalidUsage('Please enter a valid end date in form: {}'.format(DATE_FMT),
                                'e.g. {} for now'.format(now_formatted))
 
         if start_date > now or end_date > now:
@@ -116,7 +114,7 @@ class DataExtractor(object):
                         'day': str(file_date.day).zfill(2),
                         'yday': str(file_date_tuple.tm_yday).zfill(3)}
 
-            csv_file = self.dataset.file_pattern.format(**fmt_dict)
+            csv_file = self.dataset.file_fmt.format(**fmt_dict)
             if not os.path.exists(csv_file):
                 raise InvalidUsage('Path {} does not exist'.format(csv_file))
             csv_files.append(csv_file)
@@ -136,7 +134,9 @@ class DataExtractor(object):
                                                          self.variables, 
                                                          self.start_date, 
                                                          self.end_date,
-                                                         self.dataset.time_pattern)
+                                                         self.dataset.date_col_name,
+                                                         self.dataset.time_col_name,
+                                                         self.dataset.datetime_fmt)
             self.rows.extend(curr_rows)
 
     def format_response(self):

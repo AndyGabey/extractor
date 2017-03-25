@@ -1,0 +1,293 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "1hour_Level2_maxmin",
+  "variables": [
+    [
+      "TSoil100_max",
+      "100cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil100_maxt",
+      "100cm soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "TSoil100_min",
+      "100cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil100_mint",
+      "100cm soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "TSoil10_max",
+      "10cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil10_maxt",
+      "10cm soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "TSoil10_min",
+      "10cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil10_mint",
+      "10cm soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "TSoil20_max",
+      "20cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil20_maxt",
+      "20cm soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "TSoil20_min",
+      "20cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil20_mint",
+      "20cm soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "TSoil30_max",
+      "30cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil30_maxt",
+      "30cm soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "TSoil30_min",
+      "30cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil30_mint",
+      "30cm soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "TSoil50_max",
+      "50cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil50_maxt",
+      "50cm soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "TSoil50_min",
+      "50cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil50_mint",
+      "50cm soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "TSoil5_max",
+      "5cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil5_maxt",
+      "5cm soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "TSoil5_min",
+      "5cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil5_mint",
+      "5cm soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "Tsoil_max",
+      "Bare soil temperature max",
+      "typetemp"
+    ],
+    [
+      "Tsoil_maxt",
+      "Bare soil temperature maxt",
+      "typetemp"
+    ],
+    [
+      "Tsoil_min",
+      "Bare soil temperature min",
+      "typetemp"
+    ],
+    [
+      "Tsoil_mint",
+      "Bare soil temperature mint",
+      "typetemp"
+    ],
+    [
+      "Tconc_max",
+      "Concrete temperature max",
+      "typetemp"
+    ],
+    [
+      "Tconc_maxt",
+      "Concrete temperature maxt",
+      "typetemp"
+    ],
+    [
+      "Tconc_min",
+      "Concrete temperature min",
+      "typetemp"
+    ],
+    [
+      "Tconc_mint",
+      "Concrete temperature mint",
+      "typetemp"
+    ],
+    [
+      "Td_max",
+      "Dry bulb temperature max",
+      "typetemp"
+    ],
+    [
+      "Td_maxt",
+      "Dry bulb temperature maxt",
+      "typetemp"
+    ],
+    [
+      "Td_min",
+      "Dry bulb temperature min",
+      "typetemp"
+    ],
+    [
+      "Td_mint",
+      "Dry bulb temperature mint",
+      "typetemp"
+    ],
+    [
+      "Tgrass_max",
+      "Grass temperature max",
+      "typetemp"
+    ],
+    [
+      "Tgrass_maxt",
+      "Grass temperature maxt",
+      "typetemp"
+    ],
+    [
+      "Tgrass_min",
+      "Grass temperature min",
+      "typetemp"
+    ],
+    [
+      "Tgrass_mint",
+      "Grass temperature mint",
+      "typetemp"
+    ],
+    [
+      "Tw_max",
+      "Measured wet bulb temperature max",
+      "typetemp"
+    ],
+    [
+      "Tw_maxt",
+      "Measured wet bulb temperature maxt",
+      "typetemp"
+    ],
+    [
+      "Tw_min",
+      "Measured wet bulb temperature min",
+      "typetemp"
+    ],
+    [
+      "Tw_mint",
+      "Measured wet bulb temperature mint",
+      "typetemp"
+    ],
+    [
+      "P_max",
+      "P max",
+      "typepres"
+    ],
+    [
+      "P_maxt",
+      "P max time",
+      "typepres"
+    ],
+    [
+      "P_min",
+      "P min",
+      "typepres"
+    ],
+    [
+      "P_mint",
+      "P min time",
+      "typepres"
+    ],
+    [
+      "Pmsl_max",
+      "Pmsl max",
+      "typepres"
+    ],
+    [
+      "Pmsl_maxt",
+      "Pmsl max time",
+      "typepres"
+    ],
+    [
+      "Pmsl_min",
+      "Pmsl min",
+      "typepres"
+    ],
+    [
+      "Pmsl_mint",
+      "Pmsl min time",
+      "typepres"
+    ],
+    [
+      "RH_max",
+      "Relative humidity max",
+      "typetemp"
+    ],
+    [
+      "RH_maxt",
+      "Relative humidity maxt",
+      "typetemp"
+    ],
+    [
+      "RH_min",
+      "Relative humidity min",
+      "typetemp"
+    ],
+    [
+      "RH_mint",
+      "Relative humidity mint",
+      "typetemp"
+    ]
+  ],
+  "time_col_name": "Time",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "1-hour max/min processed output",
+  "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/1hour/{year}/{year}{month}{day}_1hour_maxmin.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y%m%d %H%M",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

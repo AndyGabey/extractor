@@ -1,0 +1,533 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "5min_Level2_maxmin",
+  "variables": [
+    [
+      "TSoil100_max",
+      "100cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil100_maxt",
+      "100cm soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "TSoil100_min",
+      "100cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil100_mint",
+      "100cm soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "TSoil10_max",
+      "10cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil10_maxt",
+      "10cm soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "TSoil10_min",
+      "10cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil10_mint",
+      "10cm soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "TSoil20_max",
+      "20cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil20_maxt",
+      "20cm soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "TSoil20_min",
+      "20cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil20_mint",
+      "20cm soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "TSoil30_max",
+      "30cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil30_maxt",
+      "30cm soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "TSoil30_min",
+      "30cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil30_mint",
+      "30cm soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "TSoil50_max",
+      "50cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil50_maxt",
+      "50cm soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "TSoil50_min",
+      "50cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil50_mint",
+      "50cm soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "TSoil5_max",
+      "5cm soil temperature max",
+      "typetemp"
+    ],
+    [
+      "TSoil5_maxt",
+      "5cm soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "TSoil5_min",
+      "5cm soil temperature min",
+      "typetemp"
+    ],
+    [
+      "TSoil5_mint",
+      "5cm soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "Tsoil_max",
+      "Bare soil temperature max",
+      "typetemp"
+    ],
+    [
+      "Tsoil_maxt",
+      "Bare soil temperature max time",
+      "typetemp"
+    ],
+    [
+      "Tsoil_min",
+      "Bare soil temperature min",
+      "typetemp"
+    ],
+    [
+      "Tsoil_mint",
+      "Bare soil temperature min time",
+      "typetemp"
+    ],
+    [
+      "CNR4T_max",
+      "CNR4 radiomater temp max",
+      "typesrad"
+    ],
+    [
+      "CNR4T_min",
+      "CNR4T radiomater temp  min",
+      "typesrad"
+    ],
+    [
+      "CNR4T_maxt",
+      "CNR4T radiomater temp max time",
+      "typesrad"
+    ],
+    [
+      "CNR4T_mint",
+      "CNR4T radiomater temp min time",
+      "typesrad"
+    ],
+    [
+      "Tconc_max",
+      "Concrete temperature max",
+      "typetemp"
+    ],
+    [
+      "Tconc_maxt",
+      "Concrete temperature max time",
+      "typetemp"
+    ],
+    [
+      "Tconc_min",
+      "Concrete temperature min",
+      "typetemp"
+    ],
+    [
+      "Tconc_mint",
+      "Concrete temperature min time",
+      "typetemp"
+    ],
+    [
+      "Sd_max",
+      "Diffuse solar radiation max",
+      "typesrad"
+    ],
+    [
+      "Sd_maxt",
+      "Diffuse solar radiation max time",
+      "typesrad"
+    ],
+    [
+      "Sd_min",
+      "Diffuse solar radiation min",
+      "typesrad"
+    ],
+    [
+      "Sd_mint",
+      "Diffuse solar radiation min time",
+      "typesrad"
+    ],
+    [
+      "Sb_max",
+      "Direct beam solar radiation max",
+      "typesrad"
+    ],
+    [
+      "Sb_maxt",
+      "Direct beam solar radiation max time",
+      "typesrad"
+    ],
+    [
+      "Sb_min",
+      "Direct beam solar radiation min",
+      "typesrad"
+    ],
+    [
+      "Sb_mint",
+      "Direct beam solar radiation min time",
+      "typesrad"
+    ],
+    [
+      "Td_max",
+      "Dry bulb temperature max",
+      "typetemp"
+    ],
+    [
+      "Td_maxt",
+      "Dry bulb temperature max time",
+      "typetemp"
+    ],
+    [
+      "Td_min",
+      "Dry bulb temperature min",
+      "typetemp"
+    ],
+    [
+      "Td_mint",
+      "Dry bulb temperature min time",
+      "typetemp"
+    ],
+    [
+      "Sg_max",
+      "Global solar radiation max",
+      "typesrad"
+    ],
+    [
+      "Sg_maxt",
+      "Global solar radiation max time",
+      "typesrad"
+    ],
+    [
+      "Sg_min",
+      "Global solar radiation min",
+      "typesrad"
+    ],
+    [
+      "Sg_mint",
+      "Global solar radiation min time",
+      "typesrad"
+    ],
+    [
+      "Tgrass_max",
+      "Grass temperature max",
+      "typetemp"
+    ],
+    [
+      "Tgrass_maxt",
+      "Grass temperature max time",
+      "typetemp"
+    ],
+    [
+      "Tgrass_min",
+      "Grass temperature min",
+      "typetemp"
+    ],
+    [
+      "Tgrass_mint",
+      "Grass temperature min time",
+      "typetemp"
+    ],
+    [
+      "G_max",
+      "Ground heat flux max",
+      "typesrad"
+    ],
+    [
+      "G_maxt",
+      "Ground heat flux max time",
+      "typesrad"
+    ],
+    [
+      "G_min",
+      "Ground heat flux min",
+      "typesrad"
+    ],
+    [
+      "G_mint",
+      "Ground heat flux min time",
+      "typesrad"
+    ],
+    [
+      "Ldw_max",
+      "Longwave down max",
+      "typesrad"
+    ],
+    [
+      "Ldw_maxt",
+      "Longwave down max time",
+      "typesrad"
+    ],
+    [
+      "Ldwuc_min",
+      "Longwave down min",
+      "typesrad"
+    ],
+    [
+      "Ldw_min",
+      "Longwave down min",
+      "typesrad"
+    ],
+    [
+      "Ldw_mint",
+      "Longwave down min time",
+      "typesrad"
+    ],
+    [
+      "Ldwuc_max",
+      "Longwave down uncorr max",
+      "typesrad"
+    ],
+    [
+      "Ldwuc_maxt",
+      "Longwave down uncorr max time",
+      "typesrad"
+    ],
+    [
+      "Ldwuc_mint",
+      "Longwave down uncorr min time",
+      "typesrad"
+    ],
+    [
+      "Luw_max",
+      "Longwave up max",
+      "typesrad"
+    ],
+    [
+      "Luw_maxt",
+      "Longwave up max time",
+      "typesrad"
+    ],
+    [
+      "Luw_min",
+      "Longwave up min",
+      "typesrad"
+    ],
+    [
+      "Luw_mint",
+      "Longwave up min time",
+      "typesrad"
+    ],
+    [
+      "Luwuc_max",
+      "Longwave up uncorr max",
+      "typesrad"
+    ],
+    [
+      "Luwuc_maxt",
+      "Longwave up uncorr max time",
+      "typesrad"
+    ],
+    [
+      "Luwuc_mint",
+      "Longwave up uncorr min time",
+      "typesrad"
+    ],
+    [
+      "Luwuc_min",
+      "Longwave up uncortr min",
+      "typesrad"
+    ],
+    [
+      "Tw_max",
+      "Measured wet bulb temperature max",
+      "typetemp"
+    ],
+    [
+      "Tw_maxt",
+      "Measured wet bulb temperature max time",
+      "typetemp"
+    ],
+    [
+      "Tw_min",
+      "Measured wet bulb temperature min",
+      "typetemp"
+    ],
+    [
+      "Tw_mint",
+      "Measured wet bulb temperature min time",
+      "typetemp"
+    ],
+    [
+      "Rn_max",
+      "Net radiative heat flux max",
+      "typesrad"
+    ],
+    [
+      "Rn_maxt",
+      "Net radiative heat flux max time",
+      "typesrad"
+    ],
+    [
+      "Rn_min",
+      "Net radiative heat flux min",
+      "typesrad"
+    ],
+    [
+      "Rn_mint",
+      "Net radiative heat flux min time",
+      "typesrad"
+    ],
+    [
+      "P_max",
+      "P max",
+      "typepres"
+    ],
+    [
+      "P_maxt",
+      "P max time",
+      "typepres"
+    ],
+    [
+      "P_min",
+      "P min",
+      "typepres"
+    ],
+    [
+      "P_mint",
+      "P min time",
+      "typepres"
+    ],
+    [
+      "Pmsl_max",
+      "Pmsl max",
+      "typepres"
+    ],
+    [
+      "Pmsl_maxt",
+      "Pmsl max time",
+      "typepres"
+    ],
+    [
+      "Pmsl_min",
+      "Pmsl min",
+      "typepres"
+    ],
+    [
+      "Pmsl_mint",
+      "Pmsl min time",
+      "typepres"
+    ],
+    [
+      "RH_max",
+      "Relative humidity max",
+      "typetemp"
+    ],
+    [
+      "RH_maxt",
+      "Relative humidity max time",
+      "typetemp"
+    ],
+    [
+      "RH_min",
+      "Relative humidity min",
+      "typetemp"
+    ],
+    [
+      "RH_mint",
+      "Relative humidity min time",
+      "typetemp"
+    ],
+    [
+      "Sdw_max",
+      "Shortwave down max",
+      "typesrad"
+    ],
+    [
+      "Sdw_maxt",
+      "Shortwave down max time",
+      "typesrad"
+    ],
+    [
+      "Sdw_min",
+      "Shortwave down min",
+      "typesrad"
+    ],
+    [
+      "Sdw_mint",
+      "Shortwave down min time",
+      "typesrad"
+    ],
+    [
+      "Suw_max",
+      "Shortwave up max",
+      "typesrad"
+    ],
+    [
+      "Suw_maxt",
+      "Shortwave up max time",
+      "typesrad"
+    ],
+    [
+      "Suw_min",
+      "Shortwave up min",
+      "typesrad"
+    ],
+    [
+      "Suw_mint",
+      "Shortwave up min time",
+      "typesrad"
+    ]
+  ],
+  "time_col_name": "Time",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "5-min max/min processed output",
+  "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/5min/{year}/{year}{month}{day}_5min_maxmin.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y%m%d %H%M",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

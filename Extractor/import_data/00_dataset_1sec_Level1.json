@@ -1,0 +1,283 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "1sec_Level1",
+  "variables": [
+    [
+      "T0.56",
+      "0.56m temperature",
+      "typetemp"
+    ],
+    [
+      "U0.56",
+      "0.56m wind",
+      "typewind"
+    ],
+    [
+      "U0.8",
+      "0.8m wind",
+      "typewind"
+    ],
+    [
+      "T1.12",
+      "1.12m temperature",
+      "typetemp"
+    ],
+    [
+      "U1.12",
+      "1.12m wind",
+      "typewind"
+    ],
+    [
+      "U1.6",
+      "1.6m wind",
+      "typewind"
+    ],
+    [
+      "TSoil100",
+      "100cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil10",
+      "10cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "Dirn10",
+      "10m wind direction",
+      "typewind"
+    ],
+    [
+      "U10",
+      "10m wind speed",
+      "typewind"
+    ],
+    [
+      "Rain",
+      "1sec rainfall",
+      "typerain"
+    ],
+    [
+      "Sdur",
+      "1sec sunshine",
+      "typesrad"
+    ],
+    [
+      "T2.24",
+      "2.24m temperature",
+      "typetemp"
+    ],
+    [
+      "U2.24",
+      "2.24m wind",
+      "typewind"
+    ],
+    [
+      "TSoil20",
+      "20cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "U2",
+      "2m wind speed",
+      "typewind"
+    ],
+    [
+      "U3.2",
+      "3.2m wind",
+      "typewind"
+    ],
+    [
+      "TSoil30",
+      "30cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "T4.48",
+      "4.48m temperature",
+      "typetemp"
+    ],
+    [
+      "U4.48",
+      "4.48m wind",
+      "typewind"
+    ],
+    [
+      "TSoil50",
+      "50cm soil temperature",
+      "typetemp"
+    ],
+    [
+      "TSoil5",
+      "5cm soil temperatrure",
+      "typetemp"
+    ],
+    [
+      "Dirn5",
+      "5m wind direction",
+      "typewind"
+    ],
+    [
+      "U5",
+      "5m wind speed",
+      "typewind"
+    ],
+    [
+      "U6.4",
+      "6.4m wind",
+      "typewind"
+    ],
+    [
+      "Tsoil",
+      "Bare soil temperature",
+      "typetemp"
+    ],
+    [
+      "CNR4T",
+      "CNR4 radiometer temp",
+      "typesrad"
+    ],
+    [
+      "Ch28",
+      "Channel 28",
+      "typenull"
+    ],
+    [
+      "Ch32",
+      "Channel 32",
+      "typenull"
+    ],
+    [
+      "Ch33",
+      "Channel 33",
+      "typenull"
+    ],
+    [
+      "Tconc",
+      "Concrete temperature",
+      "typetemp"
+    ],
+    [
+      "iCP",
+      "Corrugated plate current",
+      "typenull"
+    ],
+    [
+      "Sd",
+      "Diffuse solar radiation",
+      "typesrad"
+    ],
+    [
+      "Sb",
+      "Direct beam solar radiation",
+      "typesrad"
+    ],
+    [
+      "Td",
+      "Dry bulb temperature",
+      "typetemp"
+    ],
+    [
+      "iFP",
+      "Flat plate current",
+      "typenull"
+    ],
+    [
+      "Sg",
+      "Global solar radiation",
+      "typesrad"
+    ],
+    [
+      "Tgrass",
+      "Grass temperature",
+      "typetemp"
+    ],
+    [
+      "G",
+      "Ground heat flux",
+      "typesrad"
+    ],
+    [
+      "Ldw(uc)",
+      "Longwave-down(uncorrected)",
+      "typesrad"
+    ],
+    [
+      "Luw(uc)",
+      "Longwave-up(uncorrected)",
+      "typesrad"
+    ],
+    [
+      "Tw",
+      "Measured wet bulb temperature",
+      "typetemp"
+    ],
+    [
+      "Rn",
+      "Net radiative heat flux",
+      "typesrad"
+    ],
+    [
+      "PointDischarge",
+      "PointDischarge",
+      "typenull"
+    ],
+    [
+      "PG",
+      "Potential gradient",
+      "typenull"
+    ],
+    [
+      "U",
+      "Propeller U",
+      "typewind"
+    ],
+    [
+      "V",
+      "Propellor V",
+      "typewind"
+    ],
+    [
+      "W",
+      "Propellor W",
+      "typewind"
+    ],
+    [
+      "R38",
+      "R38",
+      "typenull"
+    ],
+    [
+      "RH",
+      "Relative humidity",
+      "typetemp"
+    ],
+    [
+      "Sb(csd3)",
+      "Sb(csd3)",
+      "typesrad"
+    ],
+    [
+      "Sdw",
+      "Shortwave-down",
+      "typesrad"
+    ],
+    [
+      "Suw",
+      "Shortwave-up",
+      "typesrad"
+    ],
+    [
+      "P",
+      "Station pressure",
+      "typepres"
+    ]
+  ],
+  "time_col_name": "",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "1-sec \"instantaneous\" logger output",
+  "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level1/{year}/{year}-SMP1-{yday}.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%d/%m/%Y %H:%M:%S",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

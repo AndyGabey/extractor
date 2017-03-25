@@ -1,0 +1,48 @@
+{
+  "date_col_name": "TimeStamp",
+  "name": "soniclicor_Level1",
+  "variables": [
+    [
+      "CO2",
+      "CO2",
+      "typenull"
+    ],
+    [
+      "H2O",
+      "H2O",
+      "typenull"
+    ],
+    [
+      "P",
+      "P",
+      "typepres"
+    ],
+    [
+      "T",
+      "T",
+      "typetemp"
+    ],
+    [
+      "U",
+      "U",
+      "typewind"
+    ],
+    [
+      "V",
+      "V",
+      "typewind"
+    ],
+    [
+      "W",
+      "W",
+      "typewind"
+    ]
+  ],
+  "time_col_name": "",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "0.1-sec sonic licor output",
+  "file_fmt": "/mnt/data/SonicLicor-Incoming/Level1/{year}/{year}-SMP-{yday}.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%d/%m/%Y %H:%M:%S.%f",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

@@ -1,0 +1,118 @@
+{
+  "date_col_name": "TIME",
+  "name": "eddy_cov",
+  "variables": [
+    [
+      "L",
+      "Monin-Obhukov length",
+      "typenull"
+    ],
+    [
+      "zL",
+      "atmospheric stability parameter (z=3m)",
+      "typenull"
+    ],
+    [
+      "C_CO2",
+      "carbon dioxide concentration",
+      "typenull"
+    ],
+    [
+      "cov_uv",
+      "covariance of u,v wind components",
+      "typenull"
+    ],
+    [
+      "cov_uw",
+      "covariance of u,w wind components",
+      "typenull"
+    ],
+    [
+      "cov_vw",
+      "covariance of v,w wind components",
+      "typenull"
+    ],
+    [
+      "ustar",
+      "friction velocity",
+      "typenull"
+    ],
+    [
+      "WS",
+      "horizontal wind speed",
+      "typewind"
+    ],
+    [
+      "Tsonic",
+      "mean sonic temperature",
+      "typenull"
+    ],
+    [
+      "nSamples",
+      "number of time samples in data",
+      "typenull"
+    ],
+    [
+      "q",
+      "specific humidity",
+      "typenull"
+    ],
+    [
+      "sd_C_CO2",
+      "standard deviation of CO2",
+      "typenull"
+    ],
+    [
+      "sd_Tsonic",
+      "standard deviation of sonic temperature",
+      "typenull"
+    ],
+    [
+      "sd_q",
+      "standard deviation of specific humidity",
+      "typenull"
+    ],
+    [
+      "sd_u",
+      "standard deviation of u wind component",
+      "typenull"
+    ],
+    [
+      "sd_v",
+      "standard deviation of v wind component",
+      "typenull"
+    ],
+    [
+      "sd_w",
+      "standard deviation of w wind component",
+      "typenull"
+    ],
+    [
+      "F_CO2",
+      "turbulent carbon dioxide flux",
+      "typenull"
+    ],
+    [
+      "Q_E",
+      "turbulent latent heat flux",
+      "typenull"
+    ],
+    [
+      "Q_H",
+      "turbulent sensible heat flux",
+      "typenull"
+    ],
+    [
+      "dir",
+      "wind direction",
+      "typewind"
+    ]
+  ],
+  "time_col_name": "",
+  "start_date_ts": "2016-01-01-00:00:00",
+  "long_name": "Eddy covariances - 30-min averages",
+  "file_fmt": "/mnt/data/LUMA/RUAO/ReadingFlux_{year}{yday}.csv",
+  "time_res": 86400,
+  "datetime_fmt": "%Y-%m-%d %H:%M:%S",
+  "end_date_ts": "2017-01-01-00:00:00"
+}

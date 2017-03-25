@@ -9,8 +9,7 @@
 	    <li>{{ dataset.name }}</li>
 	    <li>{{ dataset.start_date }}</li>
 	    <li>{{ dataset.end_date }}</li>
-	    <li>{{ dataset.instrument }}</li>
-	    <li>{{ dataset.file_pattern }}</li>
+	    <li>{{ dataset.file_fmt }}</li>
 	    <li>{% for var in dataset.variables %}{{ var.var }}, {% endfor %}</li>
 	    <li><a href="{{ url_for('get_data', dataset_name=dataset.name) }}">get data</a></li>
 	</ul>
