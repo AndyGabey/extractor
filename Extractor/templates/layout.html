@@ -6,20 +6,22 @@
 	<!--link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"-->
 	{% block head %}{% endblock %}
 	<style>
+
 div.container {
     width: 100%;
     /*border: 1px solid gray;*/
 }
 
 header, footer {
-    padding: 1em;
+    padding: 16px;
+    padding-left: 190px;
     color: white;
     background-color: black;
-    clear: left;
-    text-align: center;
+   /* clear: left; */
+    text-align: left;
 }
 
-body {    
+html, body {    
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -27,13 +29,14 @@ body {
 .auth {
     color: white;
     text-align: right;
+    text-decoration: none;
 }
 
 nav {
     float: left;
     max-width: 160px;
     margin: 0;
-    padding: 1em;
+    padding: 16px;
 }
 
 nav ul {
@@ -43,22 +46,20 @@ nav ul {
 
 nav ul a {
     text-decoration: none;
+    color: inherit;
 }
 
 article {
     margin-left: 170px;
     border-left: 1px solid gray;
-    padding: 1em;
-    overflow: hidden;
+    padding: 16px;
 }
 	</style>
     </head>
     <body>
-
 	<div class="container">
-
 	    <header>
-		<h1>{{ self.title() }}</h1>
+		<h1>Data Extractor | {{ self.title() }}</h1>
 		{% if current_user.is_authenticated %}
 		    <a class="auth" href="{{url_for('logout')}}">logout</a>
 		{% else %}
