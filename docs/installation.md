@@ -22,6 +22,7 @@ Development Installation
     cp host_config.txt.tpl host_config.txt
     export FLASK_APP=Extractor
     export FLASK_DEBUG=true
+    cd ..
     flask shell # Opens ipython shell:
 
 ```python
