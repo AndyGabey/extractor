@@ -79,10 +79,10 @@
     ]
   ],
   "time_col_name": "Time",
-  "start_date_ts": "2016-01-01-00:00:00",
+  "start_date_ts": "2015-08-19-00:00:00",
   "long_name": "Vertical profiles of wind and temperature",
   "file_fmt": "/mnt/data/metfidas/Level2/profile/{year}/{year}{month}{day}_UTprofile.csv",
   "time_res": 86400,
   "datetime_fmt": "%Y%m%d %H%M",
-  "end_date_ts": "2017-01-01-00:00:00"
+  "end_date_ts": "2017-03-10-00:00:00"
 }

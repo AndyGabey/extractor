@@ -109,10 +109,10 @@
     ]
   ],
   "time_col_name": "",
-  "start_date_ts": "2016-01-01-00:00:00",
+  "start_date_ts": "2015-09-16-00:00:00",
   "long_name": "Eddy covariances - 30-min averages",
   "file_fmt": "/mnt/data/LUMA/RUAO/ReadingFlux_{year}{yday}.csv",
   "time_res": 86400,
   "datetime_fmt": "%Y-%m-%d %H:%M:%S",
-  "end_date_ts": "2017-01-01-00:00:00"
+  "end_date_ts": "2017-03-08-00:00:00"
 }

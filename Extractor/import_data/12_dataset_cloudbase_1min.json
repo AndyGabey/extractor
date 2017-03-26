@@ -34,10 +34,10 @@
     ]
   ],
   "time_col_name": "Time",
-  "start_date_ts": "2016-01-01-00:00:00",
+  "start_date_ts": "2014-05-01-00:00:00",
   "long_name": "Cloud base averages at 1 minute intervals",
   "file_fmt": "/mnt/data/Ceilometer-Incoming/Level2/1min/{year}/{year}{month}{day}_1min.csv",
   "time_res": 86400,
   "datetime_fmt": "%Y%m%d %H%M",
-  "end_date_ts": "2017-01-01-00:00:00"
+  "end_date_ts": "2017-03-12-00:00:00"
 }

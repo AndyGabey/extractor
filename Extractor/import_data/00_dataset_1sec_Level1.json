@@ -274,10 +274,10 @@
     ]
   ],
   "time_col_name": "",
-  "start_date_ts": "2016-01-01-00:00:00",
+  "start_date_ts": "2014-08-25-00:00:00",
   "long_name": "1-sec \"instantaneous\" logger output",
   "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level1/{year}/{year}-SMP1-{yday}.csv",
   "time_res": 86400,
   "datetime_fmt": "%d/%m/%Y %H:%M:%S",
-  "end_date_ts": "2017-01-01-00:00:00"
+  "end_date_ts": "2015-08-01-00:00:00"
 }
