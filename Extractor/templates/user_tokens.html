@@ -32,7 +32,7 @@
 		    <td>{{ token.notes }}</td>
 		    <td>{% for dataset in token.datasets %}{{ dataset.name }}{% if not loop.last %},{% endif %}{% endfor %}</td>
 		    <td>
-			<form action="{{ url_for('delete_token', token_id=token.id) }}" method="POST">
+			<form action="{{ url_for('delete_token', token_id=token.id) }}" method="POST" onsubmit="return confirm('Confirm delete?');">
 			    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 			    <input type="submit" value="Delete token"/>
 			</form>
