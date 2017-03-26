@@ -73,8 +73,8 @@ class DataExtractor(object):
                 if self.dataset not in token.datasets:
                     raise InvalidUsage('Token does not give access to {}'.format(self.dataset.name))
 
-                if (end_date - start_date).hours > token.max_request_time_hours:
-                    raise InvalidUsage('Token does only gives access to {} hours of data'.format(token.max_request_time_hours))
+                if (end_date - start_date).total_seconds() / 3600. > token.max_request_time_hours:
+                    raise InvalidUsage('Token does only gives access to {} hour(s) of data'.format(token.max_request_time_hours))
 
             except exc.NoResultFound:
                 raise InvalidUsage('Token {} not found'.format(token_str))
@@ -141,7 +141,7 @@ class DataExtractor(object):
         self.csv_files = csv_files
 
         if len(self.csv_files) > self.max_request_files:
-            raise InvalidUsage('Token does only gives access to {} files'.format(token.max_request_files))
+            raise InvalidUsage('Token does only gives access to {} file(s)'.format(self.max_request_files))
 
 
     def extract_data(self):

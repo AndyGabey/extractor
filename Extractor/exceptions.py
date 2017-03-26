@@ -1,6 +1,6 @@
 class MaxRowsExceeded(Exception):
-    def __init__(self, message, rows):
-        Exception.__init__(self, message)
+    def __init__(self, rows):
+        Exception.__init__(self, '{} rows retrieved'.format(rows))
         self.rows = rows
 
 
