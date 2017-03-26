@@ -8,7 +8,7 @@ from flask import request, render_template
 from flask_login import login_required, login_user, logout_user
 
 from Extractor import app, login_manager
-from Extractor.utils import parse_csv, is_safe_url
+from Extractor.utils import parse_csv, is_safe_url, DATE_FMT
 from Extractor.database import db_session
 from Extractor.models import User, Dataset, Variable, UserToken
 from Extractor.forms import LoginForm, DatasetForm, VariableForm, TokenForm
