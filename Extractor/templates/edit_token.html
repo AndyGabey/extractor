@@ -11,8 +11,11 @@
 	    <dl>
 		{{ render_field(form.token) }}
 		{{ render_field(form.expiry_date) }}
+		{{ render_field(form.max_request_time_hours) }}
+		{{ render_field(form.max_request_rows) }}
+		{{ render_field(form.max_request_files) }}
 		{{ render_field(form.notes) }}
-		{{ render_field(form.datasets) }}
+		{{ render_field(form.dataset_ids) }}
 	    </dl>
 	    <p><input type="submit" value="Submit">
 	</form>

@@ -12,7 +12,11 @@
 		    <th>ID</th>
 		    <th>Token</th>
 		    <th>Expiry</th>
+		    <th>Max Req. Time (hours)</th>
+		    <th>Max Req. Rows</th>
+		    <th>Max Req. Files</th>
 		    <th>Notes</th>
+		    <th>Datasets</th>
 		    <th></th>
 		</tr>
 	    </thead>
@@ -22,7 +26,11 @@
 		    <td>{{ token.id }}</td>
 		    <td>{{ token.token }}</td>
 		    <td>{{ token.expiry_date }}</td>
+		    <td>{{ token.max_request_time_hours }}</td>
+		    <td>{{ token.max_request_rows }}</td>
+		    <td>{{ token.max_request_files }}</td>
 		    <td>{{ token.notes }}</td>
+		    <td>{% for dataset in token.datasets %}{{ dataset.name }}{% if not loop.last %},{% endif %}{% endfor %}</td>
 		    <td>
 			<form action="{{ url_for('delete_token', token_id=token.id) }}" method="POST">
 			    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

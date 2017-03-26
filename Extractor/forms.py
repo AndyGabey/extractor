@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateTimeField, SelectField, SelectMultipleField
+from wtforms import (StringField, FloatField, PasswordField, DateTimeField,
+                     IntegerField, SelectField, SelectMultipleField)
 from wtforms.validators import DataRequired, Length
 
 from Extractor.utils import DATE_FMT
@@ -38,7 +39,10 @@ class VariableForm(FlaskForm):
 
 
 class TokenForm(FlaskForm):
-    token = StringField('var', validators=[DataRequired()])
+    token = StringField('var', validators=[Length(max=10), DataRequired()])
     expiry_date = DateTimeField('expiry_date', validators=[DataRequired()])
     notes = StringField('notes', validators=[])
-    datasets = SelectMultipleField('datasets', coerce=int, choices=[], validators=[])
+    max_request_time_hours = FloatField('max_request_time_hours', validators=[DataRequired()])
+    max_request_rows = StringField('max_request_rows', validators=[DataRequired()])
+    max_request_files = StringField('max_request_files', validators=[DataRequired()])
+    dataset_ids = SelectMultipleField('datasets', coerce=int, choices=[], validators=[])

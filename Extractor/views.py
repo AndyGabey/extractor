@@ -207,22 +207,23 @@ def user_tokens():
 @login_required
 def create_token():
     if request.method == 'GET':
-        dummy_token = UserToken(uuid.uuid4().hex[:10], dt.datetime.now(), '')
+        dummy_token = UserToken(uuid.uuid4().hex[:10], dt.datetime.now() + dt.timedelta(days=5))
         form = TokenForm(obj=dummy_token)
-        form.datasets.choices = [(ds.id, ds.name) for ds in Dataset.query.all()]
     else:
-        new_token = UserToken('', '', '')
+        new_token = UserToken('', '', '', )
         form = TokenForm()
-        return form.datasets.choices
+    form.dataset_ids.choices = [(ds.id, ds.name) for ds in Dataset.query.all()]
 
     if form.validate_on_submit():
         form.populate_obj(new_token)
+        for dataset_id in form.dataset_ids.data:
+            dataset = Dataset.query.get(dataset_id)
+            new_token.datasets.append(dataset)
         db_session.add(new_token)
         db_session.commit()
 
         return flask.redirect(flask.url_for('user_tokens'))
     return render_template('edit_token.html', form=form)
-    
 
 
 @app.route('/user_token/<token_id>/delete', methods=['POST'])
