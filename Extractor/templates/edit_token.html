@@ -1,24 +1,21 @@
-<!DOCTYPE html>
-<html>
-    <head>
-	<title>Data Extractor|Token</title>
-    </head>
-    <body>
-	<h1>Token</h1>
-	{% from "_formhelpers.html" import render_field %}
-	<form method="post">
-	    {{ form.csrf_token }}
-	    <dl>
-		{{ render_field(form.token) }}
-		{{ render_field(form.expiry_date) }}
-		{{ render_field(form.max_request_time_hours) }}
-		{{ render_field(form.max_request_rows) }}
-		{{ render_field(form.max_request_files) }}
-		{{ render_field(form.notes) }}
-		{{ render_field(form.dataset_ids) }}
-	    </dl>
-	    <p><input type="submit" value="Submit">
-	</form>
-    </body>
-</html>
+{% extends "layout.html" %}
 
+{% block title %}Token create{% endblock %}
+
+{% block body %}
+<h1>Token</h1>
+{% from "_formhelpers.html" import render_field %}
+<form method="post">
+    {{ form.csrf_token }}
+    <dl>
+	{{ render_field(form.token) }}
+	{{ render_field(form.expiry_date) }}
+	{{ render_field(form.max_request_time_hours) }}
+	{{ render_field(form.max_request_rows) }}
+	{{ render_field(form.max_request_files) }}
+	{{ render_field(form.notes) }}
+	{{ render_field(form.dataset_ids) }}
+    </dl>
+    <p><input type="submit" value="Submit">
+</form>
+{% endblock body %}

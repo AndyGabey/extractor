@@ -1,25 +1,24 @@
-<!DOCTYPE html>
-<html>
-    <head>
-	<title>Data Extractor|Dataset</title>
-    </head>
-    <body>
-	<h1>Dataset</h1>
-	{% from "_formhelpers.html" import render_field %}
-	<form method="post">
-	    {{ form.csrf_token }}
-	    <dl>
-		{{ render_field(form.name) }}
-		{{ render_field(form.long_name) }}
-		{{ render_field(form.start_date) }}
-		{{ render_field(form.end_date) }}
-		{{ render_field(form.time_res) }}
-		{{ render_field(form.file_fmt) }}
-		{{ render_field(form.date_col_name) }}
-		{{ render_field(form.time_col_name) }}
-		{{ render_field(form.datetime_fmt) }}
-	    </dl>
-	    <p><input type="submit" value="Submit">
-	</form>
-    </body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}Dataset edit - {{ dataset.name }}{% endblock %}
+
+{% block body %}
+<h1>Dataset</h1>
+{% from "_formhelpers.html" import render_field %}
+<form method="post">
+    {{ form.csrf_token }}
+    <dl>
+	{{ render_field(form.name) }}
+	{{ render_field(form.long_name) }}
+	{{ render_field(form.start_date) }}
+	{{ render_field(form.end_date) }}
+	{{ render_field(form.time_res) }}
+	{{ render_field(form.file_fmt) }}
+	{{ render_field(form.date_col_name) }}
+	{{ render_field(form.time_col_name) }}
+	{{ render_field(form.datetime_fmt) }}
+    </dl>
+    <p><input type="submit" value="Submit">
+</form>
+{% endblock body %}
+

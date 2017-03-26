@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-	<title>Data Extractor|Users</title>
-    </head>
-    <body>
-	<h1>Users</h1>
+{% extends "layout.html" %}
 
-	{% for user in users %}
-	<ul>
-	    <li>{{ user.id }}, {{ user.name }}, {{ user.email }}</li>
-	</ul>
-	{% endfor %}
-    </body>
-</html>
+{% block title %}Users{% endblock %}
+
+{% block body %}
+<h1>Users</h1>
+
+{% for user in users %}
+<ul>
+    <li>{{ user.id }}, {{ user.name }}, {{ user.email }}</li>
+</ul>
+{% endfor %}
+{% endblock body %}

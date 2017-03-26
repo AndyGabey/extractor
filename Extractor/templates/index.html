@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}METFiDAS-3 Data Extractor -- University of Reading{% endblock %}
-
+{% block title %}Home{% endblock %}
 
 {% block body %}
 {% if current_user.is_authenticated %}
@@ -11,13 +10,3 @@ Hi {{ current_user.name }}!
     <li><a href="{{ url_for('datasets') }}">Datasets</a></li>
 </ul>
 {% endblock %}
-
-<!doctype html>
-<html>
-    <head>
-	<meta charset="utf-8">
-	<title></title>
-    </head>
-	<body>
-	</body>
-</html>

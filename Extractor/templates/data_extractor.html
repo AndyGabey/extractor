@@ -1,12 +1,12 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>METFiDAS-3 Data Extractor -- University of Reading</title>
+{% extends "layout.html" %}
+
+{% block title %}Data Extractor{% endblock %}
+
+
+{% block head %}
 <style type="text/css">
 body
 	{
-		font-size: 14px;
 	}
 #left_panel
 	{
@@ -14,7 +14,6 @@ body
 		top: 2.5vh;
 		width: 55vw;
 		background-color: rgba(255,255,0,0.2);
-		position: absolute;
 		height: 25vh;
 	}
 #right_panel
@@ -24,10 +23,8 @@ body
 		width: 35vw;
 		background-color: rgba(255,0,0,0.2);
 		height: 25vh;
-		position: absolute;
 		overflow: scroll;
 		padding: 5px;
-		font-size: 12px;
 	}
 #left_panel div span
 	{
@@ -46,7 +43,6 @@ body
 		top: 30vh;
 		left: 2.5vw;
 		width: 95vw;
-		position: absolute;
 	}
 #variables
 	{
@@ -55,7 +51,6 @@ body
 #variables table
 	{
 		width: 100%;
-		font-size: 12px;
 	}
 #variables table .vars
 	{
@@ -76,14 +71,12 @@ body
 		bottom: 2.5vh;
 		width: 95vw;
 		height: 10vh;
-		position: absolute;
 		background-color: red;
 		padding: 5px;
 	}
 #missing_value_options
 	{
 		width: 30%;
-		position: absolute;
 		bottom: 5px;
 		left: 5px;
 	}
@@ -91,7 +84,6 @@ body
 	{
 		left: 30vw;
 		width: 70%;
-		position: absolute;
 		bottom: 5px;
 	}
 #final input[name="url"]
@@ -279,7 +271,7 @@ function checkStepOne() {
 			logMessage("User can access level 2 data.");
 			
 			logMessage("Requesting lists of available variables from server.");
-			$.getJSON( "/ext/dataset/"+dataType+"/vars.json", function( data ) {
+			$.getJSON( "/dataset/"+dataType+"/vars.json", function( data ) {
 				logMessage("Information received.");
 				console.debug(data)
 				console.debug(data["typerain"])
@@ -455,8 +447,9 @@ $(function(){
 	});
 });
 </script>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
 <div id="left_panel">
 Step 1: Choose the type and date-range of data.
 <div id="datatype">
@@ -578,7 +571,4 @@ Select the output format.
 HTTP API URL: <div name="url" id="direct_url"></div>
 </div>
 </div>
-
-</body>
-</html>
-
+{% endblock %}

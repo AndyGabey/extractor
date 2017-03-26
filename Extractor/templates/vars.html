@@ -1,60 +1,56 @@
-<!DOCTYPE html>
-<html>
-    <head>
-	<title>Data Extractor|Variables</title>
-    </head>
-    <body>
-	<h1>Variables</h1>
+{% extends "layout.html" %}
 
-	<table id="variables" border="1">
-	    <thead>
-		<tr>
-		    <th>Type</th>
-		    <th>Name</th>
-		    <th>Long Name</th>
-		    <th>Units</th>
-		    {% if current_user.is_authenticated %}
-		    <th></th>
-		    <th></th>
-		    {% endif %}
-		</tr>
-	    </thead>
-	    <tbody>
-		{% for var in dataset.variables %}
-		<tr>
-		    <td>{{ var.vartype }}</td>
-		    <td>{{ var.var }}</td>
-		    <td>{{ var.long_name }}</td>
-		    <td>{{ var.units }}</td>
-		    {% if current_user.is_authenticated %}
-		    <td>
-			<a href="{{url_for('edit_var', dataset_name=dataset.name, var_name=var.var)}}">Edit {{ var.var }}</a>
-		    </td>
-		    <td>
-			<form action="{{ url_for('delete_var', dataset_name=dataset.name, var_name=var.var) }}" method="POST" onsubmit="return confirm('Confirm delete?');">
-			    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-			    <input type="submit" value="Delete variable"/>
-			</form>
-		    </td>
-		    {% endif %}
-		</tr>
-		{% endfor %}
-		{% if current_user.is_authenticated %}
-		<tr>
-		    <td>
-			<form action="">
-			    <input type="submit" value="Create variables" />
-			</form>
-		    </td>
-		    <td></td>
-		    <td></td>
-		    <td></td>
-		    <td></td>
-		</tr>
-		{% endif %}
-	    </tbody>
-	</table>
-    </body>
-</html>
+{% block title %}Variables{% endblock %}
 
+{% block body %}
+<h1>Variables</h1>
 
+<table id="variables" border="1">
+    <thead>
+	<tr>
+	    <th>Type</th>
+	    <th>Name</th>
+	    <th>Long Name</th>
+	    <th>Units</th>
+	    {% if current_user.is_authenticated %}
+	    <th></th>
+	    <th></th>
+	    {% endif %}
+	</tr>
+    </thead>
+    <tbody>
+	{% for var in dataset.variables %}
+	<tr>
+	    <td>{{ var.vartype }}</td>
+	    <td>{{ var.var }}</td>
+	    <td>{{ var.long_name }}</td>
+	    <td>{{ var.units }}</td>
+	    {% if current_user.is_authenticated %}
+	    <td>
+		<a href="{{url_for('edit_var', dataset_name=dataset.name, var_name=var.var)}}">Edit {{ var.var }}</a>
+	    </td>
+	    <td>
+		<form action="{{ url_for('delete_var', dataset_name=dataset.name, var_name=var.var) }}" method="POST" onsubmit="return confirm('Confirm delete?');">
+		    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		    <input type="submit" value="Delete variable"/>
+		</form>
+	    </td>
+	    {% endif %}
+	</tr>
+	{% endfor %}
+	{% if current_user.is_authenticated %}
+	<tr>
+	    <td>
+		<form action="">
+		    <input type="submit" value="Create variables" />
+		</form>
+	    </td>
+	    <td></td>
+	    <td></td>
+	    <td></td>
+	    <td></td>
+	</tr>
+	{% endif %}
+    </tbody>
+</table>
+{% endblock body %}

@@ -1,11 +1,9 @@
-<!doctype html>
-<html>
-    <head>
-	<meta charset="utf-8">
-	<title>METFiDAS-3 Data Extractor -- University of Reading {{ error.status_code }}</title>
-    </head>
-	<body>
-	    <h1>{{ error.message }}</h1>
-	    <p>{{ error.hint }}</p>
-	</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}METFiDAS-3 Data Extractor -- University of Reading {{ error.status_code }}{% endblock %}
+
+{% block body %}
+<h1>{{ error.message }}</h1>
+<p>{{ error.hint }}</p>
+{% endblock %}
+
