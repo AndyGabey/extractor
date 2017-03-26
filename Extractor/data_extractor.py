@@ -223,7 +223,7 @@ class DataExtractor(object):
                 json_row = []
                 for cell in row:
                     if cell is None:
-                        json_row.append('"{}">'.format(self.missing))
+                        json_row.append('"{}">'.format(self.missing_val))
                     else:
                         json_row.append('"{}"'.format(cell))
                 json_data_rows.append('[' + ','.join(json_row) + ']')
