@@ -1,8 +1,8 @@
 Development Installation
 ========================
 
-    git clone https://github.com/AndyGabey/extractor
-    cd extractor
+    git clone https://github.com/AndyGabey/extractor Extractor
+    cd Extractor
 
     # Unzip test data.
     mkdir -p demo_data/metfidas
@@ -18,30 +18,32 @@ Development Installation
     pip install -e .
 
     # Setup dev env.
-    cd extractor
+    cd Extractor
     cp host_config.txt.tpl host_config.txt
-    export FLASK_APP=extractor
+    export FLASK_APP=Extractor
     export FLASK_DEBUG=true
     flask shell # Opens ipython shell:
 
 ```python
 # Creates db and populates it with some mock data.
-from extractor.database import init_db
-init_db(True)
+from Extractor.database import init_db
+init_db()
 ```
 
-Running
--------
+Running Local Copy
+------------------
 
-    cd extractor
-    source venv/bin/activate
-    export FLASK_APP=extractor
-    export FLASK_DEBUG=true
+    cd Extractor
+    source setup_flask.sh
     flask run
 
 
+Running Command Line Interface
+------------------------------
+
+    cd Extractor
+    source setup_flask.sh
+    flask shell
+
+
 Then go to: http://127.0.0.1:5000/
-
-Try also:
-
-http://127.0.0.1:5000/dataset/AWS/get_data?start_date=2015-03-27-00:00:11&end_date=2015-03-27-00:00:21&field=P&field=RH&data_format=html
