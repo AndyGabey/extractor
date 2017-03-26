@@ -225,6 +225,19 @@ def user_tokens():
     user_tokens = UserToken.query.all()
     return render_template('user_tokens.html', user_tokens=user_tokens)
     
+@app.route('/user_token/<token_name>.json')
+def user_token_json(token_name):
+    token = UserToken.query.filter_by(token=token_name).one()
+    token_dict = {'token': token.token,
+                  'expiry_date': token.expiry_date.strftime(DATE_FMT),
+                  'max_request_time_hours': token.max_request_time_hours,
+                  'max_request_rows': token.max_request_rows,
+                  'max_request_files': token.max_request_files,
+                  'notes': token.notes,
+                  'datasets': [ds.name for ds in token.datasets]}
+                
+    return flask.jsonify(token=token_dict)
+    
 
 @app.route('/user_token/create', methods=['GET', 'POST'])
 @login_required
