@@ -85,12 +85,24 @@ class DataExtractor(object):
         if not variables:
             raise InvalidUsage('No variables selected')
         
+        missing = request.args.get('missing', 'blank')
+        if missing == 'blank':
+            missing_val = ''
+        else:
+            if missing not in ['9999.9', 'x']:
+                try:
+                    missing_val = float(missing)
+                except ValueError:
+                    raise InvalidUsage('missing value {} not recognized'.format(missing))
+            else:
+                missing_val = missing
+        
         varnames = dict([(v.var, v.long_name) for v in self.dataset.variables])
         for variable in variables:
             if variable not in varnames:
                 raise InvalidUsage('Variable not recognized: {}'.format(variable))
 
-        self._set(start_date, end_date, variables, token, data_format)
+        self._set(start_date, end_date, variables, token, data_format, missing_val)
 
     def run(self):
         timer_start = timer()
@@ -104,12 +116,13 @@ class DataExtractor(object):
 
         return self.response
     
-    def _set(self, start_date, end_date, variables, token=None, data_format='json'):
+    def _set(self, start_date, end_date, variables, token=None, data_format='json', missing_val=None):
         self.start_date = start_date
         self.end_date = end_date
         self.variables = variables
         self.token = token
         self.data_format = data_format
+        self.missing_val = missing_val
 
         if self.token:
             self.max_request_rows = token.max_request_rows
@@ -185,7 +198,10 @@ class DataExtractor(object):
                 html_row = []
                 html_row.append('<tr>')
                 for cell in row:
-                    html_row.append('<td>{}</td>'.format(cell))
+                    if cell is None:
+                        html_row.append('<td>{}</td>'.format(self.missing_val))
+                    else:
+                        html_row.append('<td>{}</td>'.format(cell))
                 html_row.append('</tr>')
                 html_rows.append(''.join(html_row))
             html_rows.append('</tbody>')
@@ -206,7 +222,10 @@ class DataExtractor(object):
             for row in rows:
                 json_row = []
                 for cell in row:
-                    json_row.append('"{}"'.format(cell))
+                    if cell is None:
+                        json_row.append('"{}">'.format(self.missing))
+                    else:
+                        json_row.append('"{}"'.format(cell))
                 json_data_rows.append('[' + ','.join(json_row) + ']')
             json_rows.append(','.join(json_data_rows))
             json_rows.append(']}')
