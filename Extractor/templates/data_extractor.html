@@ -387,6 +387,9 @@ function generateURL() {
 	
 			// Append dataset to API
 			url += $("#type_aws").val() + "/get_data?"
+
+			// Append token to API
+			url += "token=" + $("#token").val();
 	
 			// Append start date to API
 			url += "&start_date="+$("#startY").val()+"-"+pad($("#startM").val(),2)+
@@ -411,7 +414,7 @@ function generateURL() {
 			url += "&data_format="+$("#output_format").val();
 	
 			// Display the URL in the text field
-																									              $("#direct_url").html('<a href="' + url + '">' + url + '</a>');
+																									              $("#direct_url").html('<a href="' + url + '">get data url</a>');
 			return url;
 
 		}
@@ -453,6 +456,9 @@ $(function(){
 <div id="left_panel">
 Step 1: Choose the type and date-range of data.
 <div id="datatype">
+Enter your token.
+<input type="text" id="token"/>
+<br>
 Select the type of data to extract.
 <select id="type_aws">
     <option value="">---</option>
@@ -567,8 +573,7 @@ Select the output format.
 <div id="final">
 <input type="button" id="generate_url" value="Generate URL"></input>
 <input type="button" id="retrieve_data" value="Retrieve data"></input>
-<br>
-HTTP API URL: <div name="url" id="direct_url"></div>
+<span>HTTP API URL: <div name="url" id="direct_url"></div></span>
 </div>
 </div>
 {% endblock %}
