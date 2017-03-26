@@ -83,7 +83,11 @@ def logout():
 def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
-        # TODO: check!
+        existing_dataset = Dataset.query.filter_by(name=form.name.data).one_or_none()
+        if existing_dataset is not None:
+            raise InvalidUsage('Dataset {} already exists'.format(form.name.data))
+
+        dataset = Dataset(None, None, None, None, None, None, None, None, None) 
         form.populate_obj(dataset)
 
         db_session.add(dataset)
@@ -107,6 +111,26 @@ def edit_dataset(dataset_name):
     return render_template('edit_dataset.html', form=form)
     
 
+@app.route('/dataset/<dataset_name>/var/create', methods=['GET', 'POST'])
+@login_required
+def create_var(dataset_name):
+    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    form = VariableForm()
+
+    if form.validate_on_submit():
+        existing_variable = Variable.query.filter_by(var=form.var.data).one_or_none()
+        if existing_variable is not None:
+            raise InvalidUsage('Variable {} already exists'.format(form.var.data))
+        variable = Variable('', '', '', '')
+        form.populate_obj(variable)
+        dataset.variables.append(variable)
+        db_session.add(variable)
+        db_session.commit()
+
+        return flask.redirect(flask.url_for('get_dataset_vars', dataset_name=dataset.name))
+    return render_template('edit_var.html', form=form)
+
+
 @app.route('/dataset/<dataset_name>/<var_name>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_var(dataset_name, var_name):
@@ -121,11 +145,11 @@ def edit_var(dataset_name, var_name):
         return flask.redirect(flask.url_for('get_dataset_vars', dataset_name=dataset.name))
     return render_template('edit_var.html', form=form)
     
-@app.route('/dataset/<dataset_name>/<var_name>/delete', methods=['POST'])
+@app.route('/dataset/<dataset_name>/<var_id>/delete', methods=['POST'])
 @login_required
-def delete_var(dataset_name, var_name):
+def delete_var(dataset_name, var_id):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
-    var = dataset.variables.filter_by(var=var_name).one()
+    var = Variable.query.filter_by(dataset=dataset, id=var_id).one()
     db_session.delete(var)
     db_session.commit()
 
@@ -148,11 +172,11 @@ def get_dataset_vars_json(dataset_name):
 
     return flask.jsonify(variables)
 
-@app.route('/dataset/<dataset_name>/delete', methods=['POST'])
+@app.route('/dataset/<dataset_id>/delete', methods=['POST'])
 @login_required
-def delete_dataset(dataset_name):
+def delete_dataset(dataset_id):
     print(request.method)
-    dataset = Dataset.query.filter_by(name=dataset_name).one()
+    dataset = Dataset.query.get(dataset_id)
     db_session.delete(dataset)
     db_session.commit()
 
@@ -213,6 +237,9 @@ def create_token():
     form.dataset_ids.choices = [(ds.id, ds.name) for ds in Dataset.query.all()]
 
     if form.validate_on_submit():
+        existing_token = UserToken.query.filter_by(token=form.token.data).one_or_none()
+        if existing_token is not None:
+            raise InvalidUsage('Token {} already exists'.format(form.token.data))
         form.populate_obj(new_token)
         for dataset_id in form.dataset_ids.data:
             dataset = Dataset.query.get(dataset_id)

@@ -30,7 +30,7 @@
 		<a href="{{url_for('edit_var', dataset_name=dataset.name, var_name=var.var)}}">Edit {{ var.var }}</a>
 	    </td>
 	    <td>
-		<form action="{{ url_for('delete_var', dataset_name=dataset.name, var_name=var.var) }}" method="POST" onsubmit="return confirm('Confirm delete?');">
+		<form action="{{ url_for('delete_var', dataset_name=dataset.name, var_id=var.id) }}" method="POST" onsubmit="return confirm('Confirm delete?');">
 		    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		    <input type="submit" value="Delete variable"/>
 		</form>
@@ -41,10 +41,12 @@
 	{% if current_user.is_authenticated %}
 	<tr>
 	    <td>
-		<form action="">
-		    <input type="submit" value="Create variables" />
+		<form action="{{url_for('create_var', dataset_name=dataset.name)}}">
+		    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		    <input type="submit" value="Create variable" />
 		</form>
 	    </td>
+	    <td></td>
 	    <td></td>
 	    <td></td>
 	    <td></td>
