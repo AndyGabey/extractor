@@ -2,9 +2,11 @@ import os
 import datetime as dt
 from timeit import default_timer as timer
 
+from sqlalchemy.orm import exc
+
 from Extractor.utils import parse_csv, date_parser, DATE_FMT
 from Extractor.models import Dataset, UserToken
-from Extractor.exceptions import InvalidUsage
+from Extractor.exceptions import InvalidUsage, MaxRowsExceeded
 
 
 class DataExtractor(object):
@@ -37,24 +39,6 @@ class DataExtractor(object):
             raise InvalidUsage('Unknown data format: {}'.format(data_format),
                                'Choices are html, json')
 
-        token_str = request.args.get('token', 'none')
-        if token_str != 'none':
-            try:
-                token = UserToken.query.filter_by(token=token_str).one()
-            except exc.NoResultFound:
-                raise InvalidUsage('Token {} not found'.format(token_str))
-        else:
-            token = None
-
-        variables = request.args.getlist('var')
-        if not variables:
-            raise InvalidUsage('No variables selected')
-        
-        varnames = dict([(v.var, v.long_name) for v in self.dataset.variables])
-        for variable in variables:
-            if variable not in varnames:
-                raise InvalidUsage('Variable not recognized: {}'.format(variable))
-
         now = dt.datetime.now()
         start_date_ts = request.args.get('start_date')
         start_date = date_parser(start_date_ts, fmt=DATE_FMT)
@@ -79,6 +63,33 @@ class DataExtractor(object):
         if False and not token and (end_date - start_date > dt.timedelta(hours=6)):
             return 'No token supplied and more than 6 hours of data requested'
 
+        token_str = request.args.get('token', 'none')
+        if token_str != 'none':
+            try:
+                token = UserToken.query.filter_by(token=token_str).one()
+                if now > token.expiry_date:
+                    raise InvalidUsage('Token {} has expired'.format(token_str))
+                
+                if self.dataset not in token.datasets:
+                    raise InvalidUsage('Token does not give access to {}'.format(self.dataset.name))
+
+                if (end_date - start_date).hours > token.max_request_time_hours:
+                    raise InvalidUsage('Token does only gives access to {} hours of data'.format(token.max_request_time_hours))
+
+            except exc.NoResultFound:
+                raise InvalidUsage('Token {} not found'.format(token_str))
+        else:
+            raise InvalidUsage('Token must be supplied')
+
+        variables = request.args.getlist('var')
+        if not variables:
+            raise InvalidUsage('No variables selected')
+        
+        varnames = dict([(v.var, v.long_name) for v in self.dataset.variables])
+        for variable in variables:
+            if variable not in varnames:
+                raise InvalidUsage('Variable not recognized: {}'.format(variable))
+
         self._set(start_date, end_date, variables, token, data_format)
 
     def run(self):
@@ -93,12 +104,19 @@ class DataExtractor(object):
 
         return self.response
     
-    def _set(self, start_date, end_date, variables, token, data_format):
+    def _set(self, start_date, end_date, variables, token=None, data_format='json'):
         self.start_date = start_date
         self.end_date = end_date
         self.variables = variables
         self.token = token
         self.data_format = data_format
+
+        if self.token:
+            self.max_request_rows = token.max_request_rows
+            self.max_request_files = token.max_request_files
+        else:
+            self.max_request_rows = 1000000
+            self.max_request_files = 50
 
     def generate_filelist(self):
         """Generate list of CSV files to get data from. Complain if any file doesn't exist."""
@@ -122,21 +140,31 @@ class DataExtractor(object):
 
         self.csv_files = csv_files
 
+        if len(self.csv_files) > self.max_request_files:
+            raise InvalidUsage('Token does only gives access to {} files'.format(token.max_request_files))
+
+
     def extract_data(self):
         """Parse all CSV files sequentially, storing results"""
         # Parse files. 
         self.rows = []
         for csv_file in self.csv_files:
+            curr_rows = len(self.rows)
+            max_rows = self.max_request_rows - curr_rows
             self.curr_csv_file = csv_file
             # TODO: May be able to get units from one file but not another.
             # TODO: Get if possible (don't just take last).
-            self.cols, self.units, curr_rows = parse_csv(csv_file, 
-                                                         self.variables, 
-                                                         self.start_date, 
-                                                         self.end_date,
-                                                         self.dataset.date_col_name,
-                                                         self.dataset.time_col_name,
-                                                         self.dataset.datetime_fmt)
+            try:
+                self.cols, self.units, curr_rows = parse_csv(csv_file, 
+                                                             self.variables, 
+                                                             self.start_date, 
+                                                             self.end_date,
+                                                             self.dataset.date_col_name,
+                                                             self.dataset.time_col_name,
+                                                             self.dataset.datetime_fmt,
+                                                             max_rows)
+            except MaxRowsExceeded as mre:
+                raise InvalidUsage('Token only allows access to {} rows'.format(self.max_request_rows))
             self.rows.extend(curr_rows)
 
     def format_response(self):

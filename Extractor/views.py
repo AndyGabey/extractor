@@ -7,8 +7,6 @@ import flask
 from flask import request, render_template
 from flask_login import login_required, login_user, logout_user
 
-from sqlalchemy.orm import exc
-
 from Extractor import app, login_manager
 from Extractor.utils import parse_csv, is_safe_url
 from Extractor.database import db_session

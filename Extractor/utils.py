@@ -4,7 +4,7 @@ import csv
 from urlparse import urlparse, urljoin
 from flask import request, url_for
 
-from Extractor.exceptions import InvalidUsage
+from Extractor.exceptions import MaxRowsExceeded
 
 DATE_FMT = '%Y-%m-%d-%H:%M:%S'
 
@@ -27,7 +27,7 @@ def date_parser(timestamp, fmt):
         raise
 
 
-def parse_csv(csv_file, variables, start_date, end_date, date_col_name, time_col_name, datetime_fmt):
+def parse_csv(csv_file, variables, start_date, end_date, date_col_name, time_col_name, datetime_fmt, max_rows):
     print(csv_file)
     with open(csv_file, 'r') as f:
         reader = csv.reader(f)
@@ -45,26 +45,6 @@ def parse_csv(csv_file, variables, start_date, end_date, date_col_name, time_col
             time_index = header.index(time_col_name)
         else:
             datetime_index = header.index(date_col_name)
-
-        #if 'TimeStamp' in header:
-        #    if 'Time' in header:
-        #        date_index = header.index('TimeStamp')
-        #        time_index = header.index('Time')
-        #        split_time = True
-        #    elif 'hhmm' in header:
-        #        date_index = header.index('TimeStamp')
-        #        time_index = header.index('hhmm')
-        #        split_time = True
-        #    else:
-        #        datetime_index = header.index('TimeStamp')
-        #        split_time = False
-        #elif 'Date' in header and 'Time' in header:
-        #    date_index = header.index('Date')
-        #    time_index = header.index('Time')
-        #    split_time = True
-        #elif 'TIME' in header:
-        #    datetime_index = header.index('TIME')
-        #    split_time = False
 
         for var in variables:
             if var in header:
@@ -107,5 +87,7 @@ def parse_csv(csv_file, variables, start_date, end_date, date_col_name, time_col
                     else:
                         row.append(None)
                 rows.append(row)
+                if len(rows) > max_rows:
+                    raise MaxRowsExceeded(len(rows))
 
         return cols, units, rows

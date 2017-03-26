@@ -1,3 +1,9 @@
+class MaxRowsExceeded(Exception):
+    def __init__(self, message, rows):
+        Exception.__init__(self, message)
+        self.rows = rows
+
+
 class InvalidUsage(Exception):
     status_code = 400
 
