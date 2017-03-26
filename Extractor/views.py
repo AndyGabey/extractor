@@ -206,8 +206,9 @@ def dataset_json(dataset_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
     dataset_dict = {'name': dataset.name,
                     'long_name': dataset.long_name,
-                    'variables': [{'var': v.var, 'long_name': v.long_name, 'units': v.units,
-                        'vartype': v.vartype} for v in dataset.variables]}
+                    'start_date': dataset.start_date.strftime(DATE_FMT),
+                    'end_date': dataset.end_date.strftime(DATE_FMT),
+                    'variables': [{'var': v.var, 'long_name': v.long_name, 'units': v.units, 'vartype': v.vartype} for v in dataset.variables]}
     return flask.jsonify(dataset=dataset_dict)
     
 

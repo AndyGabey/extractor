@@ -5,11 +5,13 @@
 {% block body %}
 <h1>Dataset</h1>
 <ul>
-    <li>{{ dataset.name }}</li>
-    <li>{{ dataset.start_date }}</li>
-    <li>{{ dataset.end_date }}</li>
-    <li>{{ dataset.file_fmt }}</li>
-    <li>{% for var in dataset.variables %}{{ var.var }}, {% endfor %}</li>
-    <li><a href="{{ url_for('get_data', dataset_name=dataset.name) }}">get data</a></li>
+    <li>Name: {{ dataset.name }}</li>
+    <li>Start date: {{ dataset.start_date }}</li>
+    <li>End date: {{ dataset.end_date }}</li>
+    <li>Variables: {% for var in dataset.variables %}{{ var.var }}{% if not loop.last %},{% endif %}{% endfor %}</li>
+    {% if current_user.is_authenticated %}
+    <li>File format: {{ dataset.file_fmt }}</li>
+    <li>Tokens: {% for token in dataset.user_tokens %}{{ token.token }}{% if not loop.last %},{% endif %}{% endfor %}</li>
+    {% endif %}
 </ul>
 {% endblock %}

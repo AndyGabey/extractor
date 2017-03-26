@@ -4,7 +4,7 @@
 
 {% block body %}
 {% if current_user.is_authenticated %}
-Hi {{ current_user.name }}!
+Hello {{ current_user.name }}
 {% endif %}
 <ul>
     <li><a href="{{ url_for('datasets') }}">Datasets</a></li>
