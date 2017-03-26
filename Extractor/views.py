@@ -1,6 +1,7 @@
 import os
 from collections import defaultdict
 import datetime as dt
+import uuid
 
 import flask
 from flask import request, render_template
@@ -12,7 +13,7 @@ from Extractor import app, login_manager
 from Extractor.utils import parse_csv, is_safe_url
 from Extractor.database import db_session
 from Extractor.models import User, Dataset, Variable, UserToken
-from Extractor.forms import LoginForm, DatasetForm, VariableForm
+from Extractor.forms import LoginForm, DatasetForm, VariableForm, TokenForm
 from Extractor.data_extractor import DataExtractor
 from Extractor.exceptions import InvalidUsage
 
@@ -84,12 +85,9 @@ def logout():
 def create_dataset():
     form = DatasetForm()
     if form.validate_on_submit():
-        raise
-        dataset = Dataset(form.name.data, form.long_name.data, 
-                     dt.datetime(2017, 1, 1), dt.datetime.now(),
-                     5, form.name.data, form.instrument.data, 
-                     '/some/file/path/{year}/', 
-                     'TimeStamp' , '%d%m', 'Time', '%s')
+        # TODO: check!
+        form.populate_obj(dataset)
+
         db_session.add(dataset)
         db_session.commit()
 
@@ -115,7 +113,7 @@ def edit_dataset(dataset_name):
 @login_required
 def edit_var(dataset_name, var_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
-    var = Variable.query.filter_by(dataset=dataset, var=var_name).one()
+    var = dataset.variables.filter_by(var=var_name).one()
     form = VariableForm(obj=var)
 
     if form.validate_on_submit():
@@ -129,7 +127,7 @@ def edit_var(dataset_name, var_name):
 @login_required
 def delete_var(dataset_name, var_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
-    var = Variable.query.filter_by(dataset=dataset, var=var_name).one()
+    var = dataset.variables.filter_by(var=var_name).one()
     db_session.delete(var)
     db_session.commit()
 
@@ -205,14 +203,25 @@ def user_tokens():
     return render_template('user_tokens.html', user_tokens=user_tokens)
     
 
-@app.route('/user_token/create', methods=['POST'])
+@app.route('/user_token/create', methods=['GET', 'POST'])
 @login_required
 def create_token():
-    import uuid
-    token = UserToken(uuid.uuid4().hex[:10], dt.datetime.now(), '')
-    db_session.add(token)
-    db_session.commit()
-    return flask.redirect(flask.url_for('user_tokens'))
+    if request.method == 'GET':
+        dummy_token = UserToken(uuid.uuid4().hex[:10], dt.datetime.now(), '')
+        form = TokenForm(obj=dummy_token)
+        form.datasets.choices = [(ds.id, ds.name) for ds in Dataset.query.all()]
+    else:
+        new_token = UserToken('', '', '')
+        form = TokenForm()
+        return form.datasets.choices
+
+    if form.validate_on_submit():
+        form.populate_obj(new_token)
+        db_session.add(new_token)
+        db_session.commit()
+
+        return flask.redirect(flask.url_for('user_tokens'))
+    return render_template('edit_token.html', form=form)
     
 
 

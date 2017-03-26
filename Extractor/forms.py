@@ -1,17 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateTimeField, SelectField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, DateTimeField, SelectField, SelectMultipleField
+from wtforms.validators import DataRequired, Length
 
 from Extractor.utils import DATE_FMT
-
-VARTYPE_CHOICES = [
-        ('typenull', 'typenull'), 
-        ('typewind', 'typewind'), 
-        ('typepres', 'typepres'),
-        ('typetemp', 'typetemp'),
-        ('typerad', 'typerad'),
-]
-
 
 class LoginForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
@@ -30,8 +21,24 @@ class DatasetForm(FlaskForm):
     datetime_fmt = StringField('datetime_fmt', validators=[DataRequired()])
 
 
+VARTYPE_CHOICES = [
+        ('typenull', 'typenull'), 
+        ('typewind', 'typewind'), 
+        ('typepres', 'typepres'),
+        ('typetemp', 'typetemp'),
+        ('typerad', 'typerad'),
+]
+
+
 class VariableForm(FlaskForm):
     var = StringField('var', validators=[DataRequired()])
     long_name = StringField('long_name', validators=[DataRequired()])
     units = StringField('units', validators=[DataRequired()])
     vartype = SelectField('vartype', choices=VARTYPE_CHOICES)
+
+
+class TokenForm(FlaskForm):
+    token = StringField('var', validators=[DataRequired()])
+    expiry_date = DateTimeField('expiry_date', validators=[DataRequired()])
+    notes = StringField('notes', validators=[])
+    datasets = SelectMultipleField('datasets', coerce=int, choices=[], validators=[])

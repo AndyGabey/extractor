@@ -35,7 +35,7 @@
 	    </tbody>
 	</table>
 
-	<form action="{{ url_for('create_token') }}" method="POST">
+	<form action="{{ url_for('create_token') }}" method="GET">
 	    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 	    <input type="submit" value="Create token" />
 	</form>
