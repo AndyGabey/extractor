@@ -4,7 +4,7 @@ import datetime as dt
 import uuid
 
 import flask
-from flask import request, render_template
+from flask import request, render_template, Response, stream_with_context
 from flask_login import login_required, login_user, logout_user
 
 from Extractor import app, login_manager
@@ -276,11 +276,24 @@ def delete_token(token_id):
 
 @app.route('/dataset/<dataset_name>/get_data')
 def get_data(dataset_name):
-    try:
+    def streamer():
         extractor = DataExtractor(dataset_name, request)
         extractor.load()
         extractor.validate()
-        return extractor.run()
+        for line in extractor.run(stream=True):
+            yield line
+
+    return Response(stream_with_context(streamer()), mimetype='text/json')
+
+    try:
+        if request.args.get('stream', 'false') == 'false':
+            return extractor.run()
+        else:
+            def streamer():
+                for line in extractor.run(stream=True):
+                    print(line)
+                    yield line
+            return Response(stream_with_context(streamer()), mimetype='text/json')
     except Exception as e:
         # Pokemon exception handling!
         hint = ''

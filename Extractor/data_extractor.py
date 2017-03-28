@@ -104,17 +104,13 @@ class DataExtractor(object):
 
         self._set(start_date, end_date, variables, token, data_format, missing_val)
 
-    def run(self):
+    def run(self, stream=False):
         timer_start = timer()
 
         self.generate_filelist()
-        self.extract_data()
-        self.response = self.format_response()
 
-        parsed = timer()
-        print(parsed - timer_start)
-
-        return self.response
+        for line in self.extract_data_stream():
+            yield line
     
     def _set(self, start_date, end_date, variables, token=None, data_format='json', missing_val=None):
         self.start_date = start_date
@@ -179,6 +175,76 @@ class DataExtractor(object):
             except MaxRowsExceeded as mre:
                 raise InvalidUsage('Token only allows access to {} rows'.format(self.max_request_rows))
             self.rows.extend(curr_rows)
+
+    def extract_data_stream(self):
+        """Parse all CSV files sequentially, storing results"""
+
+        written_header = False
+        # Parse files. 
+        for i, csv_file in enumerate(self.csv_files):
+            self.curr_csv_file = csv_file
+            max_rows = 1e6
+
+            # TODO: May be able to get units from one file but not another.
+            # TODO: Get if possible (don't just take last).
+            try:
+                self.cols, self.units, curr_rows = parse_csv(csv_file, 
+                                                             self.variables, 
+                                                             self.start_date, 
+                                                             self.end_date,
+                                                             self.dataset.date_col_name,
+                                                             self.dataset.time_col_name,
+                                                             self.dataset.datetime_fmt,
+                                                             max_rows)
+                if not written_header:
+                    for header_line in self.format_header_json(self.cols):
+                        yield header_line
+                    written_header = True
+                
+                if i == len(self.csv_files) - 1:
+                    last = True
+                else:
+                    last = False
+                for data_row in self.format_data_json(curr_rows, last):
+                    yield data_row
+
+            except MaxRowsExceeded as mre:
+                raise InvalidUsage('Token only allows access to {} rows'.format(self.max_request_rows))
+
+        yield self.format_footer_json()
+
+    def format_header_json(self, cols):
+        json_rows = ['{"header": [']
+
+        header_row = []
+        for col in cols:
+            header_row.append('"{}"'.format(col))
+        json_rows.append(','.join(header_row))
+        json_rows.append('], "data": [')
+        return json_rows
+
+    def format_data_json(self, rows, last):
+        def format_row(row):
+            json_row = []
+            for cell in row:
+                if cell is None:
+                    json_row.append('"{}"'.format(self.missing_val))
+                else:
+                    json_row.append('"{}"'.format(cell))
+            return '[' + ','.join(json_row) + '],'
+
+        print(len(rows))
+        for row in rows[:-1]:
+            yield format_row(row)
+
+        if last:
+            yield format_row(rows[-1])[:-1]
+        else:
+            yield format_row(rows[-1])
+
+    def format_footer_json(self):
+        return ']}'
+
 
     def format_response(self):
         cols, units, rows = self.cols, self.units, self.rows
