@@ -14,6 +14,12 @@ class DataExtractor(object):
         self.dataset_name = dataset_name
         self.request = request
         self.curr_csv_file = None
+        self.dataset = None
+        self.response = None
+        self.csv_files = None
+        self.rows = None
+        self.cols = None
+        self.units = None
 
     def __repr__(self):
         return '<DataExtractor {}>'.format(self.dataset_name)
@@ -60,21 +66,19 @@ class DataExtractor(object):
         if start_date > end_date:
             raise InvalidUsage('Start date must be before end date')
 
-        if False and not token and (end_date - start_date > dt.timedelta(hours=6)):
-            return 'No token supplied and more than 6 hours of data requested'
-
         token_str = request.args.get('token', 'none')
         if token_str != 'none':
             try:
                 token = UserToken.query.filter_by(token=token_str).one()
                 if now > token.expiry_date:
                     raise InvalidUsage('Token {} has expired'.format(token_str))
-                
+
                 if self.dataset not in token.datasets:
                     raise InvalidUsage('Token does not give access to {}'.format(self.dataset.name))
 
                 if (end_date - start_date).total_seconds() / 3600. > token.max_request_time_hours:
-                    raise InvalidUsage('Token does only gives access to {} hour(s) of data'.format(token.max_request_time_hours))
+                    raise InvalidUsage(
+                        'Token does only gives access to {} hour(s) of data'.format(token.max_request_time_hours))
 
             except exc.NoResultFound:
                 raise InvalidUsage('Token {} not found'.format(token_str))
@@ -84,7 +88,7 @@ class DataExtractor(object):
         variables = request.args.getlist('var')
         if not variables:
             raise InvalidUsage('No variables selected')
-        
+
         missing = request.args.get('missing', 'blank')
         if missing == 'blank':
             missing_val = ''
@@ -96,7 +100,7 @@ class DataExtractor(object):
                     raise InvalidUsage('missing value {} not recognized'.format(missing))
             else:
                 missing_val = missing
-        
+
         varnames = dict([(v.var, v.long_name) for v in self.dataset.variables])
         for variable in variables:
             if variable not in varnames:
@@ -115,7 +119,7 @@ class DataExtractor(object):
         print(parsed - timer_start)
 
         return self.response
-    
+
     def _set(self, start_date, end_date, variables, token=None, data_format='json', missing_val=None):
         self.start_date = start_date
         self.end_date = end_date
@@ -156,7 +160,6 @@ class DataExtractor(object):
         if len(self.csv_files) > self.max_request_files:
             raise InvalidUsage('Token does only gives access to {} file(s)'.format(self.max_request_files))
 
-
     def extract_data(self):
         """Parse all CSV files sequentially, storing results"""
         # Parse files. 
@@ -168,15 +171,15 @@ class DataExtractor(object):
             # TODO: May be able to get units from one file but not another.
             # TODO: Get if possible (don't just take last).
             try:
-                self.cols, self.units, curr_rows = parse_csv(csv_file, 
-                                                             self.variables, 
-                                                             self.start_date, 
+                self.cols, self.units, curr_rows = parse_csv(csv_file,
+                                                             self.variables,
+                                                             self.start_date,
                                                              self.end_date,
                                                              self.dataset.date_col_name,
                                                              self.dataset.time_col_name,
                                                              self.dataset.datetime_fmt,
                                                              max_rows)
-            except MaxRowsExceeded as mre:
+            except MaxRowsExceeded:
                 raise InvalidUsage('Token only allows access to {} rows'.format(self.max_request_rows))
             self.rows.extend(curr_rows)
 
@@ -186,8 +189,7 @@ class DataExtractor(object):
         if self.data_format == 'html':
             html_rows = ['<table border="1">']
 
-            header_row = []
-            header_row.append('<thead><tr>')
+            header_row = ['<thead><tr>']
             for col in cols:
                 header_row.append('<th>{}</th>'.format(col))
             header_row.append('</tr></thead>')
@@ -195,8 +197,7 @@ class DataExtractor(object):
 
             html_rows.append('<tbody>')
             for row in rows:
-                html_row = []
-                html_row.append('<tr>')
+                html_row = ['<tr>']
                 for cell in row:
                     if cell is None:
                         html_row.append('<td>{}</td>'.format(self.missing_val))
@@ -230,5 +231,7 @@ class DataExtractor(object):
             json_rows.append(','.join(json_data_rows))
             json_rows.append(']}')
             payload = ''.join(json_rows)
+        else:
+            raise Exception('Unexpected data format: {}'.format(self.data_format))
 
         return payload
