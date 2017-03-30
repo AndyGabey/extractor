@@ -1,9 +1,9 @@
+import csv
+import datetime as dt
 import os
 import re
+from collections import Counter, defaultdict
 from glob import glob
-import datetime as dt
-from collections import Counter, defaultdict, OrderedDict
-import csv
 
 import simplejson
 
@@ -159,7 +159,7 @@ def check_path(instrument_patterns, path):
         match = re.match(pattern, path)
         if match:
             return name, pattern, fmt, parse_opt, match
-    return name, None, None, None, None
+    return None, None, None, None, None
 
 
 def check_path_format(instrument_paths):
@@ -323,7 +323,7 @@ def run_all():
         dataset, start_date, end_date = (k.split(':')[1], v['earliest'], v['latest'])
         print(dataset)
         fn = glob('Extractor/import_data/??_dataset_{0}.json'.format(dataset))[0]
-        print((dataset, fn))
+        print(dataset, fn)
 
         with open(fn, 'r') as f:
             json = simplejson.load(f)

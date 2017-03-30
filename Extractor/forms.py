@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, FloatField, PasswordField, DateTimeField,
-                     IntegerField, SelectField, SelectMultipleField)
+                     SelectField, SelectMultipleField)
 from wtforms.validators import DataRequired, Length
 
 from Extractor.utils import DATE_FMT
+
 
 class LoginForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
@@ -23,11 +24,11 @@ class DatasetForm(FlaskForm):
 
 
 VARTYPE_CHOICES = [
-        ('typenull', 'typenull'), 
-        ('typewind', 'typewind'), 
-        ('typepres', 'typepres'),
-        ('typetemp', 'typetemp'),
-        ('typerad', 'typerad'),
+    ('typenull', 'typenull'),
+    ('typewind', 'typewind'),
+    ('typepres', 'typepres'),
+    ('typetemp', 'typetemp'),
+    ('typerad', 'typerad'),
 ]
 
 
