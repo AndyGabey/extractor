@@ -29,7 +29,7 @@ body
 #left_panel div span
 	{
 		width: 50%;
-		background-color: rgba(255,0,255,0.2);
+		background-color: rba(255,0,255,0.2);
 		
 	}
 #left_panel div
@@ -271,7 +271,7 @@ function checkStepOne() {
 			logMessage("User can access level 2 data.");
 			
 			logMessage("Requesting lists of available variables from server.");
-			$.getJSON( "/ext/dataset/"+dataType+"/vars.json", function( data ) {
+			$.getJSON( "/dataset/"+dataType+"/vars.json", function( data ) {
 				logMessage("Information received.");
 				console.debug(data)
 				console.debug(data["typerain"])
@@ -383,7 +383,7 @@ function generateURL() {
 	
 	if (fields.length > 0)
 		{
-			var url = window.location.protocol + "//" + window.location.host + "/ext/dataset/";
+			var url = window.location.protocol + "//" + window.location.host + "/dataset/";
 	
 			// Append dataset to API
 			url += $("#type_aws").val() + "/get_data?"

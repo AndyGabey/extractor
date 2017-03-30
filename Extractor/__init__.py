@@ -26,4 +26,4 @@ def shutdown_session(exception=None):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, use_debugger=False, use_reloader=False)
