@@ -207,20 +207,43 @@ function getDB(token){
 		
 		var datasets = data['token']['datasets'];
 		var dropDown = '<option selected value="---">---</option>';
+		
 		for (var i=0; i<datasets.length;i++)
 			{
 				dropDown += '<option value="'+datasets[i]+'">'+datasets[i]+'</option>';
 			}
 		
 		// Begin constructing the variable table dynamically.
-		$("#databases").html(dropDown);
+		$("#datasets").html(dropDown);
 		
 		divideLog();
 	}).fail(function(){
-		logMessage("Token not found.");
+		logMessage("Token not found. Please contact the administrator.");
+		divideLog();
 	});
-
 }
+function getDatasetTimeRange(dataset)
+	{
+		$.getJSON( "/dataset/"+dataset+".json", function(data) {
+			logMessage("Token is valid.");
+		
+			var startDate = data['dataset']['start_date'].split("-");
+			var startHour = startDate[3].split(":")[1];
+			
+			console.log(startDate);
+			console.log(startHour);
+			
+			$("#startY").val(startDate[0]);
+			$("#startM").val(Number(startDate[1]).toString());
+			$("#startD").val(startDate[2]);
+			$("#startH").val(startHour);
+			
+			divideLog();
+		}).fail(function(){
+			logMessage("Dataset not found!");
+			divideLog();
+		});
+	}
 function checkStepOne() {
 	$("#check_step_one").prop('disabled',true);
 	logMessage("Initialising input sanity check...");
@@ -230,7 +253,7 @@ function checkStepOne() {
 	
 	// Check if user has selected the type of data to extract. Return an error 
 	// message if false.
-	var dataType = $("#type_aws").val();
+	var dataType = $("#datasets").val();
 	
 	if (dataType == "")
 		{
@@ -473,6 +496,11 @@ $(function(){
 	$("#generate_url").click(function(){
 		generateURL();
 	});
+	$("#datasets").on("change",function(){
+				console.log($(this).val());
+				console.log("what");
+				getDatasetTimeRange($(this).val());
+			});
 });
 </script>
 
@@ -556,10 +584,8 @@ Enter your token.
 <input type="text" id="token"/>
 <button id="submitToken">Submit token</button>
 <br>
-Select the datasets.
-<select id="databases"></select><br>
-Select the type of data to extract.
-<select id="type_aws"></select>
+Select the dataset.
+<select id="datasets"></select><br>
 </div>
 <div id="start_date">Select the start date.
 <select id="startY">
