@@ -241,7 +241,7 @@ def user_token_json(token_name):
                   'max_request_rows': token.max_request_rows,
                   'max_request_files': token.max_request_files,
                   'notes': token.notes,
-                  'datasets': [ds.name for ds in token.datasets]}
+                  'datasets': [{'name': ds.name, 'long_name': ds.long_name} for ds in token.datasets]}
 
     return flask.jsonify(token=token_dict)
 

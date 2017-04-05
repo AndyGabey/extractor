@@ -210,7 +210,7 @@ function getDB(token){
 		
 		for (var i=0; i<datasets.length;i++)
 			{
-				dropDown += '<option value="'+datasets[i]+'">'+datasets[i]+'</option>';
+				dropDown += '<option value="'+datasets[i]['name']+'">'+datasets[i]['long_name']+'</option>';
 			}
 		
 		// Begin constructing the variable table dynamically.
