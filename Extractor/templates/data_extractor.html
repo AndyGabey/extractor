@@ -117,6 +117,8 @@ function isValidDate(dateArray) {
 		return true;
 	}
 }
+
+
 // Compares two dates in array form and see if Date2 is larger than Date1.
 // Date arrays must be in (H)H (D)D (M)M YYYY
 function compareDates(dateArrayOne,dateArrayTwo) {
@@ -226,12 +228,14 @@ function getDatasetTimeRange(dataset)
 	{
 		$.getJSON( "/dataset/"+dataset+".json", function(data) {
 			logMessage("Token is valid.");
-		
+			
+			//console.log(data['dataset']);
+			
+			$("#earliest_rec").val(data['dataset']['start_date']);
+			$("#latest_rec").val(data['dataset']['end_date']);
+			
 			var startDate = data['dataset']['start_date'].split("-");
 			var startHour = startDate[3].split(":")[1];
-			
-			console.log(startDate);
-			console.log(startHour);
 			
 			$("#startY").val(startDate[0]);
 			$("#startM").val(Number(startDate[1]).toString());
@@ -497,10 +501,29 @@ $(function(){
 		generateURL();
 	});
 	$("#datasets").on("change",function(){
-				console.log($(this).val());
-				console.log("what");
-				getDatasetTimeRange($(this).val());
-			});
+		getDatasetTimeRange($(this).val());
+	});
+	
+	$("#setStartToYtd").click(function(){
+		var ytd = new Date();
+		ytd.setDate(ytd.getDate()-1);
+		
+		$("#startY").val(ytd.getUTCFullYear().toString());
+		$("#startM").val((ytd.getUTCMonth()+1).toString());
+		$("#startD").val(pad(ytd.getUTCDate(),2));
+		$("#startH").val(pad(ytd.getUTCHours(),2));
+	
+	});
+	
+	$("#setEndToNow").click(function(){
+		var ytd = new Date();
+		
+		$("#endY").val(ytd.getUTCFullYear().toString());
+		$("#endM").val((ytd.getUTCMonth()+1).toString());
+		$("#endD").val(pad(ytd.getUTCDate(),2));
+		$("#endH").val(pad(ytd.getUTCHours(),2));
+	
+	});
 });
 </script>
 
@@ -581,7 +604,7 @@ article {
 Step 1: Choose the type and date-range of data.
 <div id="datatype">
 Enter your token.
-<input type="text" id="token"/>
+<input type="text" id="token">
 <button id="submitToken">Submit token</button>
 <br>
 Select the dataset.
@@ -608,21 +631,12 @@ Select the dataset.
 <option value="11">Nov</option>
 <option value="12">Dec</option>
 </select>
-<select id="startD">
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-<option value="04">04</option>
-</select>
-<select id="startH">
-<option value="00">00</option>
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-</select>
+<select id="startD"></select>
+<select id="startH"></select>
+<button id="setStartToYtd">Set to yesterday</button>
+Earliest record: <input type="text" id="earliest_rec" disabled>
 </div>
 <div id="end_date"><span>Select the end date.</span>
-<span>
 <select id="endY">
 <option value="2017">2017</option>
 <option value="2016">2016</option>
@@ -643,19 +657,10 @@ Select the dataset.
 <option value="11">Nov</option>
 <option value="12">Dec</option>
 </select>
-<select id="endD">
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-<option value="04">04</option>
-</select>
-<select id="endH">
-<option value="00">00</option>
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-</select>
-</span>
+<select id="endD"></select>
+<select id="endH"></select>
+<button id="setEndToNow">Set to now</button>
+Latest record: <input type="text" id="latest_rec" disabled>
 </div>
 <div id="vtype">
 Choose the variable categories.<br>
