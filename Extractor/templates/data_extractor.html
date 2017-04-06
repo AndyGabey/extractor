@@ -6,6 +6,11 @@
 	<!--link rel=stylesheet type=text/css href="/static/style.css"-->
 	
 <style type="text/css">
+html
+	{
+		font-family: Arial;
+		font-size: 0.85em;
+	}
 body
 	{
 	}
@@ -139,7 +144,19 @@ function compareDateWithNow(dateArray) {
 	if (d > dnow) return false
 	else return true
 }
+// This function auto-lists all years from 1965 and put them into the 
+// selection fields.
+function autoListYears() {	
+	var yearNow = new Date().getUTCFullYear();
+	var year = "";
+	for (var i = yearNow; i >= 1965; i--)
+		{
+			year += '<option value="'+pad(i,4)+'">'+pad(i,4)+'</option>'
+		}
 
+	$("#startY").html(year);
+	$("#endY").html(year);
+}
 // This function auto-lists all the days in a month (01-31) and put them into the 
 // selection fields.
 function autoListDays() {	
@@ -224,30 +241,35 @@ function getDB(token){
 		divideLog();
 	});
 }
-function getDatasetTimeRange(dataset)
-	{
+function changeDateFields(inputDate,target){
+	if (target != "start" && target != "end") return;
+	
+	$('#'+target+'Y').val(inputDate[0]);
+	$('#'+target+'M').val(inputDate[1]);
+	$('#'+target+'D').val(inputDate[2]);
+	$('#'+target+'H').val(inputDate[3]);
+}
+function getDatasetTimeRange(dataset){
+		logMessage("Retrieving dataset information from server.");
 		$.getJSON( "/dataset/"+dataset+".json", function(data) {
-			logMessage("Token is valid.");
-			
-			//console.log(data['dataset']);
+			logMessage("Dataset information received.");
 			
 			$("#earliest_rec").val(data['dataset']['start_date']);
 			$("#latest_rec").val(data['dataset']['end_date']);
 			
 			var startDate = data['dataset']['start_date'].split("-");
-			var startHour = startDate[3].split(":")[1];
+			var startHour = startDate[3].split(":")[0];
 			
-			$("#startY").val(startDate[0]);
-			$("#startM").val(Number(startDate[1]).toString());
-			$("#startD").val(startDate[2]);
-			$("#startH").val(startHour);
+			var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
 			
+			changeDateFields(dateArray,"start");
 			divideLog();
 		}).fail(function(){
 			logMessage("Dataset not found!");
 			divideLog();
 		});
 	}
+
 function checkStepOne() {
 	$("#check_step_one").prop('disabled',true);
 	logMessage("Initialising input sanity check...");
@@ -477,9 +499,10 @@ function retrieveData(url) {
 // Initialise after document is fully loaded.
 $(function(){
 	// Auto-put the days and hours into the selection field in start/end times. 
+	autoListYears();
 	autoListDays();
 	autoListHours();
-	
+	// Define button functions.
 	// Check / Uncheck all functionalities upon clicks on buttons for variable categories.
 	$("#check_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",true);});
 	$("#uncheck_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",false);});
@@ -489,10 +512,7 @@ $(function(){
 		if (token.length > 0) getDB(token);
 		else logMessage("Please enter a token.");
 	});
-	
-	// Initiate check routine upon clicking on button.
 	$("#check_step_one").click(checkStepOne);
-	
 	$("#retrieve_data").click(function(){
 		var url = generateURL();
 		retrieveData(url);
@@ -500,29 +520,61 @@ $(function(){
 	$("#generate_url").click(function(){
 		generateURL();
 	});
-	$("#datasets").on("change",function(){
-		getDatasetTimeRange($(this).val());
-	});
-	
 	$("#setStartToYtd").click(function(){
 		var ytd = new Date();
 		ytd.setDate(ytd.getDate()-1);
 		
-		$("#startY").val(ytd.getUTCFullYear().toString());
-		$("#startM").val((ytd.getUTCMonth()+1).toString());
-		$("#startD").val(pad(ytd.getUTCDate(),2));
-		$("#startH").val(pad(ytd.getUTCHours(),2));
-	
-	});
-	
+		var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
+		
+		changeDateFields(dateArray,"start");
+	});	
 	$("#setEndToNow").click(function(){
 		var ytd = new Date();
 		
-		$("#endY").val(ytd.getUTCFullYear().toString());
-		$("#endM").val((ytd.getUTCMonth()+1).toString());
-		$("#endD").val(pad(ytd.getUTCDate(),2));
-		$("#endH").val(pad(ytd.getUTCHours(),2));
+		var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
+		
+		changeDateFields(dateArray,"end");
+	});
+	$("#setStartToEarliest").click(function(){
+		if ($("#earliest_rec").val() == "")
+			{
+				logMessage("Please select a dataset.");
+				divideLog();
+				return;
+			}
+		
+		var startDate = $("#earliest_rec").val().split("-");
+		var startHour = startDate[3].split(":")[0];
+		
+		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+		
+		changeDateFields(dateArray,"start");
 	
+	});
+	$("#setEndToLatest").click(function(){
+		if ($("#latest_rec").val() == "")
+			{
+				logMessage("Please select a dataset.");
+				divideLog();
+				return;
+			}
+		var startDate = $("#latest_rec").val().split("-");
+		var startHour = startDate[3].split(":")[0];
+		
+		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+		
+		changeDateFields(dateArray,"end");
+	
+	});
+	$("#reset_1").click(function(){
+		$("#token").val("");
+		$("#datasets").html("");
+		$("#earliest_rec").val("");
+		$("#latest_rec").val("");
+	});
+	
+	$("#datasets").on("change",function(){
+		getDatasetTimeRange($(this).val());
 	});
 });
 </script>
@@ -586,7 +638,6 @@ article {
 		    <a class="auth" href="/logout">logout</a>
 		
 	    </header>
-
 	    <nav>
 		<ul>
 		    <li><a href="/data_extractor">Data Extractor</a></li>
@@ -594,30 +645,25 @@ article {
 		    
 			<li><a href="/user_tokens">Tokens</a></li>
 			<li><a href="/users">Users</a></li>
-		    
 		</ul>
 	    </nav>
-
 	    <article>
-		
 <div id="left_panel">
-Step 1: Choose the type and date-range of data.
 <div id="datatype">
-Enter your token.
+Step 1: Enter your token.
 <input type="text" id="token">
 <button id="submitToken">Submit token</button>
-<br>
-Select the dataset.
-<select id="datasets"></select><br>
 </div>
-<div id="start_date">Select the start date.
-<select id="startY">
-<option value="2017">2017</option>
-<option value="2016">2016</option>
-<option value="2015">2015</option>
-<option value="2014">2014</option>
-</select>
-<select id="startM">
+<div>
+Step 2: Select the dataset.
+<select id="datasets"></select>
+</div>
+<div id="start_date">
+Step 3: Select the time range of data.
+<div>
+From: 
+<select id="startY" class="dates"></select>
+<select id="startM" class="dates">
 <option value="1">Jan</option>
 <option value="2">Feb</option>
 <option value="3">Mar</option>
@@ -631,19 +677,16 @@ Select the dataset.
 <option value="11">Nov</option>
 <option value="12">Dec</option>
 </select>
-<select id="startD"></select>
-<select id="startH"></select>
-<button id="setStartToYtd">Set to yesterday</button>
+<select id="startD" class="dates"></select>
+<select id="startH" class="dates"></select>
+Set to: 
+<button id="setStartToYtd">Yesterday</button>
+<button id="setStartToEarliest">Earliest</button>
 Earliest record: <input type="text" id="earliest_rec" disabled>
 </div>
-<div id="end_date"><span>Select the end date.</span>
-<select id="endY">
-<option value="2017">2017</option>
-<option value="2016">2016</option>
-<option value="2015">2015</option>
-<option value="2014">2014</option>
-</select>
-<select id="endM">
+<div id="end_date">To: 
+<select id="endY" class="dates"></select>
+<select id="endM" class="dates">
 <option value="1">Jan</option>
 <option value="2">Feb</option>
 <option value="3">Mar</option>
@@ -657,10 +700,13 @@ Earliest record: <input type="text" id="earliest_rec" disabled>
 <option value="11">Nov</option>
 <option value="12">Dec</option>
 </select>
-<select id="endD"></select>
-<select id="endH"></select>
-<button id="setEndToNow">Set to now</button>
+<select id="endD" class="dates"></select>
+<select id="endH" class="dates"></select>
+Set to: 
+<button id="setEndToNow">Now</button>
+<button id="setEndToLatest">Latest</button>
 Latest record: <input type="text" id="latest_rec" disabled>
+</div>
 </div>
 <div id="vtype">
 Choose the variable categories.<br>
@@ -701,9 +747,7 @@ Select the output format.
 <span>HTTP API URL: <div name="url" id="direct_url"></div></span>
 </div>
 </div>
-
 	    </article>
-
 	    <footer></footer>
 	</div>
     </body>
