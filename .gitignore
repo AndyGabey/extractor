@@ -10,3 +10,4 @@ experiments/*.json
 experiments/*.csv
 extractor.egg-info/
 Extractor.egg-info/
+.idea

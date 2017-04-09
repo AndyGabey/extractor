@@ -1,19 +1,18 @@
-import os
-from collections import defaultdict
 import datetime as dt
 import uuid
+from collections import defaultdict
 
 import flask
 from flask import request, render_template, Response, stream_with_context
 from flask_login import login_required, login_user, logout_user
 
 from Extractor import app, login_manager
-from Extractor.utils import parse_csv, is_safe_url, DATE_FMT
-from Extractor.database import db_session
-from Extractor.models import User, Dataset, Variable, UserToken
-from Extractor.forms import LoginForm, DatasetForm, VariableForm, TokenForm
 from Extractor.data_extractor import DataExtractor
+from Extractor.database import db_session
 from Extractor.exceptions import InvalidUsage
+from Extractor.forms import LoginForm, DatasetForm, VariableForm, TokenForm
+from Extractor.models import User, Dataset, Variable, UserToken
+from Extractor.utils import is_safe_url, DATE_FMT
 
 
 @app.errorhandler(400)
@@ -21,16 +20,19 @@ def page_not_found(e):
     print(e)
     return render_template('400.html'), 400
 
+
 @login_manager.user_loader
 def load_user(user_id):
     user = User.query.get(user_id)
     return user
+
 
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
     response = flask.make_response(render_template('invalid_usage.html', error=error))
     response.status_code = error.status_code
     return response
+
 
 @app.route('/')
 def index():
@@ -87,7 +89,7 @@ def create_dataset():
         if existing_dataset is not None:
             raise InvalidUsage('Dataset {} already exists'.format(form.name.data))
 
-        dataset = Dataset(None, None, None, None, None, None, None, None, None) 
+        dataset = Dataset(None, None, None, None, None, None, None, None, None)
         form.populate_obj(dataset)
 
         db_session.add(dataset)
@@ -95,7 +97,7 @@ def create_dataset():
 
         return flask.redirect(flask.url_for('datasets'))
     return render_template('edit_dataset.html', form=form)
-    
+
 
 @app.route('/dataset/<dataset_name>/edit', methods=['GET', 'POST'])
 @login_required
@@ -109,7 +111,7 @@ def edit_dataset(dataset_name):
 
         return flask.redirect(flask.url_for('datasets'))
     return render_template('edit_dataset.html', form=form)
-    
+
 
 @app.route('/dataset/<dataset_name>/var/create', methods=['GET', 'POST'])
 @login_required
@@ -144,7 +146,8 @@ def edit_var(dataset_name, var_name):
 
         return flask.redirect(flask.url_for('get_dataset_vars', dataset_name=dataset.name))
     return render_template('edit_var.html', form=form)
-    
+
+
 @app.route('/dataset/<dataset_name>/<var_id>/delete', methods=['POST'])
 @login_required
 def delete_var(dataset_name, var_id):
@@ -154,12 +157,13 @@ def delete_var(dataset_name, var_id):
     db_session.commit()
 
     return flask.redirect(flask.url_for('get_dataset_vars', dataset_name=dataset.name))
-    
+
 
 @app.route('/dataset/<dataset_name>/vars')
 def get_dataset_vars(dataset_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
     return render_template('vars.html', dataset=dataset)
+
 
 @app.route('/dataset/<dataset_name>/vars.json')
 def get_dataset_vars_json(dataset_name):
@@ -168,9 +172,10 @@ def get_dataset_vars_json(dataset_name):
     for var in dataset.variables:
         variables[var.vartype].append({'var': var.var,
                                        'long_name': var.long_name,
-                                        'units': var.units})
+                                       'units': var.units})
 
     return flask.jsonify(variables)
+
 
 @app.route('/dataset/<dataset_id>/delete', methods=['POST'])
 @login_required
@@ -181,13 +186,13 @@ def delete_dataset(dataset_id):
     db_session.commit()
 
     return flask.redirect(flask.url_for('datasets'))
-    
+
 
 @app.route('/datasets')
 def datasets():
     datasets = Dataset.query.all()
     return render_template('datasets.html', datasets=datasets)
-    
+
 
 @app.route('/datasets.json')
 def datasets_json():
@@ -200,7 +205,7 @@ def dataset(dataset_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
     return render_template('dataset.html', dataset=dataset)
 
-    
+
 @app.route('/dataset/<dataset_name>.json')
 def dataset_json(dataset_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
@@ -208,23 +213,25 @@ def dataset_json(dataset_name):
                     'long_name': dataset.long_name,
                     'start_date': dataset.start_date.strftime(DATE_FMT),
                     'end_date': dataset.end_date.strftime(DATE_FMT),
-                    'variables': [{'var': v.var, 'long_name': v.long_name, 'units': v.units, 'vartype': v.vartype} for v in dataset.variables]}
+                    'variables': [{'var': v.var, 'long_name': v.long_name, 'units': v.units, 'vartype': v.vartype} for v
+                                  in dataset.variables]}
     return flask.jsonify(dataset=dataset_dict)
-    
+
 
 @app.route('/users')
 @login_required
 def users():
     users = User.query.all()
     return render_template('users.html', users=users)
-    
+
 
 @app.route('/user_tokens')
 @login_required
 def user_tokens():
     user_tokens = UserToken.query.all()
     return render_template('user_tokens.html', user_tokens=user_tokens)
-    
+
+
 @app.route('/user_token/<token_name>.json')
 def user_token_json(token_name):
     token = UserToken.query.filter_by(token=token_name).one()
@@ -234,10 +241,10 @@ def user_token_json(token_name):
                   'max_request_rows': token.max_request_rows,
                   'max_request_files': token.max_request_files,
                   'notes': token.notes,
-                  'datasets': [ds.name for ds in token.datasets]}
-                
+                  'datasets': [{'name': ds.name, 'long_name': ds.long_name} for ds in token.datasets]}
+
     return flask.jsonify(token=token_dict)
-    
+
 
 @app.route('/user_token/create', methods=['GET', 'POST'])
 @login_required

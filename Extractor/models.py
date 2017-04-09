@@ -1,9 +1,9 @@
 import bcrypt
-
-from sqlalchemy import Column, Integer, Float, String, Boolean, DateTime, ForeignKey, Table
+from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
 from Extractor.database import Base
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -33,10 +33,12 @@ class User(Base):
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
+
 association_table = Table('association', Base.metadata,
-    Column('left_id', Integer, ForeignKey('datasets.id')),
-    Column('right_id', Integer, ForeignKey('user_tokens.id'))
-)
+                          Column('left_id', Integer, ForeignKey('datasets.id')),
+                          Column('right_id', Integer, ForeignKey('user_tokens.id'))
+                          )
+
 
 class Dataset(Base):
     __tablename__ = 'datasets'
@@ -57,7 +59,7 @@ class Dataset(Base):
     user_tokens = relationship('UserToken', secondary=association_table, backref='datasets')
 
     def __init__(self, name, long_name, start_date, end_date, time_res,
-                 file_fmt, date_col_name, 
+                 file_fmt, date_col_name,
                  time_col_name, datetime_fmt):
         self.name = name
         self.long_name = long_name
@@ -106,7 +108,7 @@ class UserToken(Base):
 
     dataset_id = Column(Integer, ForeignKey('datasets.id'))
 
-    def __init__(self, token, expiry_date, 
+    def __init__(self, token, expiry_date,
                  max_request_time_hours=12,
                  max_request_rows=100000,
                  max_request_files=5,

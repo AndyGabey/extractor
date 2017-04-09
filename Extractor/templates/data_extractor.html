@@ -1,10 +1,16 @@
-{% extends "layout.html" %}
-
-{% block title %}Data Extractor{% endblock %}
-
-
-{% block head %}
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<title>UoR Met Data Extractor|Data Extractor</title>
+	<!--link rel=stylesheet type=text/css href="/static/style.css"-->
+	
 <style type="text/css">
+html
+	{
+		font-family: Arial;
+		font-size: 0.85em;
+	}
 body
 	{
 	}
@@ -29,7 +35,7 @@ body
 #left_panel div span
 	{
 		width: 50%;
-		background-color: rgba(255,0,255,0.2);
+		background-color: rba(255,0,255,0.2);
 		
 	}
 #left_panel div
@@ -116,6 +122,8 @@ function isValidDate(dateArray) {
 		return true;
 	}
 }
+
+
 // Compares two dates in array form and see if Date2 is larger than Date1.
 // Date arrays must be in (H)H (D)D (M)M YYYY
 function compareDates(dateArrayOne,dateArrayTwo) {
@@ -136,7 +144,19 @@ function compareDateWithNow(dateArray) {
 	if (d > dnow) return false
 	else return true
 }
+// This function auto-lists all years from 1965 and put them into the 
+// selection fields.
+function autoListYears() {	
+	var yearNow = new Date().getUTCFullYear();
+	var year = "";
+	for (var i = yearNow; i >= 1965; i--)
+		{
+			year += '<option value="'+pad(i,4)+'">'+pad(i,4)+'</option>'
+		}
 
+	$("#startY").html(year);
+	$("#endY").html(year);
+}
 // This function auto-lists all the days in a month (01-31) and put them into the 
 // selection fields.
 function autoListDays() {	
@@ -199,6 +219,57 @@ function divideLog() {
 }
 
 // Wrapper function to perform sanity check for Step 1.
+
+function getDB(token){
+	$.getJSON( "/user_token/"+token+".json", function(data) {
+		logMessage("Token is valid.");
+		
+		var datasets = data['token']['datasets'];
+		var dropDown = '<option selected value="---">---</option>';
+		
+		for (var i=0; i<datasets.length;i++)
+			{
+				dropDown += '<option value="'+datasets[i]['name']+'">'+datasets[i]['long_name']+'</option>';
+			}
+		
+		// Begin constructing the variable table dynamically.
+		$("#datasets").html(dropDown);
+		
+		divideLog();
+	}).fail(function(){
+		logMessage("Token not found. Please contact the administrator.");
+		divideLog();
+	});
+}
+function changeDateFields(inputDate,target){
+	if (target != "start" && target != "end") return;
+	
+	$('#'+target+'Y').val(inputDate[0]);
+	$('#'+target+'M').val(inputDate[1]);
+	$('#'+target+'D').val(inputDate[2]);
+	$('#'+target+'H').val(inputDate[3]);
+}
+function getDatasetTimeRange(dataset){
+		logMessage("Retrieving dataset information from server.");
+		$.getJSON( "/dataset/"+dataset+".json", function(data) {
+			logMessage("Dataset information received.");
+			
+			$("#earliest_rec").val(data['dataset']['start_date']);
+			$("#latest_rec").val(data['dataset']['end_date']);
+			
+			var startDate = data['dataset']['start_date'].split("-");
+			var startHour = startDate[3].split(":")[0];
+			
+			var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+			
+			changeDateFields(dateArray,"start");
+			divideLog();
+		}).fail(function(){
+			logMessage("Dataset not found!");
+			divideLog();
+		});
+	}
+
 function checkStepOne() {
 	$("#check_step_one").prop('disabled',true);
 	logMessage("Initialising input sanity check...");
@@ -208,7 +279,7 @@ function checkStepOne() {
 	
 	// Check if user has selected the type of data to extract. Return an error 
 	// message if false.
-	var dataType = $("#type_aws").val();
+	var dataType = $("#datasets").val();
 	
 	if (dataType == "")
 		{
@@ -261,9 +332,6 @@ function checkStepOne() {
 	if (!err)
 		{
 			logMessage("Input sanity check passed.");
-
-			
-			
 			
 			// Need another json to look at the user database to determine what data level
 			// the user can retrieve.
@@ -271,7 +339,7 @@ function checkStepOne() {
 			logMessage("User can access level 2 data.");
 			
 			logMessage("Requesting lists of available variables from server.");
-			$.getJSON( "/ext/dataset/"+dataType+"/vars.json", function( data ) {
+			$.getJSON( "/dataset/"+dataType+"/vars.json", function( data ) {
 				logMessage("Information received.");
 				console.debug(data)
 				console.debug(data["typerain"])
@@ -383,7 +451,7 @@ function generateURL() {
 	
 	if (fields.length > 0)
 		{
-			var url = window.location.protocol + "//" + window.location.host + "/ext/dataset/";
+			var url = window.location.protocol + "//" + window.location.host + "/dataset/";
 	
 			// Append dataset to API
 			url += $("#type_aws").val() + "/get_data?"
@@ -414,7 +482,7 @@ function generateURL() {
 			url += "&data_format="+$("#output_format").val();
 	
 			// Display the URL in the text field
-																									              $("#direct_url").html('<a href="' + url + '">get data url</a>');
+		    $("#direct_url").html('<a href="' + url + '">get data url</a>');
 			return url;
 
 		}
@@ -431,16 +499,20 @@ function retrieveData(url) {
 // Initialise after document is fully loaded.
 $(function(){
 	// Auto-put the days and hours into the selection field in start/end times. 
+	autoListYears();
 	autoListDays();
 	autoListHours();
-	
+	// Define button functions.
 	// Check / Uncheck all functionalities upon clicks on buttons for variable categories.
 	$("#check_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",true);});
 	$("#uncheck_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",false);});
-	
-	// Initiate check routine upon clicking on button.
+	$("#submitToken").click(function(){
+		var token = $("#token").val();
+		
+		if (token.length > 0) getDB(token);
+		else logMessage("Please enter a token.");
+	});
 	$("#check_step_one").click(checkStepOne);
-	
 	$("#retrieve_data").click(function(){
 		var url = generateURL();
 		retrieveData(url);
@@ -448,33 +520,150 @@ $(function(){
 	$("#generate_url").click(function(){
 		generateURL();
 	});
+	$("#setStartToYtd").click(function(){
+		var ytd = new Date();
+		ytd.setDate(ytd.getDate()-1);
+		
+		var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
+		
+		changeDateFields(dateArray,"start");
+	});	
+	$("#setEndToNow").click(function(){
+		var ytd = new Date();
+		
+		var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
+		
+		changeDateFields(dateArray,"end");
+	});
+	$("#setStartToEarliest").click(function(){
+		if ($("#earliest_rec").val() == "")
+			{
+				logMessage("Please select a dataset.");
+				divideLog();
+				return;
+			}
+		
+		var startDate = $("#earliest_rec").val().split("-");
+		var startHour = startDate[3].split(":")[0];
+		
+		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+		
+		changeDateFields(dateArray,"start");
+	
+	});
+	$("#setEndToLatest").click(function(){
+		if ($("#latest_rec").val() == "")
+			{
+				logMessage("Please select a dataset.");
+				divideLog();
+				return;
+			}
+		var startDate = $("#latest_rec").val().split("-");
+		var startHour = startDate[3].split(":")[0];
+		
+		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+		
+		changeDateFields(dateArray,"end");
+	
+	});
+	$("#reset_1").click(function(){
+		$("#token").val("");
+		$("#datasets").html("");
+		$("#earliest_rec").val("");
+		$("#latest_rec").val("");
+	});
+	
+	$("#datasets").on("change",function(){
+		getDatasetTimeRange($(this).val());
+	});
 });
 </script>
-{% endblock %}
 
-{% block body %}
+	<style>
+
+div.container {
+    width: 100%;
+    /*border: 1px solid gray;*/
+}
+
+header, footer {
+    padding: 16px;
+    padding-left: 190px;
+    color: white;
+    background-color: black;
+   /* clear: left; */
+    text-align: left;
+}
+
+html, body {    
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.auth {
+    color: white;
+    text-align: right;
+    text-decoration: none;
+}
+
+nav {
+    float: left;
+    max-width: 160px;
+    margin: 0;
+    padding: 16px;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul a {
+    text-decoration: none;
+    color: inherit;
+}
+
+article {
+    margin-left: 170px;
+    border-left: 1px solid gray;
+    padding: 16px;
+}
+	</style>
+    </head>
+    <body>
+	<div class="container">
+	    <header>
+		<h1>Data Extractor | Data Extractor</h1>
+		
+		    <a class="auth" href="/logout">logout</a>
+		
+	    </header>
+	    <nav>
+		<ul>
+		    <li><a href="/data_extractor">Data Extractor</a></li>
+		    <li><a href="/datasets">Datasets</a></li>
+		    
+			<li><a href="/user_tokens">Tokens</a></li>
+			<li><a href="/users">Users</a></li>
+		</ul>
+	    </nav>
+	    <article>
 <div id="left_panel">
-Step 1: Choose the type and date-range of data.
 <div id="datatype">
-Enter your token.
-<input type="text" id="token"/>
-<br>
-Select the type of data to extract.
-<select id="type_aws">
-    <option value="">---</option>
-    {% for dataset in datasets %}
-    <option value="{{ dataset.name }}">{{ dataset.long_name }}</option>
-    {% endfor %}
-</select>
+Step 1: Enter your token.
+<input type="text" id="token">
+<button id="submitToken">Submit token</button>
 </div>
-<div id="start_date">Select the start date.
-<select id="startY">
-<option value="2017">2017</option>
-<option value="2016">2016</option>
-<option value="2015">2015</option>
-<option value="2014">2014</option>
-</select>
-<select id="startM">
+<div>
+Step 2: Select the dataset.
+<select id="datasets"></select>
+</div>
+<div id="start_date">
+Step 3: Select the time range of data.
+<div>
+From: 
+<select id="startY" class="dates"></select>
+<select id="startM" class="dates">
 <option value="1">Jan</option>
 <option value="2">Feb</option>
 <option value="3">Mar</option>
@@ -488,28 +677,16 @@ Select the type of data to extract.
 <option value="11">Nov</option>
 <option value="12">Dec</option>
 </select>
-<select id="startD">
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-<option value="04">04</option>
-</select>
-<select id="startH">
-<option value="00">00</option>
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-</select>
+<select id="startD" class="dates"></select>
+<select id="startH" class="dates"></select>
+Set to: 
+<button id="setStartToYtd">Yesterday</button>
+<button id="setStartToEarliest">Earliest</button>
+Earliest record: <input type="text" id="earliest_rec" disabled>
 </div>
-<div id="end_date"><span>Select the end date.</span>
-<span>
-<select id="endY">
-<option value="2017">2017</option>
-<option value="2016">2016</option>
-<option value="2015">2015</option>
-<option value="2014">2014</option>
-</select>
-<select id="endM">
+<div id="end_date">To: 
+<select id="endY" class="dates"></select>
+<select id="endM" class="dates">
 <option value="1">Jan</option>
 <option value="2">Feb</option>
 <option value="3">Mar</option>
@@ -523,19 +700,13 @@ Select the type of data to extract.
 <option value="11">Nov</option>
 <option value="12">Dec</option>
 </select>
-<select id="endD">
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-<option value="04">04</option>
-</select>
-<select id="endH">
-<option value="00">00</option>
-<option value="01">01</option>
-<option value="02">02</option>
-<option value="03">03</option>
-</select>
-</span>
+<select id="endD" class="dates"></select>
+<select id="endH" class="dates"></select>
+Set to: 
+<button id="setEndToNow">Now</button>
+<button id="setEndToLatest">Latest</button>
+Latest record: <input type="text" id="latest_rec" disabled>
+</div>
 </div>
 <div id="vtype">
 Choose the variable categories.<br>
@@ -576,4 +747,8 @@ Select the output format.
 <span>HTTP API URL: <div name="url" id="direct_url"></div></span>
 </div>
 </div>
-{% endblock %}
+	    </article>
+	    <footer></footer>
+	</div>
+    </body>
+</html>
