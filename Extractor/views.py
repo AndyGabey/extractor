@@ -89,7 +89,7 @@ def create_dataset():
         if existing_dataset is not None:
             raise InvalidUsage('Dataset {} already exists'.format(form.name.data))
 
-        dataset = Dataset(None, None, None, None, None, None, None, None, None)
+        dataset = Dataset(None, None, None, None, None, None, None, None, None, None)
         form.populate_obj(dataset)
 
         db_session.add(dataset)
@@ -289,6 +289,7 @@ def get_data(dataset_name):
         try:
             extractor.load()
             extractor.validate()
+            extractor.generate_filelist()
         except Exception as e:
             yield extractor.error_message(e)
             return

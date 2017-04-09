@@ -44,5 +44,6 @@
   "file_fmt": "/mnt/data/SonicLicor-Incoming/Level1/{year}/{year}-SMP-{yday}.csv",
   "time_res": 864000,
   "datetime_fmt": "%d/%m/%Y %H:%M:%S.%f",
+  "file_freq": "daily",
   "end_date_ts": "2017-03-10-00:00:00"
 }

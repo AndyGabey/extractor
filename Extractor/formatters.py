@@ -23,15 +23,10 @@ class JsonFormatter(object):
                 json_row.append('"{}"'.format(cell))
         return '[' + ','.join(json_row) + '],'
 
-    def rows(self, rows_data, last=False):
-        """Return json for each row, removing final comma if last"""
-        for row_data in rows_data[:-1]:
+    def rows(self, rows_data):
+        """Return json for each row"""
+        for row_data in rows_data:
             yield self.row(row_data)
-
-        if last:
-            yield self.row(rows_data[-1])[:-1]  # Remove final comma.
-        else:
-            yield self.row(rows_data[-1])
 
     def error_message(self, error_type, msg, hint=None):
         json_error = ['{"']
@@ -84,7 +79,7 @@ class HtmlFormatter(object):
         html_row.append('</tr>\n')
         return ''.join(html_row)
 
-    def rows(self, rows_data, last=False):
+    def rows(self, rows_data):
         """Return html for each row"""
         for row_data in rows_data:
             yield self.row(row_data)
@@ -126,7 +121,7 @@ class CsvFormatter(object):
         html_row.append('\n')
         return ','.join(html_row)
 
-    def rows(self, rows_data, last=False):
+    def rows(self, rows_data):
         """yield csv for each row"""
         for row_data in rows_data:
             yield self.row(row_data)

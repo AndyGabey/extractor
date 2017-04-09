@@ -39,5 +39,6 @@
   "file_fmt": "/mnt/data/Ceilometer-Incoming/Level2/1min/{year}/{year}{month}{day}_1min.csv",
   "time_res": 86400,
   "datetime_fmt": "%Y%m%d %H%M",
+  "file_freq": "daily",
   "end_date_ts": "2017-03-12-00:00:00"
 }

@@ -279,5 +279,6 @@
   "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level1/{year}/{year}-AVG5-{yday}.csv",
   "time_res": 288,
   "datetime_fmt": "%d/%m/%Y %H:%M:%S",
+  "file_freq": "daily",
   "end_date_ts": "2015-08-01-00:00:00"
 }

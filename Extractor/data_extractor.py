@@ -27,8 +27,6 @@ class DataExtractor(object):
         self.response = None
         self.csv_files = None
         self.rows = None
-        self.cols = None
-        self.units = None
 
     def __repr__(self):
         return '<DataExtractor {}>'.format(self.dataset_name)
@@ -132,12 +130,8 @@ class DataExtractor(object):
 
     def run(self):
         timer_start = timer()
-
-        self.generate_filelist()
-
         for line in self.extract_data_stream():
             yield line
-
         timer_end = timer()
         print('Extracted data in {}'.format(timer_end - timer_start))
     
@@ -156,11 +150,12 @@ class DataExtractor(object):
             self.max_request_files = 50
 
     def generate_filelist(self):
-        """Generate list of CSV files to get data from. Complain if any file doesn't exist."""
+        """Generate list of CSV files to get data from. Log if any file doesn't exist."""
         start_date = self.start_date
         end_date = self.end_date
         file_date = dt.datetime(start_date.year, start_date.month, start_date.day)
         csv_files = []
+
         while file_date < end_date:
             file_date_tuple = file_date.timetuple()
 
@@ -171,9 +166,16 @@ class DataExtractor(object):
 
             csv_file = self.dataset.file_fmt.format(**fmt_dict)
             if not os.path.exists(csv_file):
-                raise InvalidUsage('Path {} does not exist'.format(csv_file))
+                print('Path {} does not exist'.format(csv_file))
             csv_files.append(csv_file)
-            file_date += dt.timedelta(days=1)
+
+            if self.dataset.file_freq == 'yearly':
+                # Can't set a timedelta to one year (because of leap years).
+                file_date = dt.datetime(file_date.year + 1, 1, 1)
+            elif self.dataset.file_freq == 'daily':
+                file_date += dt.timedelta(days=1)
+            else:
+                raise Exception('Unknown file_freq')
 
         self.csv_files = csv_files
 
@@ -183,36 +185,57 @@ class DataExtractor(object):
     def extract_data_stream(self):
         """Parse all CSV files sequentially, streaming formatted results"""
         header_sent = False
+        max_rows = self.token.max_request_rows
+        prev_data_row = None
+
+        # Loop over each CSV file, parsing its contents that I care about and yielding formatted
+        # output.
         for i, csv_file in enumerate(self.csv_files):
             self.curr_csv_file = csv_file
-            max_rows = 1e6
 
             try:
-                # TODO: May be able to get units from one file but not another.
-                # TODO: Get if possible (don't just take last).
                 try:
-                    self.cols, self.units, curr_rows = parse_csv(csv_file, 
-                                                                 self.variables, 
-                                                                 self.start_date, 
-                                                                 self.end_date,
-                                                                 self.dataset.date_col_name,
-                                                                 self.dataset.time_col_name,
-                                                                 self.dataset.datetime_fmt,
-                                                                 max_rows)
+                    if not os.path.exists(csv_file):
+                        # N.B. even if file does not exist, I want to print out a suitable header.
+                        cols = ['TimeStamp']
+                        cols.extend(self.variables)
+                        units = []
+                        curr_rows = []
+                    else:
+                        cols, units, curr_rows = parse_csv(csv_file, 
+                                                           self.variables, 
+                                                           self.start_date, 
+                                                           self.end_date,
+                                                           self.dataset.date_col_name,
+                                                           self.dataset.time_col_name,
+                                                           self.dataset.datetime_fmt,
+                                                           max_rows)
                 except Exception as parse_e:
+                    raise parse_e
                     raise Exception('Parse error: {}'.format(parse_e.message))
 
                 try:
                     if i == 0:
-                        yield self.formatter.header(self.cols)
+                        yield self.formatter.header(cols)
                         header_sent = True
                     
-                    if i == len(self.csv_files) - 1:
-                        last = True
-                    else:
-                        last = False
-                    for data_row in self.formatter.rows(curr_rows, last):
-                        yield data_row
+                    if curr_rows:
+                        for data_row in self.formatter.rows(curr_rows):
+                            # Convoluted? Yes a little. The problem is that it's quite hard to
+                            # figure out in advance whether this is the final row or not. 
+                            # Why is it hard? If you have hourly data, and a request comes in for 
+                            # 21:00 - 00:30 the next day, unless you specifically check that the
+                            # data is hourly, and the overlap in the next day is less than that
+                            # freq, a naive algorithm for working out if it's the final row will
+                            # fail. JSON will fail if there is a final comma before the list is
+                            # closed, this way guarantees that only the last row will be affected.
+                            # 
+                            # An alternative would be to check if first, and only add a comma at the
+                            # start if not first. This would require a branch on each loop tho.
+                            if prev_data_row:
+                                yield prev_data_row
+                            prev_data_row = data_row
+
                 except Exception as format_e:
                     raise Exception('Format error: {}'.format(format_e.message))
 
@@ -224,4 +247,10 @@ class DataExtractor(object):
                     yield self.formatter.error_message('server_error', e.message)
                     return
 
+        if prev_data_row:
+            if self.data_format == 'json':
+                # See Convoluted? above for why it's done like this.
+                yield prev_data_row[:-1]  # Remove final comma.
+            else:
+                yield prev_data_row
         yield self.formatter.footer()

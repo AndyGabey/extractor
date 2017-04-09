@@ -114,5 +114,6 @@
   "file_fmt": "/mnt/data/LUMA/RUAO/ReadingFlux_{year}{yday}.csv",
   "time_res": 86400,
   "datetime_fmt": "%Y-%m-%d %H:%M:%S",
+  "file_freq": "daily",
   "end_date_ts": "2017-03-08-00:00:00"
 }

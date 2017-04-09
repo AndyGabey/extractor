@@ -21,6 +21,7 @@ class DatasetForm(FlaskForm):
     date_col_name = StringField('date_col_name', validators=[DataRequired()])
     time_col_name = StringField('time_col_name', validators=[])
     datetime_fmt = StringField('datetime_fmt', validators=[DataRequired()])
+    file_freq = StringField('file_freq ("daily", "yearly")', validators=[DataRequired()])
 
 
 VARTYPE_CHOICES = [

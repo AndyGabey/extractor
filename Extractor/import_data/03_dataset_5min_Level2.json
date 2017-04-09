@@ -229,5 +229,6 @@
   "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/5min/{year}/{year}{month}{day}_5min.csv",
   "time_res": 288,
   "datetime_fmt": "%Y%m%d %H%M",
+  "file_freq": "daily",
   "end_date_ts": "2015-04-30-00:00:00"
 }

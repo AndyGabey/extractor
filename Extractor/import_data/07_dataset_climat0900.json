@@ -129,10 +129,11 @@
     ]
   ],
   "time_col_name": "hhmm",
-  "start_date_ts": "2016-01-01-00:00:00",
+  "start_date_ts": "2014-01-01-00:00:00",
   "long_name": "0900 UTC climat observation - no data thrown back",
   "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/climat/{year}climat.csv",
   "time_res": 1,
   "datetime_fmt": "%Y%m%d %H%M",
-  "end_date_ts": "2017-01-01-00:00:00"
+  "file_freq": "yearly",
+  "end_date_ts": "2016-01-01-00:00:00"
 }

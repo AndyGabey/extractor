@@ -1,5 +1,5 @@
 import bcrypt
-from sqlalchemy import Column, Boolean, Integer, Float, String, DateTime, ForeignKey, Table
+from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey, Table, Enum
 from sqlalchemy.orm import relationship
 
 from Extractor.database import Base
@@ -54,13 +54,14 @@ class Dataset(Base):
     date_col_name = Column(String(100))
     time_col_name = Column(String(100))
     datetime_fmt = Column(String(100))
+    file_freq = Column(Enum('daily', 'yearly'))
 
     variables = relationship('Variable', backref='dataset')
     user_tokens = relationship('UserToken', secondary=association_table, backref='datasets')
 
     def __init__(self, name, long_name, start_date, end_date, time_res,
                  file_fmt, date_col_name,
-                 time_col_name, datetime_fmt):
+                 time_col_name, datetime_fmt, file_freq):
         self.name = name
         self.long_name = long_name
         self.start_date = start_date
@@ -70,6 +71,7 @@ class Dataset(Base):
         self.date_col_name = date_col_name
         self.time_col_name = time_col_name
         self.datetime_fmt = datetime_fmt
+        self.file_freq = file_freq
 
     def __repr__(self):
         return '<Dataset {}>'.format(self.name)
