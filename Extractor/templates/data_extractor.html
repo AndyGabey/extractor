@@ -1,104 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
+{% extends "layout.html" %}
+
+{% block title %}Data Extractor{% endblock %}
+
+{% block head %}
 	<meta charset="utf-8">
-	<title>UoR Met Data Extractor|Data Extractor</title>
 	<!--link rel=stylesheet type=text/css href="/static/style.css"-->
 	
-<style type="text/css">
-html
-	{
-		font-family: Arial;
-		font-size: 0.85em;
-	}
-body
-	{
-	}
-#left_panel
-	{
-		left: 2.5vw;
-		top: 2.5vh;
-		width: 55vw;
-		background-color: rgba(255,255,0,0.2);
-		height: 25vh;
-	}
-#right_panel
-	{
-		left: 60vw;
-		top: 2.5vh;
-		width: 35vw;
-		background-color: rgba(255,0,0,0.2);
-		height: 25vh;
-		overflow: scroll;
-		padding: 5px;
-	}
-#left_panel div span
-	{
-		width: 50%;
-		background-color: rba(255,0,255,0.2);
-		
-	}
-#left_panel div
-	{
-		
-		background-color: rgba(0,0,255,0.2);
-		padding: 5px;
-	}
-#database
-	{
-		top: 30vh;
-		left: 2.5vw;
-		width: 95vw;
-	}
-#variables
-	{
-		text-align: center;
-	}
-#variables table
-	{
-		width: 100%;
-	}
-#variables table .vars
-	{
-		width: 20%;
-	}
-#variables table .scrollable
-	{
-		text-align: left;
-		vertical-align: top;
-		width: 100%;
-		height: 40vh;
-		overflow: auto;
-		background-color: red;
-	}
-#footer
-	{
-		left: 2.5vw;
-		bottom: 2.5vh;
-		width: 95vw;
-		height: 10vh;
-		background-color: red;
-		padding: 5px;
-	}
-#missing_value_options
-	{
-		width: 30%;
-		bottom: 5px;
-		left: 5px;
-	}
-#final
-	{
-		left: 30vw;
-		width: 70%;
-		bottom: 5px;
-	}
-#final input[name="url"]
-	{
-		width: 85%;
-	}
-</style>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
+var URL_BASE = "/ext";
+if (window.location.hostname == "127.0.0.1") {
+    URL_BASE = ""
+}
 // Checks a string to see if it in a valid date format
 // of (D)D/(M)M/(YY)YY and returns true/false
 function isValidDate(dateArray) {
@@ -221,7 +134,7 @@ function divideLog() {
 // Wrapper function to perform sanity check for Step 1.
 
 function getDB(token){
-	$.getJSON( "/ext/user_token/"+token+".json", function(data) {
+	$.getJSON( URL_BASE + "/user_token/"+token+".json", function(data) {
 		logMessage("Token is valid.");
 		
 		var datasets = data['token']['datasets'];
@@ -251,7 +164,7 @@ function changeDateFields(inputDate,target){
 }
 function getDatasetTimeRange(dataset){
 		logMessage("Retrieving dataset information from server.");
-		$.getJSON( "/ext/dataset/"+dataset+".json", function(data) {
+		$.getJSON( URL_BASE + "/dataset/"+dataset+".json", function(data) {
 			logMessage("Dataset information received.");
 			
 			$("#earliest_rec").val(data['dataset']['start_date']);
@@ -339,13 +252,13 @@ function checkStepOne() {
 			logMessage("User can access level 2 data.");
 			
 			logMessage("Requesting lists of available variables from server.");
-			$.getJSON( "/ext//dataset/"+dataType+"/vars.json", function( data ) {
+			$.getJSON(URL_BASE + "/dataset/"+dataType+"/vars.json", function( data ) {
 				logMessage("Information received.");
 				console.debug(data)
 				console.debug(data["typerain"])
 
 				// Begin constructing the variable table dynamically.
-				var tableHTML = '<span style="width: 100%; text-align: center;">Available variables</span><br><table>'+"\n<thead><tr>";
+				var tableHTML = '<span style="width: 100%; text-align: center;">Available variables</span><br><table class="table">'+"\n<thead><tr>";
 
 				// Start with the headers.
 				for (var i = 0; i < varCat.length; i++)
@@ -451,7 +364,7 @@ function generateURL() {
 	
 	if (fields.length > 0)
 		{
-			var url = window.location.protocol + "//" + window.location.host + "/ext/dataset/";
+			var url = window.location.protocol + "//" + window.location.host + URL_BASE + "/dataset/";
 	
 			// Append dataset to API
 			url += $("#datasets").val() + "/get_data?"
@@ -579,176 +492,125 @@ $(function(){
 });
 </script>
 
-	<style>
+{% endblock %}
 
-div.container {
-    width: 100%;
-    /*border: 1px solid gray;*/
-}
+{% block body %}
 
-header, footer {
-    padding: 16px;
-    padding-left: 190px;
-    color: white;
-    background-color: black;
-   /* clear: left; */
-    text-align: left;
-}
+<div class="row" style="padding:25px">
+    <div id="left_panel" class="well col-sm-8">
+        <div id="datatype" class="well well-sm">
+            Enter your token:
+            <input type="text" id="token">
+            <button id="submitToken">Submit token</button>
+        </div>
+        <div class="well well-sm">
+            Select the dataset:
+            <select id="datasets"></select>
+        </div>
+        <div id="start_date" class="well well-sm">
+            Select the time range of data:
+            <table class="table">
+                <tr>
+                    <td>From:</td>
+                    <td><select id="startY" class="dates"></select></td>
+                    <td><select id="startM" class="dates">
+                        <option value="1">Jan</option>
+                        <option value="2">Feb</option>
+                        <option value="3">Mar</option>
+                        <option value="4">Apr</option>
+                        <option value="5">May</option>
+                        <option value="6">Jun</option>
+                        <option value="7">Jul</option>
+                        <option value="8">Aug</option>
+                        <option value="9">Sep</option>
+                        <option value="10">Oct</option>
+                        <option value="11">Nov</option>
+                        <option value="12">Dec</option>
+                    </select></td>
+                    <td><select id="startD" class="dates"></select></td>
+                    <td><select id="startH" class="dates"></select></td>
+                    <td>Set to:</td>
+                    <td><button id="setStartToYtd">Yesterday</button></td>
+                    <td><button id="setStartToEarliest">Earliest</button></td>
+                    <td>Earliest record:</td><td> <input type="text" id="earliest_rec" disabled></td>
+                </tr>
+                <tr id="end_date">
+                    <td>To:</td>
+                    <td><select id="endY" class="dates"></select></td>
+                    <td><select id="endM" class="dates">
+                        <option value="1">Jan</option>
+                        <option value="2">Feb</option>
+                        <option value="3">Mar</option>
+                        <option value="4">Apr</option>
+                        <option value="5">May</option>
+                        <option value="6">Jun</option>
+                        <option value="7">Jul</option>
+                        <option value="8">Aug</option>
+                        <option value="9">Sep</option>
+                        <option value="10">Oct</option>
+                        <option value="11">Nov</option>
+                        <option value="12">Dec</option>
+                    </select></td>
+                    <td><select id="endD" class="dates"></select></td>
+                    <td><select id="endH" class="dates"></select></td>
+                <td>Set to:</td>
+                <td><button id="setEndToNow">Now</button></td>
+                <td><button id="setEndToLatest">Latest</button></td>
+                    <td>Latest record:</td><td> <input type="text" id="latest_rec" disabled></td>
+                </tr>
+           </table>
+        </div>
 
-html, body {    
-    margin: 0 !important;
-    padding: 0 !important;
-}
+        <div id="vtype" class="well well-sm">
+            Choose the variable categories:<br>
+            <input type="checkbox" name="var_type" value="typetemp">Temperature</input>
+            <input type="checkbox" name="var_type" value="typerain">Rainfall</input>
+            <input type="checkbox" name="var_type" value="typesrad">Sun/Radiation</input>
+            <input type="checkbox" name="var_type" value="typewind">Wind</input>
+            <input type="checkbox" name="var_type" value="typepres">Pressure</input>
+            <input type="button" id="check_all_vartypes" value="Check all"></input>
+            <input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input>
+        </div>
+        <div>
+            <input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input>
+        </div>
+    </div>
 
-.auth {
-    color: white;
-    text-align: right;
-    text-decoration: none;
-}
+    <div class="col-sm-4">
+        <div id="right_panel" class="well"></div>
+    </div>
+</div>
+<div class="row" style="padding: 25px;">
+    <div id="database" class="well">
+        <div id="variables"></div>
+    </div>
+</div>
 
-nav {
-    float: left;
-    max-width: 160px;
-    margin: 0;
-    padding: 16px;
-}
+<div class="row" style="padding: 25px;">
+    <div id="footer" class="well">
 
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
+        <div id="missing_value_options">
+            Select a value for the missing data:
+            <select id="missing">
+                <option value="blank">Blank/Empty</option>
+                <option value="9999.9">9999.9</option>
+                <option value="x">x</option>
+            </select>
+            <br>
+            Select the output format:
+            <select id="output_format">
+                <option value="html" selected>Web Page (HTML)</option>
+                <option value="csv">Comma Separated Values (CSV)</option>
+                <option value="json">JavaScript Object Notation (JSON)</option>
+                <!--option value="netcdf">NetCDF</option-->
+            </select>
+        </div>
 
-nav ul a {
-    text-decoration: none;
-    color: inherit;
-}
-
-article {
-    margin-left: 170px;
-    border-left: 1px solid gray;
-    padding: 16px;
-}
-	</style>
-    </head>
-    <body>
-	<div class="container">
-	    <header>
-		<h1>Data Extractor | Data Extractor</h1>
-		
-		    <a class="auth" href="/logout">logout</a>
-		
-	    </header>
-	    <nav>
-		<ul>
-		    <li><a href="data_extractor">Data Extractor</a></li>
-		    <li><a href="datasets">Datasets</a></li>
-		    
-			<li><a href="user_tokens">Tokens</a></li>
-			<li><a href="users">Users</a></li>
-		</ul>
-	    </nav>
-	    <article>
-<div id="left_panel">
-<div id="datatype">
-Step 1: Enter your token.
-<input type="text" id="token">
-<button id="submitToken">Submit token</button>
+        <div id="final">
+            <input type="button" id="generate_url" value="Generate URL"></input>
+            <input type="button" id="retrieve_data" value="Retrieve data"></input>
+            <span>HTTP API URL: <span name="url" id="direct_url"></span></span>
+        </div>
+    </div>
 </div>
-<div>
-Step 2: Select the dataset.
-<select id="datasets"></select>
-</div>
-<div id="start_date">
-Step 3: Select the time range of data.
-<div>
-From: 
-<select id="startY" class="dates"></select>
-<select id="startM" class="dates">
-<option value="1">Jan</option>
-<option value="2">Feb</option>
-<option value="3">Mar</option>
-<option value="4">Apr</option>
-<option value="5">May</option>
-<option value="6">Jun</option>
-<option value="7">Jul</option>
-<option value="8">Aug</option>
-<option value="9">Sep</option>
-<option value="10">Oct</option>
-<option value="11">Nov</option>
-<option value="12">Dec</option>
-</select>
-<select id="startD" class="dates"></select>
-<select id="startH" class="dates"></select>
-Set to: 
-<button id="setStartToYtd">Yesterday</button>
-<button id="setStartToEarliest">Earliest</button>
-Earliest record: <input type="text" id="earliest_rec" disabled>
-</div>
-<div id="end_date">To: 
-<select id="endY" class="dates"></select>
-<select id="endM" class="dates">
-<option value="1">Jan</option>
-<option value="2">Feb</option>
-<option value="3">Mar</option>
-<option value="4">Apr</option>
-<option value="5">May</option>
-<option value="6">Jun</option>
-<option value="7">Jul</option>
-<option value="8">Aug</option>
-<option value="9">Sep</option>
-<option value="10">Oct</option>
-<option value="11">Nov</option>
-<option value="12">Dec</option>
-</select>
-<select id="endD" class="dates"></select>
-<select id="endH" class="dates"></select>
-Set to: 
-<button id="setEndToNow">Now</button>
-<button id="setEndToLatest">Latest</button>
-Latest record: <input type="text" id="latest_rec" disabled>
-</div>
-</div>
-<div id="vtype">
-Choose the variable categories.<br>
-<input type="checkbox" name="var_type" value="typetemp">Temperature</input>
-<input type="checkbox" name="var_type" value="typerain">Rainfall</input>
-<input type="checkbox" name="var_type" value="typesrad">Sun/Radiation</input>
-<input type="checkbox" name="var_type" value="typewind">Wind</input>
-<input type="checkbox" name="var_type" value="typepres">Pressure</input>
-<input type="button" id="check_all_vartypes" value="Check all"></input>
-<input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input>
-</div>
-<div><input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input></div>
-</div>
-<div id="right_panel"></div>
-<div id="database">
-<div id="variables"></div>
-</div>
-<div id="footer">Step 3<br>
-<div id="missing_value_options">
-Select a value for the missing data. 
-<select id="missing">
-<option value="blank">Blank/Empty</option>
-<option value="9999.9">9999.9</option>
-<option value="x">x</option>
-</select>
-<br>
-Select the output format.
-<select id="output_format">
-<option value="html" selected>Web Page (HTML)</option>
-<option value="csv">Comma Separated Values (CSV)</option>
-<option value="json">JavaScript Object Notation (JSON)</option>
-<option value="netcdf">NetCDF</option>
-</select>
-</div>
-<div id="final">
-<input type="button" id="generate_url" value="Generate URL"></input>
-<input type="button" id="retrieve_data" value="Retrieve data"></input>
-<span>HTTP API URL: <div name="url" id="direct_url"></div></span>
-</div>
-</div>
-	    </article>
-	    <footer></footer>
-	</div>
-    </body>
-</html>
+{% endblock  %}
