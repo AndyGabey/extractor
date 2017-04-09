@@ -527,7 +527,7 @@
   "start_date_ts": "2014-08-31-00:00:00",
   "long_name": "5-min max/min processed output",
   "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level2/5min/{year}/{year}{month}{day}_5min_maxmin.csv",
-  "time_res": 86400,
+  "time_res": 288,
   "datetime_fmt": "%Y%m%d %H%M",
   "end_date_ts": "2015-04-30-00:00:00"
 }

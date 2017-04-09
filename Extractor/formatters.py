@@ -33,12 +33,17 @@ class JsonFormatter(object):
         else:
             yield self.row(rows_data[-1])
 
-    def error_message(self, error_type, msg):
+    def error_message(self, error_type, msg, hint=None):
         json_error = ['{"']
         json_error.append(error_type)
-        json_error.append('": "')
+        json_error.append('":"')
         json_error.append(msg)
-        json_error.append('"}')
+        json_error.append('"')
+        if hint:
+            json_error.append(',"hint":"')
+            json_error.append(hint)
+            json_error.append('"')
+        json_error.append('}')
         return ''.join(json_error)
 
     def error_footer(self, msg):
@@ -84,8 +89,11 @@ class HtmlFormatter(object):
         for row_data in rows_data:
             yield self.row(row_data)
 
-    def error_message(self, error_type, msg):
-        return '<div id="error_type">{}: {}</div>'.format(error_type, msg)
+    def error_message(self, error_type, msg, hint=None):
+        html = '<div id="error_type">{}: {}</div>'.format(error_type, msg)
+        if hint:
+            html += '\n<div id="hint">hint: {}</div>'.format(hint)
+        return html
 
     def error_footer(self, msg):
         html_rows = ['</tbody>', '</table>']
@@ -123,8 +131,10 @@ class CsvFormatter(object):
         for row_data in rows_data:
             yield self.row(row_data)
 
-    def error_message(self, error_type, msg):
-        return 'ERROR: {}: {}'.format(error_type, msg)
+    def error_message(self, error_type, msg, hint=None):
+        csv = 'ERROR: {}: {}'.format(error_type, msg)
+        if hint:
+            csv += '\nHINT: {}'.format(hint)
 
     def error_footer(self, msg):
         return 'ERROR: server_error: {}'.format(msg)

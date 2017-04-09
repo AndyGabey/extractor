@@ -104,7 +104,6 @@ class UserToken(Base):
     max_request_time_hours = Column(Float)
     max_request_rows = Column(Integer)
     max_request_files = Column(Integer)
-    #can_stream = Column(Boolean)
     notes = Column(String)
 
     dataset_id = Column(Integer, ForeignKey('datasets.id'))
@@ -113,14 +112,12 @@ class UserToken(Base):
                  max_request_time_hours=12,
                  max_request_rows=100000,
                  max_request_files=5,
-                 can_stream=False,
                  notes=''):
         self.token = token
         self.expiry_date = expiry_date
         self.max_request_time_hours = max_request_time_hours
         self.max_request_rows = max_request_rows
         self.max_request_files = max_request_files
-        #self.can_stream = can_stream
         self.notes = notes
 
     def __repr__(self):

@@ -38,7 +38,7 @@ class DataExtractor(object):
 
     def error_message(self, error):
         if isinstance(error, InvalidUsage):
-            return self.formatter.error_message('usage_error', error.message)
+            return self.formatter.error_message('usage_error', error.message, error.hint)
         else:
             return self.formatter.error_message('server_error', error.message)
 
@@ -49,7 +49,7 @@ class DataExtractor(object):
         except exc.NoResultFound:
             datasets = [d[0] for d in Dataset.query.with_entities(Dataset.name).all()]
             raise InvalidUsage('Dataset {} does not exist'.format(self.dataset_name),
-                               'Available datasets are:w {}'.format(', '.join(datasets)),
+                               'Available datasets are: {}'.format(', '.join(datasets)),
                                404)
 
     def validate(self):
@@ -80,8 +80,6 @@ class DataExtractor(object):
         if start_date > end_date:
             raise InvalidUsage('Start date must be before end date')
 
-        is_stream = True if request.args.get('stream', 'false') == 'true' else False
-
         token_str = request.args.get('token', 'none')
         if token_str != 'none':
             try:
@@ -92,12 +90,17 @@ class DataExtractor(object):
                 if self.dataset not in token.datasets:
                     raise InvalidUsage('Token does not give access to {}'.format(self.dataset.name))
 
-                if (end_date - start_date).total_seconds() / 3600. > token.max_request_time_hours:
+                total_seconds = (end_date - start_date).total_seconds()
+                if total_seconds / 3600. > token.max_request_time_hours:
                     raise InvalidUsage(
                         'Token only gives access to {} hour(s) of data'.format(token.max_request_time_hours))
 
-                if is_stream and not token.can_stream:
-                    raise InvalidUsage('Token does only gives allow streaming')
+                total_days = total_seconds / 86400.
+                rows_requested = total_days * self.dataset.time_res
+                if rows_requested > token.max_request_rows:
+                    raise InvalidUsage(
+                        'Token only gives access to {} row(s) of data'.format(token.max_request_rows),
+                        '{} row(s) requested'.format(rows_requested))
 
             except exc.NoResultFound:
                 raise InvalidUsage('Token {} not found'.format(token_str))
