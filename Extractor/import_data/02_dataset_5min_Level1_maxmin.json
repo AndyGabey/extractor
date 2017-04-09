@@ -1024,7 +1024,7 @@
     ]
   ],
   "time_col_name": "",
-  "start_date_ts": "2014-08-25-00:00:00",
+  "start_date_ts": "2014-08-28-00:00:00",
   "long_name": "5-min max/min logger output",
   "file_fmt": "/mnt/data/labserver_files/METFiDAS-3/Level1/{year}/{year}-MMX5-{yday}.csv",
   "time_res": 288,
