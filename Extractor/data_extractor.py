@@ -7,12 +7,21 @@ from sqlalchemy.orm import exc
 from Extractor.utils import parse_csv, date_parser, DATE_FMT
 from Extractor.models import Dataset, UserToken
 from Extractor.exceptions import InvalidUsage, MaxRowsExceeded
+from Extractor.formatters import JsonFormatter, HtmlFormatter, CsvFormatter
 
 
 class DataExtractor(object):
-    def __init__(self, dataset_name, request):
+    def __init__(self, dataset_name, data_format, request):
         self.dataset_name = dataset_name
         self.request = request
+        self.data_format = data_format
+
+        if self.data_format == 'json':
+            self.formatter = JsonFormatter()
+        elif self.data_format == 'html':
+            self.formatter = HtmlFormatter()
+        elif self.data_format == 'csv':
+            self.formatter = CsvFormatter()
         self.curr_csv_file = None
         self.dataset = None
         self.response = None
@@ -26,6 +35,12 @@ class DataExtractor(object):
 
     def __str__(self):
         return '<DataExtractor {}>'.format(self.dataset_name)
+
+    def error_message(self, error):
+        if isinstance(error, InvalidUsage):
+            return self.formatter.error_message('usage_error', error.message)
+        else:
+            return self.formatter.error_message('server_error', error.message)
 
     def load(self):
         # Load the requested dataset.
@@ -41,10 +56,9 @@ class DataExtractor(object):
         """Validate all request arguments. Save variables to self."""
         request = self.request
         data_format = request.args.get('data_format', 'json')
-        if data_format not in ['html', 'json']:
+        if data_format not in ['html', 'json', 'csv']:
             raise InvalidUsage('Unknown data format: {}'.format(data_format),
-                               'Choices are html, json')
-
+                               'Choices are html, json, csv')
         now = dt.datetime.now()
         start_date_ts = request.args.get('start_date')
         start_date = date_parser(start_date_ts, fmt=DATE_FMT)
@@ -66,6 +80,8 @@ class DataExtractor(object):
         if start_date > end_date:
             raise InvalidUsage('Start date must be before end date')
 
+        is_stream = True if request.args.get('stream', 'false') == 'true' else False
+
         token_str = request.args.get('token', 'none')
         if token_str != 'none':
             try:
@@ -78,7 +94,10 @@ class DataExtractor(object):
 
                 if (end_date - start_date).total_seconds() / 3600. > token.max_request_time_hours:
                     raise InvalidUsage(
-                        'Token does only gives access to {} hour(s) of data'.format(token.max_request_time_hours))
+                        'Token only gives access to {} hour(s) of data'.format(token.max_request_time_hours))
+
+                if is_stream and not token.can_stream:
+                    raise InvalidUsage('Token does only gives allow streaming')
 
             except exc.NoResultFound:
                 raise InvalidUsage('Token {} not found'.format(token_str))
@@ -108,21 +127,23 @@ class DataExtractor(object):
 
         self._set(start_date, end_date, variables, token, data_format, missing_val)
 
-    def run(self, stream=False):
+    def run(self):
         timer_start = timer()
 
         self.generate_filelist()
 
         for line in self.extract_data_stream():
             yield line
+
+        timer_end = timer()
+        print('Extracted data in {}'.format(timer_end - timer_start))
     
     def _set(self, start_date, end_date, variables, token=None, data_format='json', missing_val=None):
         self.start_date = start_date
         self.end_date = end_date
         self.variables = variables
         self.token = token
-        self.data_format = data_format
-        self.missing_val = missing_val
+        self.formatter.missing_val = missing_val
 
         if self.token:
             self.max_request_rows = token.max_request_rows
@@ -154,150 +175,50 @@ class DataExtractor(object):
         self.csv_files = csv_files
 
         if len(self.csv_files) > self.max_request_files:
-            raise InvalidUsage('Token does only gives access to {} file(s)'.format(self.max_request_files))
-
-    def extract_data(self):
-        """Parse all CSV files sequentially, storing results"""
-        # Parse files. 
-        self.rows = []
-        for csv_file in self.csv_files:
-            curr_rows = len(self.rows)
-            max_rows = self.max_request_rows - curr_rows
-            self.curr_csv_file = csv_file
-            # TODO: May be able to get units from one file but not another.
-            # TODO: Get if possible (don't just take last).
-            try:
-                self.cols, self.units, curr_rows = parse_csv(csv_file,
-                                                             self.variables,
-                                                             self.start_date,
-                                                             self.end_date,
-                                                             self.dataset.date_col_name,
-                                                             self.dataset.time_col_name,
-                                                             self.dataset.datetime_fmt,
-                                                             max_rows)
-            except MaxRowsExceeded:
-                raise InvalidUsage('Token only allows access to {} rows'.format(self.max_request_rows))
-            self.rows.extend(curr_rows)
+            raise InvalidUsage('Token only gives access to {} file(s)'.format(self.max_request_files))
 
     def extract_data_stream(self):
-        """Parse all CSV files sequentially, storing results"""
-
-        written_header = False
-        # Parse files. 
+        """Parse all CSV files sequentially, streaming formatted results"""
+        header_sent = False
         for i, csv_file in enumerate(self.csv_files):
             self.curr_csv_file = csv_file
             max_rows = 1e6
 
-            # TODO: May be able to get units from one file but not another.
-            # TODO: Get if possible (don't just take last).
             try:
-                self.cols, self.units, curr_rows = parse_csv(csv_file, 
-                                                             self.variables, 
-                                                             self.start_date, 
-                                                             self.end_date,
-                                                             self.dataset.date_col_name,
-                                                             self.dataset.time_col_name,
-                                                             self.dataset.datetime_fmt,
-                                                             max_rows)
-                if not written_header:
-                    for header_line in self.format_header_json(self.cols):
-                        yield header_line
-                    written_header = True
-                
-                if i == len(self.csv_files) - 1:
-                    last = True
-                else:
-                    last = False
-                for data_row in self.format_data_json(curr_rows, last):
-                    yield data_row
+                # TODO: May be able to get units from one file but not another.
+                # TODO: Get if possible (don't just take last).
+                try:
+                    self.cols, self.units, curr_rows = parse_csv(csv_file, 
+                                                                 self.variables, 
+                                                                 self.start_date, 
+                                                                 self.end_date,
+                                                                 self.dataset.date_col_name,
+                                                                 self.dataset.time_col_name,
+                                                                 self.dataset.datetime_fmt,
+                                                                 max_rows)
+                except Exception as parse_e:
+                    raise Exception('Parse error: {}'.format(parse_e.message))
 
-            except MaxRowsExceeded as mre:
-                raise InvalidUsage('Token only allows access to {} rows'.format(self.max_request_rows))
-
-        yield self.format_footer_json()
-
-    def format_header_json(self, cols):
-        json_rows = ['{"header": [']
-
-        header_row = []
-        for col in cols:
-            header_row.append('"{}"'.format(col))
-        json_rows.append(','.join(header_row))
-        json_rows.append('], "data": [')
-        return json_rows
-
-    def format_data_json(self, rows, last):
-        def format_row(row):
-            json_row = []
-            for cell in row:
-                if cell is None:
-                    json_row.append('"{}"'.format(self.missing_val))
-                else:
-                    json_row.append('"{}"'.format(cell))
-            return '[' + ','.join(json_row) + '],'
-
-        print(len(rows))
-        for row in rows[:-1]:
-            yield format_row(row)
-
-        if last:
-            yield format_row(rows[-1])[:-1]
-        else:
-            yield format_row(rows[-1])
-
-    def format_footer_json(self):
-        return ']}'
-
-
-    def format_response(self):
-        cols, units, rows = self.cols, self.units, self.rows
-        # Format response.
-        if self.data_format == 'html':
-            html_rows = ['<table border="1">']
-
-            header_row = ['<thead><tr>']
-            for col in cols:
-                header_row.append('<th>{}</th>'.format(col))
-            header_row.append('</tr></thead>')
-            html_rows.append(''.join(header_row))
-
-            html_rows.append('<tbody>')
-            for row in rows:
-                html_row = ['<tr>']
-                for cell in row:
-                    if cell is None:
-                        html_row.append('<td>{}</td>'.format(self.missing_val))
+                try:
+                    if i == 0:
+                        yield self.formatter.header(self.cols)
+                        header_sent = True
+                    
+                    if i == len(self.csv_files) - 1:
+                        last = True
                     else:
-                        html_row.append('<td>{}</td>'.format(cell))
-                html_row.append('</tr>')
-                html_rows.append(''.join(html_row))
-            html_rows.append('</tbody>')
-            html_rows.append('</table>')
+                        last = False
+                    for data_row in self.formatter.rows(curr_rows, last):
+                        yield data_row
+                except Exception as format_e:
+                    raise Exception('Format error: {}'.format(format_e.message))
 
-            payload = '\n'.join(html_rows)
+            except Exception as e:
+                if header_sent:
+                    yield self.formatter.error_footer(e.message)
+                    return
+                else:
+                    yield self.formatter.error_message('server_error', e.message)
+                    return
 
-        elif self.data_format == 'json':
-            json_rows = ['{"header": [']
-
-            header_row = []
-            for col in cols:
-                header_row.append('"{}"'.format(col))
-            json_rows.append(','.join(header_row))
-            json_rows.append('], "data": [')
-
-            json_data_rows = []
-            for row in rows:
-                json_row = []
-                for cell in row:
-                    if cell is None:
-                        json_row.append('"{}"'.format(self.missing_val))
-                    else:
-                        json_row.append('"{}"'.format(cell))
-                json_data_rows.append('[' + ','.join(json_row) + ']')
-            json_rows.append(','.join(json_data_rows))
-            json_rows.append(']}')
-            payload = ''.join(json_rows)
-        else:
-            raise Exception('Unexpected data format: {}'.format(self.data_format))
-
-        return payload
+        yield self.formatter.footer()

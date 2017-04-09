@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, FloatField, PasswordField, DateTimeField,
-                     SelectField, SelectMultipleField)
+                     SelectField, SelectMultipleField, BooleanField)
 from wtforms.validators import DataRequired, Length
 
 from Extractor.utils import DATE_FMT
@@ -46,4 +46,5 @@ class TokenForm(FlaskForm):
     max_request_time_hours = FloatField('max_request_time_hours', validators=[DataRequired()])
     max_request_rows = StringField('max_request_rows', validators=[DataRequired()])
     max_request_files = StringField('max_request_files', validators=[DataRequired()])
+    #can_stream = BooleanField('can_stream')
     dataset_ids = SelectMultipleField('datasets', coerce=int, choices=[], validators=[])

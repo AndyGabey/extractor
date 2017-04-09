@@ -283,27 +283,18 @@ def delete_token(token_id):
 
 @app.route('/dataset/<dataset_name>/get_data')
 def get_data(dataset_name):
+    data_format = request.args.get('data_format', 'json')
     def streamer():
-        extractor = DataExtractor(dataset_name, request)
-        extractor.load()
-        extractor.validate()
-        for line in extractor.run(stream=True):
+        extractor = DataExtractor(dataset_name, data_format, request)
+        try:
+            extractor.load()
+            extractor.validate()
+        except Exception as e:
+            yield extractor.error_message(e)
+            return
+
+        for line in extractor.run():
             yield line
 
-    return Response(stream_with_context(streamer()), mimetype='text/json')
-
-    try:
-        if request.args.get('stream', 'false') == 'false':
-            return extractor.run()
-        else:
-            def streamer():
-                for line in extractor.run(stream=True):
-                    print(line)
-                    yield line
-            return Response(stream_with_context(streamer()), mimetype='text/json')
-    except Exception as e:
-        # Pokemon exception handling!
-        hint = ''
-        if extractor.curr_csv_file:
-            hint += 'Current CSV file: {}\n'.format(extractor.curr_csv_file)
-        raise InvalidUsage(e.message, hint)
+    mimetype = 'text/{}'.format(data_format)
+    return Response(stream_with_context(streamer()), mimetype=mimetype)

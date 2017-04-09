@@ -221,7 +221,7 @@ function divideLog() {
 // Wrapper function to perform sanity check for Step 1.
 
 function getDB(token){
-	$.getJSON( "/user_token/"+token+".json", function(data) {
+	$.getJSON( "/ext/user_token/"+token+".json", function(data) {
 		logMessage("Token is valid.");
 		
 		var datasets = data['token']['datasets'];
@@ -251,7 +251,7 @@ function changeDateFields(inputDate,target){
 }
 function getDatasetTimeRange(dataset){
 		logMessage("Retrieving dataset information from server.");
-		$.getJSON( "/dataset/"+dataset+".json", function(data) {
+		$.getJSON( "/ext/dataset/"+dataset+".json", function(data) {
 			logMessage("Dataset information received.");
 			
 			$("#earliest_rec").val(data['dataset']['start_date']);
@@ -339,7 +339,7 @@ function checkStepOne() {
 			logMessage("User can access level 2 data.");
 			
 			logMessage("Requesting lists of available variables from server.");
-			$.getJSON( "/dataset/"+dataType+"/vars.json", function( data ) {
+			$.getJSON( "/ext//dataset/"+dataType+"/vars.json", function( data ) {
 				logMessage("Information received.");
 				console.debug(data)
 				console.debug(data["typerain"])
@@ -451,10 +451,10 @@ function generateURL() {
 	
 	if (fields.length > 0)
 		{
-			var url = window.location.protocol + "//" + window.location.host + "/dataset/";
+			var url = window.location.protocol + "//" + window.location.host + "/ext/dataset/";
 	
 			// Append dataset to API
-			url += $("#type_aws").val() + "/get_data?"
+			url += $("#datasets").val() + "/get_data?"
 
 			// Append token to API
 			url += "token=" + $("#token").val();
@@ -640,11 +640,11 @@ article {
 	    </header>
 	    <nav>
 		<ul>
-		    <li><a href="/data_extractor">Data Extractor</a></li>
-		    <li><a href="/datasets">Datasets</a></li>
+		    <li><a href="data_extractor">Data Extractor</a></li>
+		    <li><a href="datasets">Datasets</a></li>
 		    
-			<li><a href="/user_tokens">Tokens</a></li>
-			<li><a href="/users">Users</a></li>
+			<li><a href="user_tokens">Tokens</a></li>
+			<li><a href="users">Users</a></li>
 		</ul>
 	    </nav>
 	    <article>
