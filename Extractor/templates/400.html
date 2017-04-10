@@ -3,6 +3,6 @@
 {% block title %}ERROR {{ error.status_code }}{% endblock %}
 
 {% block body %}
-<h1 id="error_message">{{ error.message }}</h1>
-<p>{{ error.hint }}</p>
+<div class="alert alert-warning"><strong>Warning:</strong> {{ error.description }}</div>
+<p>{{ hint }}</p>
 {% endblock %}
