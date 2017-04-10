@@ -16,9 +16,9 @@ from Extractor.utils import is_safe_url, DATE_FMT
 
 
 @app.errorhandler(400)
-def page_not_found(e):
-    print(e)
-    return render_template('400.html'), 400
+def page_not_found(error):
+    print(error)
+    return render_template('400.html', error=error), 400
 
 
 @login_manager.user_loader
@@ -56,9 +56,12 @@ def login():
         # Login and validate the user.
         # user should be an instance of your `User` class
 
-        user = User.query.filter_by(name=form.name.data).one()
+        user = User.query.filter_by(name=form.name.data).one_or_none()
+        auth_error_msg = 'Authentication error: Username or password is incorrect'
+        if not user:
+            flask.abort(400, auth_error_msg)
         if not user.check_password(form.password.data):
-            return flask.abort(400)
+            return flask.abort(400, auth_error_msg)
         login_user(user)
 
         flask.flash('Logged in successfully.')
@@ -137,7 +140,7 @@ def create_var(dataset_name):
 @login_required
 def edit_var(dataset_name, var_name):
     dataset = Dataset.query.filter_by(name=dataset_name).one()
-    var = dataset.variables.filter_by(var=var_name).one()
+    var = Variable.query.filter_by(dataset=dataset, var=var_name).one()
     form = VariableForm(obj=var)
 
     if form.validate_on_submit():
