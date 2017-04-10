@@ -6,7 +6,7 @@
 <h1>Users</h1>
 
 <table class="table">
-    <thead><tr><td>ID</td><td>Name</td><td>Email</td></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th></tr></thead>
 {% for user in users %}
     <tr><td>{{ user.id }}</td><td>{{ user.name }}</td><td>{{ user.email }}</td></tr>
 {% endfor %}
