@@ -15,7 +15,17 @@ div
 		width: 20%;
 		text-align: center;
 	}
-</style>	
+
+button.time-set {
+    width: 90px;
+}
+
+span.inline-span {
+    text-align: right;
+    display: inline-block;
+}
+
+</style>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 function clearVarBox(){
@@ -537,58 +547,70 @@ $(function(){
         <div class="well well-sm">
             Select the time range of data (UTC):
             <br>
-            <table class="table" style="padding: 0px; width: 100%;">
-                <tr id="start_date" style="padding: 0px;">
-                    <td>From:
-                    <select id="startY" class="dates"></select>
-                    <select id="startM" class="dates">
-                        <option value="1">Jan</option>
-                        <option value="2">Feb</option>
-                        <option value="3">Mar</option>
-                        <option value="4">Apr</option>
-                        <option value="5">May</option>
-                        <option value="6">Jun</option>
-                        <option value="7">Jul</option>
-                        <option value="8">Aug</option>
-                        <option value="9">Sep</option>
-                        <option value="10">Oct</option>
-                        <option value="11">Nov</option>
-                        <option value="12">Dec</option>
-                    </select>
-                    <select id="startD" class="dates"></select>
-                    <select id="startH" class="dates"></select></td>
-                    <td>
-                    Set to:
-                    <button id="setStartToYtd">Yesterday</button>
-                    <button id="setStartToEarliest">Earliest</button></td>
-                    <td>Earliest record: <input type="text" id="earliest_rec" disabled></td>
-                </tr>
-                <tr id="end_date" style="padding: 0px;">
-                    <td>To:
-                    <select id="endY" class="dates"></select>
-                    <select id="endM" class="dates">
-                        <option value="1">Jan</option>
-                        <option value="2">Feb</option>
-                        <option value="3">Mar</option>
-                        <option value="4">Apr</option>
-                        <option value="5">May</option>
-                        <option value="6">Jun</option>
-                        <option value="7">Jul</option>
-                        <option value="8">Aug</option>
-                        <option value="9">Sep</option>
-                        <option value="10">Oct</option>
-                        <option value="11">Nov</option>
-                        <option value="12">Dec</option>
-                    </select>
-                    <select id="endD" class="dates"></select>
-                    <select id="endH" class="dates"></select></td>
-                <td>Set to:
-                	<button id="setEndToNow">Now</button>
-                	<button id="setEndToLatest">Latest</button></td>
-                <td>Latest record: <input type="text" id="latest_rec" disabled></td>
-                </tr>
-           </table>
-            <br>
+            <div style="padding: 0px; width: 100%;">
+                <div id="start_date" style="padding: 0px;">
+                    <span class="inline-span">
+                        <span class="inline-span" style="width:50px">From:</span>
+                        <select id="startY" class="dates"></select>
+                        <select id="startM" class="dates">
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">Jun</option>
+                            <option value="7">Jul</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                        <select id="startD" class="dates"></select>
+                        <select id="startH" class="dates"></select>
+                    </span>
+                    <span class="inline-span">
+                        <span class="inline-span" style="width:50px">Set to:</span>
+                        <button id="setStartToYtd" class="time-set">Yesterday</button>
+                        <button id="setStartToEarliest" class="time-set">Earliest</button>
+                    </span>
+                    <span class="inline-span">
+                        <span class="inline-span" style="width:100px">Earliest record:</span>
+                        <input type="text" id="earliest_rec" disabled>
+                    </span>
+                </div>
+                <div id="end_date" style="padding: 0px;">
+                    <span class="inline-span">
+                        <span style="text-align:right; display:inline-block; width:50px">To:</span>
+                        <select id="endY" class="dates"></select>
+                        <select id="endM" class="dates">
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">Jun</option>
+                            <option value="7">Jul</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                        <select id="endD" class="dates"></select>
+                        <select id="endH" class="dates"></select>
+                    </span>
+                    <span class="inline-span">
+                        <span class="inline-span" style="width:50px">Set to:</span>
+                        <button id="setEndToNow" class="time-set">Now</button>
+                        <button id="setEndToLatest" class="time-set">Latest</button>
+                    </span>
+                    <span class="inline-span">
+                        <span class="inline-span" style="width:100px">Latest record:</span>
+                        <input type="text" id="latest_rec" disabled>
+                    </span>
+                </div>
+            </div>
             <span style="font-size: 0.75em;">The date range will change based on the selected database.</span>
         </div>
 
