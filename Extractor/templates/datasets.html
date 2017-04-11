@@ -20,8 +20,8 @@
     <tbody>
 	{% for dataset in datasets %}
 	<tr>
-	    <td>{{ dataset.name }}</td>
-	    <td><a href="{{url_for('dataset', dataset_name=dataset.name)}}">{{ dataset.name }}</a></td>
+	    <td>{{ dataset.long_name }}</td>
+	    <td><a href="{{url_for('dataset', dataset_name=dataset.name)}}">{{url_for('dataset', dataset_name=dataset.name)}}</a></td>
 	    <td><a href="{{url_for('get_dataset_vars', dataset_name=dataset.name)}}">Variables</a></td>
 	    {% if current_user.is_authenticated %}
 	    <td>
