@@ -80,7 +80,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return flask.redirect('/')
+    return flask.redirect(flask.url_for('index'))
 
 
 @app.route('/dataset/create', methods=['GET', 'POST'])
