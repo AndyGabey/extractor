@@ -301,7 +301,8 @@ function checkStepOne() {
 						else if (catName == "typetemp") var longName = "Temperature";
 						else if (catName == "typewind") var longName = "Wind";
 						else if (catName == "typesrad") var longName = "Radiation";
-						else if (catName == "typepres") var longName = "Pressure";
+                        else if (catName == "typepres") var longName = "Pressure";
+						else if (catName == "typenull") var longName = "Other";
 						else var longName = varCat[i].value;
 						
 						tableHTML += "<th>"+longName+"</th>";
@@ -620,12 +621,13 @@ $(function(){
             <input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input><br>
             <table style="width: 100%;" id="var_choices">
             	<tr>
-            		<td><input type="checkbox" name="var_type" value="typetemp"> Temperature</input></td>
-            		<td><input type="checkbox" name="var_type" value="typerain"> Rainfall</input></td>
-            		<td><input type="checkbox" name="var_type" value="typesrad"> Sun/Radiation</input></td>
-            		<td><input type="checkbox" name="var_type" value="typewind"> Wind</input></td>
-            		<td><input type="checkbox" name="var_type" value="typepres"> Pressure</input></td>
-            </tr>
+            		<th><label><input type="checkbox" name="var_type" value="typetemp"> Temperature</label></th>
+            		<th><label><input type="checkbox" name="var_type" value="typerain"> Rainfall</label></th>
+            		<th><label><input type="checkbox" name="var_type" value="typesrad"> Sun/Radiation</label></th>
+            		<th><label><input type="checkbox" name="var_type" value="typewind"> Wind</label></th>
+                    <th><label><input type="checkbox" name="var_type" value="typepres"> Pressure</label></th>
+                    <th><label><input type="checkbox" name="var_type" value="typenull"> Other</label></th>
+                </tr>
             </table>
         </div>
         <div>
