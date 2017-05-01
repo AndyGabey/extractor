@@ -123,7 +123,7 @@ def create_var(dataset_name):
     form = VariableForm()
 
     if form.validate_on_submit():
-        existing_variable = Variable.query.filter_by(var=form.var.data).one_or_none()
+        existing_variable = Variable.query.filter_by(dataset=dataset, var=form.var.data).one_or_none()
         if existing_variable is not None:
             raise InvalidUsage('Variable {} already exists'.format(form.var.data))
         variable = Variable('', '', '', '')
