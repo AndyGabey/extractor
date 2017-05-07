@@ -507,9 +507,16 @@ $(function(){
 			}
 		var startDate = $("#latest_rec").val().split("-");
 		var startHour = startDate[3].split(":")[0];
-		
-		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
-		
+
+        var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+		// Check to see whether latestDate is in the future; set to now if so.
+		var latestDate = new Date(dateArray[0], dateArray[1] - 1, dateArray[2] - 1, dateArray[3]);
+        var ytd = new Date();
+	    if (latestDate > ytd)
+            {
+                var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
+            }
+
 		changeDateFields(dateArray,"end");
 	
 	});
