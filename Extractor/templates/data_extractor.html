@@ -192,20 +192,33 @@ function changeDateFields(inputDate,target){
 	$('#'+target+'D').val(inputDate[2]);
 	$('#'+target+'H').val(inputDate[3]);
 }
+var earliest_rec="";
+var latest_rec="";
 function getDatasetTimeRange(dataset){
 		logMessage("Retrieving dataset information from server.");
 		$.getJSON( URL_BASE + "/dataset/"+dataset+".json", function(data) {
 			logMessage("Dataset information received.");
-			
-			$("#earliest_rec").val(data['dataset']['start_date']);
-			$("#latest_rec").val(data['dataset']['end_date']);
+			earliest_rec = 	data['dataset']['start_date'];
+			latest_rec = 	data['dataset']['end_date'];
+
+			//$("#earliest_rec").val(data['dataset']['start_date']);
+			//$("#latest_rec").val(data['dataset']['end_date']);
 			
 			var startDate = data['dataset']['start_date'].split("-");
-			var startHour = startDate[3].split(":")[0];
+			var endDate = data['dataset']['end_date'].split("-");
+			// var startHour = startDate[3].split(":")[0];
+                        var startHour = "00";
 			
-			var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
-			
-			changeDateFields(dateArray,"start");
+			var startDateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+			var endDateArray = [endDate[0],Number(endDate[1]).toString(),endDate[2],"23"];
+		        if (!compareDateWithNow(endDateArray.reverse())){
+				// If end date in future, cap final date as today
+			 	var ytd = new Date();	
+				ytd.setDate(ytd.getDate()-1);
+				endDateArray = [ytd.getUTCFullYear().toString(), (ytd.getUTCMonth()+1).toString(), pad(ytd.getUTCDate(),2), "23"].reverse()
+			}
+			changeDateFields(startDateArray,"start");
+			changeDateFields(endDateArray.reverse(),"end");
 			divideLog();
 		}).fail(function(){
 			logMessage("Dataset not found!");
@@ -230,7 +243,7 @@ function checkStepOne() {
 			err = 1; 
 		}
 	
-	// Retrieve user's input dates from the form.
+	// Retrieve users input dates from the form.
 	var startDateArray = new Array($("#startH").val(),$("#startD").val(),$("#startM").val(),$("#startY").val()),
 		endDateArray = new Array($("#endH").val(),$("#endD").val(),$("#endM").val(),$("#endY").val());
 	
@@ -319,8 +332,6 @@ function checkStepOne() {
 						tableHTML += '<td class="vars"><div class="scrollable">';
 						
 						// Generate a random number for the fake number of variables.
-					    //console.debug(varCat[i]);
-					    //console.debug(varCat[i].value);
 						var vars = data[varCat[i].value];
 						
 						if (vars)
@@ -339,7 +350,7 @@ function checkStepOne() {
 										var varName = vars[j]["long_name"];
 										
 										// Add the variable checkbox to the table.
-										tableHTML += '<input type="checkbox" name="var" value="'+vars[j]["var"]+'" vartype="'+varCat[i].value+'">'+varName+'</input>';
+										tableHTML += '<label><input type="checkbox" name="var" value="'+vars[j]["var"]+'" vartype="'+varCat[i].value+'">'+varName+'</label>';
 										
 										// Add new line html tag if it is not the last var.
 										if (j < numOfVar-1) tableHTML += "<br>";
@@ -360,7 +371,7 @@ function checkStepOne() {
 				// Generate the check / uncheck buttons dynamically
 				for (var i = 0; i < varCat.length; i++)
 					{	
-						tableHTML += '<td class="foot"><input type="button" class="check_all_var" value="Check all" target="'+varCat[i].value+'"></input><br><input type="button" class="uncheck_all_var" value="Uncheck all" target="'+varCat[i].value+'"></input></td>';
+						tableHTML += '<td class="foot"><input type="button" class="check_all_var" value="All" target="'+varCat[i].value+'"></input>&nbsp;<input type="button" class="uncheck_all_var" value="None" target="'+varCat[i].value+'"></input></td>';
 					}
 				
 				// Complete table
@@ -453,6 +464,10 @@ $(function(){
 	// Check / Uncheck all functionalities upon clicks on buttons for variable categories.
 	$("#check_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",true);});
 	$("#uncheck_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",false);});
+	$("#submitPublic").click(function(){
+		 $("#token").val("public");
+	         $("#submitToken").trigger( "click" );});
+
 	$("#submitToken").click(function(){
 		var token = $("#token").val();
 		
@@ -483,14 +498,14 @@ $(function(){
 		changeDateFields(dateArray,"end");
 	});
 	$("#setStartToEarliest").click(function(){
-		if ($("#earliest_rec").val() == "")
+		if (earliest_rec == "")
 			{
 				logMessage("Please select a dataset.");
 				divideLog();
 				return;
 			}
 		
-		var startDate = $("#earliest_rec").val().split("-");
+		var startDate = earliest_rec.split("-");
 		var startHour = startDate[3].split(":")[0];
 		
 		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
@@ -499,16 +514,17 @@ $(function(){
 	
 	});
 	$("#setEndToLatest").click(function(){
-		if ($("#latest_rec").val() == "")
+		if (latest_rec == "")
 			{
 				logMessage("Please select a dataset.");
 				divideLog();
 				return;
 			}
-		var startDate = $("#latest_rec").val().split("-");
+		//var startDate = $("#latest_rec").val().split("-");
+		var startDate = latest_rec.split("-")
 		var startHour = startDate[3].split(":")[0];
 
-        var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
+	        var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
 		// Check to see whether latestDate is in the future; set to now if so.
 		var latestDate = new Date(dateArray[0], dateArray[1] - 1, dateArray[2] - 1, dateArray[3]);
         var ytd = new Date();
@@ -516,16 +532,18 @@ $(function(){
             {
                 var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
             }
-
-		changeDateFields(dateArray,"end");
+ 	    changeDateFields(dateArray,"end");
 	
 	});
 	$("#reset_1").click(function(){
 		$("#token").val("");
 		$("#datasets").html("");
-		$("#earliest_rec").val("");
-		$("#latest_rec").val("");
+		//$("#earliest_rec").val("");
+                earliest_rec = "";
+                latest_rec = "";
+		// $("#latest_rec").val("");
 		clearVarBox();
+                $('input[name="var_type"]').prop("checked",false);
 		infoDatabase();
 	});
 	
@@ -542,18 +560,19 @@ $(function(){
 <div class="row">
     <div id="left_panel" class="well col-sm-8">
         <div id="datatype" class="well well-sm">
-            Enter your token:
+            Access token
             <input type="text" id="token">
-            <button id="submitToken">Submit token</button><br>
+            <button id="submitToken">Submit token</button> or 
+            <button id="submitPublic">View public datasets</button><br>
             <span style="font-size: 0.75em;">A valid token is required to use this utility. Please request one from the administrator if required.</span>
         </div>
         <div class="well well-sm">
-            Select the dataset:
+            Select dataset:
             <select id="datasets"></select><br>
             <span id="dataset_info" style="font-size: 0.75em;"></span>
         </div>
         <div class="well well-sm">
-            Select the time range of data (UTC):
+            Request time range (UTC):
             <br>
             <div style="padding: 0px; width: 100%;">
                 <div id="start_date" style="padding: 0px;">
@@ -582,10 +601,10 @@ $(function(){
                         <button id="setStartToYtd" class="time-set">Yesterday</button>
                         <button id="setStartToEarliest" class="time-set">Earliest</button>
                     </span>
-                    <span class="inline-span">
+                    <!--<span class="inline-span">
                         <span class="inline-span" style="width:100px">Earliest record:</span>
                         <input type="text" id="earliest_rec" disabled>
-                    </span>
+                    </span>--!>
                 </div>
                 <div id="end_date" style="padding: 0px;">
                     <span class="inline-span">
@@ -613,19 +632,17 @@ $(function(){
                         <button id="setEndToNow" class="time-set">Now</button>
                         <button id="setEndToLatest" class="time-set">Latest</button>
                     </span>
-                    <span class="inline-span">
+                   <!-- <span class="inline-span">
                         <span class="inline-span" style="width:100px">Latest record:</span>
                         <input type="text" id="latest_rec" disabled>
-                    </span>
+                    </span>--!>
                 </div>
             </div>
-            <span style="font-size: 0.75em;">The date range will change based on the selected database.</span>
+            <span style="font-size: 0.75em;">Available dates are determined by the chosen dataset.</span>
         </div>
 
         <div id="vtype" class="well well-sm">
-            Choose the variable categories:
-            <input type="button" id="check_all_vartypes" value="Check all"></input>
-            <input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input><br>
+            Choose variable categories:
             <table style="width: 100%;" id="var_choices">
             	<tr>
             		<th><label><input type="checkbox" name="var_type" value="typetemp"> Temperature</label></th>
@@ -636,6 +653,8 @@ $(function(){
                     <th><label><input type="checkbox" name="var_type" value="typenull"> Other</label></th>
                 </tr>
             </table>
+            <input type="button" id="check_all_vartypes" value="Check all"></input>
+            <!--<input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input>--!>
         </div>
         <div>
             <input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input>
@@ -648,7 +667,7 @@ $(function(){
 </div>
 <div class="row">
     <div id="database" class="well">
-        <div id="variables" style="text-align:center;">
+        <div id="variables" style="text-align:left;">
         </div>
     </div>
 </div>

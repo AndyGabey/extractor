@@ -5,11 +5,12 @@
 {% block body %}
 <h1>Variables</h1>
 
+<p>These variables specify which column(s) of the dataset are available. Note that variable names used here must exactly match those in the header of the data file, otherwise the extractor will not be able to match it up with a column.</p>
 <table id="variables" class="table">
     <thead>
 	<tr>
-	    <th>Type</th>
-	    <th>Name</th>
+	    <th>Category</th>
+	    <th>ID</th>
 	    <th>Long Name</th>
 	    <th>Units</th>
 	    {% if current_user.is_authenticated %}

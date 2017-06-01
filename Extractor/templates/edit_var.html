@@ -3,6 +3,11 @@
 {% block title %}Variable edit{% endblock %}
 
 {% block body %}
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover(); 
+});
+</script>
 <h1>Variable</h1>
 {% from "_formhelpers.html" import render_field %}
 <form method="post">
