@@ -25,7 +25,16 @@ Development Installation
 
     # Setup dev env.
     cd Extractor
-    cp host_config.txt.tpl host_config.txt
+    
+    # Set for production config mode (sets logging level)
+    echo "Extractor.config.ProductionConfig" > host_config.txt
+    # Or: set for development config:
+    # cp host_config.txt.tpl host_config.txt
+    
+    # Make sure db folder writable
+    chmod 777 db
+    
+    # Set up dev env
     export FLASK_APP=Extractor
     export FLASK_DEBUG=true
     cd ..
