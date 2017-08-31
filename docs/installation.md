@@ -1,6 +1,12 @@
 Development Installation
 ========================
 
+    # Install dependencies  (Ubuntu assumed)
+    apt-get update
+    apt-get install python-pip
+    apt-get install python-virtualenv
+    
+    # The following commands may need to be executed as sudo
     git clone https://github.com/AndyGabey/extractor Extractor
     cd Extractor
 
