@@ -26,20 +26,23 @@ Development Installation
     # Setup dev env.
     cd Extractor
     
-    # Set for production config mode (sets logging level)
-    echo "Extractor.config.ProductionConfig" > host_config.txt
-    # Or: set for development config:
-    # cp host_config.txt.tpl host_config.txt
-    ```python
-# Creates db and populates it with some mock data.
-from Extractor.database import init_db
-init_db()
-```
+    
     # Make sure db folder writable
     chmod 777 db
     cd db
     chmod 777 extractor.db
     
+    
+    # Set for production config mode (sets logging level)
+    echo "Extractor.config.ProductionConfig" > host_config.txt
+    # Or: set for development config:
+    # cp host_config.txt.tpl host_config.txt
+```python
+# Creates db and populates it with some mock data.
+from Extractor.database import init_db
+init_db()
+```
+    # Follow the instructions in /docs/ for creating a new admin user
     
 Setting up for actual running
 ------------------
