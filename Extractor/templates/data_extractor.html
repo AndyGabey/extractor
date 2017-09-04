@@ -316,8 +316,8 @@ function updateSelectedDataset(){
         $("#time_periods").hide();
         $("#database").hide();
         $("#download_options").hide();
-        var selected =$("#datasets").val()
-        var selected_label =$("#datasets").text()
+        var selected =$("#datasets option:selected").val()
+        var selected_label =$("#datasets  option:selected").text()
 		getDatasetTimeRange(selected);
 
         // Another JSON call to get the list of variables in this dataset
