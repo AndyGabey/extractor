@@ -82,6 +82,11 @@ function isValidDate(dateArray) {
 	}
 }
 
+function formatDate(dateObj){
+    // Return string YYYY-mm-dd HH:MM:SS from a date object
+    return dateObj.getUTCFullYear() + '-' + pad(dateObj.getUTCMonth()+1,2) + '-' + pad(dateObj.getUTCDate(),2) + '-' + pad(dateObj.getUTCHours(),2) + ':' + pad(dateObj.getUTCMinutes(),2) + ':' + pad(dateObj.getUTCSeconds(),2)
+}
+
 // Compares two dates in array form and see if Date2 is larger than Date1.
 // Date arrays must be in (H)H (D)D (M)M YYYY
 function compareDates(dateArrayOne,dateArrayTwo) {
@@ -155,10 +160,13 @@ function getDB(token){
 	});
 }
 
-var earliest_rec="";
-var latest_rec="";
+// Set up global date variables
 var startDate=''
 var endDate='';
+var td = new Date();
+var ytd = new Date();
+ytd.setDate(ytd.getDate()-1);
+
 var varCat = ['typetemp', 'typewind',  'typesrad', 'typenull', 'typepres', 'typerain']
 function getDatasetTimeRange(dataset){
         $('#dataset_error').hide();
@@ -166,28 +174,23 @@ function getDatasetTimeRange(dataset){
 			earliest_rec = 	data['dataset']['start_date'];
 			latest_rec = 	data['dataset']['end_date'];
 
-			startDate = data['dataset']['start_date'].split("-");
-			endDate = data['dataset']['end_date'].split("-");
-            var startHour = "00";
+			sda = data['dataset']['start_date'].split("-");
+            startDate = new Date(Date.UTC(Number(sda[0]), Number(sda[1]), Number(sda[2]), 00, 00, 00));
 
-			var startDateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
-			var startDateStr = startDate[0] + '-' + startDate[1] + '-' + startDate[2] + '-'  + startHour + ':00:00';
-			var endDateArray = [endDate[0], Number(endDate[1]).toString(), endDate[2],"23"];
-            var endDateStr  = endDate[0] + '-' + pad(endDate[1],2) + '-' + pad(endDate[2],2) + '-' + "23:59:59";
+			eda = data['dataset']['end_date'].split("-");
+            endDate = new Date(Date.UTC(Number(eda[0]), Number(eda[1]), Number(eda[2]), 23, 59, 59));
 
-		    if (!compareDateWithNow(endDateArray.reverse())){
-				// If end date in future, cap final date as today
-			 	var ytd = new Date();
-				ytd.setDate(ytd.getDate()-1);
-				endDateArray = [ytd.getUTCFullYear().toString(), (ytd.getUTCMonth()+1).toString(), pad(ytd.getUTCDate(),2), "23"].reverse()
-				endDateStr  = ytd.getUTCFullYear().toString() + '-' + pad(ytd.getUTCMonth()+1,2) + '-' + pad(ytd.getUTCDate(),2) + "-23:59:59"
+	        // If end date in future, cap final date as today
+		    if (endDate > td){
+				endDate = td
 			}
-            $("#start_date").val(startDateStr)
-            $("#end_date").val(endDateStr)
-            $("#start_date").datepicker('setStartDate', startDateStr.substr(0,10))
-            $("#start_date").datepicker('setEndDate', endDateStr.substr(0,10))
-            $("#end_date").datepicker('setStartDate', startDateStr.substr(0,10))
-            $("#end_date").datepicker('setEndDate', endDateStr.substr(0,10))
+
+            $("#start_date").val(formatDate(startDate))
+            $("#end_date").val(formatDate(endDate))
+            $("#start_date").datepicker('setStartDate', formatDate(startDate).substr(0,10))
+            $("#start_date").datepicker('setEndDate', formatDate(endDate).substr(0,10))
+            $("#end_date").datepicker('setStartDate', formatDate(startDate).substr(0,10))
+            $("#end_date").datepicker('setEndDate', formatDate(endDate).substr(0,10))
 
 		}).fail(function(){
 			$('#dataset_error').html("<strong>Problem retrieving dataset information</strong>: Please check your internet connection. If the problem persists, please contact us.").show();
@@ -437,13 +440,11 @@ $(function(){
 	});
 	$("#setStartToYtd").click(function(){
 	    // Set start date to yesterday unless dataset ended before yesterday, in which case set to the start of the final day
-        var ytd = new Date();
-		ytd.setDate(ytd.getDate()-1);
-        var ed = new Date(endDate[0], endDate[1], endDate[2], 23, 59, 59.9);
-        if (ed < ytd) {
-          var startDateStr = ed.getUTCFullYear() + '-' + pad(ed.getUTCMonth(), 2) + '-' + pad(ed.getUTCDate(),2) + '-00:00:00';
+        if (endDate < ytd) {
+          var startDateStr = formatDate(endDate);
+          startDateStr = startDateStr.substr(0,10) + '-00:00:00'; // Change end of day to start of day
         } else {
-          var startDateStr = ytd.getUTCFullYear() + '-' + pad(ytd.getUTCMonth(), 2) + '-' + pad(ytd.getUTCDate(),2) + '-00:00:00';
+          var startDateStr = formatDate(ytd);
         }
 
 		$('#start_date').val(startDateStr)
@@ -451,29 +452,16 @@ $(function(){
 
     $("#setEndToLatest").click(function(){
         // Set end date to either the end of day (if measurement still on-going) or end of measurement itself (if ended)
-		if (latest_rec == "")
-			{
-				return;
-			}
-        var ed = new Date(endDate[0], endDate[1], endDate[2], 23, 59, 59.9);
-        var td = new Date();
-        if (ed < td) {
-          var endDateStr = ed.getUTCFullYear() + '-' + pad(ed.getUTCMonth(), 2) + '-' + pad(ed.getUTCDate(),2) + '-23:59:59.9';
+        if (endDate < td) {
+          var endDateStr = formatDate(endDate);
         } else {
-          var endDateStr = td.getUTCFullYear() + '-' + pad(td.getUTCMonth(), 2) + '-' + pad(td.getUTCDate(),2) + '-' + pad(td.getUTCHours(),2) + ':' + pad(td.getUTCMinutes(), 2) + ':00';
+          var endDateStr = formatDate(td);
         }
 		$('#end_date').val(endDateStr)
 	});
 
 	$("#setStartToEarliest").click(function(){
-		if (earliest_rec == "")
-			{
-				return;
-			}
-        var sd = new Date(startDate[0], startDate[1], startDate[2], 00, 00, 00);
-
-        var startStr = sd.getUTCFullYear() + '-' + pad(sd.getUTCMonth(), 2) + '-' + pad(sd.getUTCDate()+1,2) + '-00:00:00';
-		$('#start_date').val(startStr)
+		$('#start_date').val(formatDate(startDate))
 	});
 
 	$("#reset_1").click(function(){
@@ -502,8 +490,6 @@ $(function(){
 <script>
     // Initialize datepicker options (actual datepickers initialised when a dataset chosen)
     $(document).ready(function(){
-      var yesterday = new Date();
-      yesterday.setDate(yesterday.getDate()-1);
 
       validateNumberInput = function(){
         if (this.value != this.value.replace(/[^0-9\.\-]/g, '')) {
@@ -521,7 +507,7 @@ $(function(){
             autoclose: true,
           };
        var options_end={
-            format: 'yyyy-mm-dd-23:59:59.9',
+            format: 'yyyy-mm-dd-23:59:59',
             container: container,
             todayHighlight: true,
             autoclose: true,
