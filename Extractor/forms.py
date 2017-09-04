@@ -42,7 +42,6 @@ VARTYPE_CHOICES = [
     ('typerad', 'Radiation'),
 ]
 
-
 class VariableForm(FlaskForm):
     _POPOVER_VARID = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Variable" data-content="Variable ID, as used in data file column headers">Variable ID</a>'
     _POPOVER_VARNAME = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Variable name" data-content="Description of the variable">Variable name</a>'
@@ -53,10 +52,18 @@ class VariableForm(FlaskForm):
 
 
 class TokenForm(FlaskForm):
-    token = StringField('User token', validators=[Length(max=10), DataRequired()])
-    expiry_date = DateTimeField('expiry_date', validators=[DataRequired()])
-    notes = StringField('notes', validators=[])
-    max_request_time_hours = FloatField('max_request_time_hours', validators=[DataRequired()])
-    max_request_rows = StringField('max_request_rows', validators=[DataRequired()])
-    max_request_files = StringField('max_request_files', validators=[DataRequired()])
-    dataset_ids = SelectMultipleField('datasets', coerce=int, choices=[], validators=[])
+    POPOVER_TOKEN = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="User Token" data-content="A unique combination of letters and numbers that identifies a user, and allows them to access the extractor.<br/><br/><strong>Should be kept private by user.</strong><br/><br/>A suggested token is generated automatically but can be overridden">User Token</a>'
+    POPOVER_EXPIRY = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Expiry Date" data-content="The user token will not work after this date, but will still exist. Required format: YYYY-mm-dd HH:MM:SS">Token expiry date</a>'
+    POPOVER_NOTES = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="User notes" data-content="Any notes about this user token. Not visible to user.">User Notes</a>'
+    POPOVER_MAXHOURS = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Max. request size (hours)" data-content="The maximum number of hours of data the user can request in a single run">Max. Request Size (hours)</a>'
+    POPOVER_MAXROWS = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Max. request size (rows)" data-content="The maximum number of rows of data the user can request in a single run">Max. Request Size (rows)</a>'
+    POPOVER_MAXFILES = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Max. request size (files)" data-content="The maximum number of data files the user can request in a single run">Max. Request Size (files)</a>'
+    POPOVER_DATASETS = '<a href="#" data-html="true" data-toggle="popover" data-trigger="focus" title="Allowed Datasets" data-content="Select which dataset(s) this user can access">Allowed datasets</a>'
+
+    token = StringField(POPOVER_TOKEN, validators=[Length(max=10), DataRequired()])
+    expiry_date = DateTimeField(POPOVER_EXPIRY, validators=[DataRequired()])
+    notes = StringField(POPOVER_NOTES, validators=[])
+    max_request_time_hours = FloatField(POPOVER_MAXHOURS, validators=[DataRequired()])
+    max_request_rows = StringField(POPOVER_MAXROWS, validators=[DataRequired()])
+    max_request_files = StringField(POPOVER_MAXFILES, validators=[DataRequired()])
+    dataset_ids = SelectMultipleField(POPOVER_DATASETS, coerce=int, choices=[], validators=[])

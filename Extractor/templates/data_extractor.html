@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
 
-{% block title %}Data Extractor{% endblock %}
+{% block title %}Get Data{% endblock %}
 
 {% block head %}
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
 	<meta charset="utf-8">
 	<!--link rel=stylesheet type=text/css href="/static/style.css"-->
 <style type="text/css">
@@ -20,25 +24,36 @@ button.time-set {
     width: 90px;
 }
 
+#bad_token, #good_token, #dataset_error, #download_error{
+    display:none;
+    text-align:center;
+}
 span.inline-span {
     text-align: right;
     display: inline-block;
 }
 
+.breaktext {
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for webkit */
+  word-break: break-word;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
 </style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script type="text/javascript">
+
+  <script type="text/javascript">
 function clearVarBox(){
-	$("#variables").html("Available variables of selected categories in selected database will be populated here.");	
+	$("#variables").html("Available variables of selected categories in selected database will be populated here.");
 }
 function welcomeMsg(){
-	logMessage("Welcome to UoR Atmospheric Observatory Data Extractor.");
-	//logMessage("To use the extractor, you must first obtain a valid token from the administrator.");
-	divideLog();
 }
-function infoDatabase(){
-	$("#dataset_info").html("Available datasets will be listed based on the submitted token.");
-}
+
 var URL_BASE = "/ext";
 if (window.location.hostname == "127.0.0.1") {
     URL_BASE = ""
@@ -46,9 +61,9 @@ if (window.location.hostname == "127.0.0.1") {
 // Checks a string to see if it in a valid date format
 // of (D)D/(M)M/(YY)YY and returns true/false
 function isValidDate(dateArray) {
-   
+
     //var dateArray = s.split(/[\.|\/|-]/);
-      
+
 	// correct month value
 	dateArray = dateArray.slice(1);
 	dateArray[1] = dateArray[1] - 1;
@@ -70,10 +85,10 @@ function isValidDate(dateArray) {
 // Compares two dates in array form and see if Date2 is larger than Date1.
 // Date arrays must be in (H)H (D)D (M)M YYYY
 function compareDates(dateArrayOne,dateArrayTwo) {
-	
-	var dateOne = new Date(dateArrayOne[3],dateArrayOne[2]-1,dateArrayOne[1],dateArrayOne[0]),
-		dateTwo = new Date(dateArrayTwo[3],dateArrayTwo[2]-1,dateArrayTwo[1],dateArrayTwo[0]);
-		
+
+	var dateOne = new Date(dateArrayOne[3],dateArrayOne[2]-1,dateArrayOne[1],dateArrayOne[0]);
+	var	dateTwo = new Date(dateArrayTwo[3],dateArrayTwo[2]-1,dateArrayTwo[1],dateArrayTwo[0]);
+
 	if (dateOne >= dateTwo) return false
 	else return true
 }
@@ -83,37 +98,12 @@ function compareDates(dateArrayOne,dateArrayTwo) {
 function compareDateWithNow(dateArray) {
 	var d = new Date(dateArray[3],dateArray[2]-1,dateArray[1],dateArray[0]);
 	var dnow = new Date();
-		
+
 	if (d > dnow) return false
 	else return true
 }
-// This function auto-lists all years from 1965 and put them into the 
-// selection fields.
-function autoListYears() {	
-	var yearNow = new Date().getUTCFullYear();
-	var year = "";
-	for (var i = yearNow; i >= 1965; i--)
-		{
-			year += '<option value="'+pad(i,4)+'">'+pad(i,4)+'</option>'
-		}
 
-	$("#startY").html(year);
-	$("#endY").html(year);
-}
-// This function auto-lists all the days in a month (01-31) and put them into the 
-// selection fields.
-function autoListDays() {	
-	var day = "";
-	for (var i = 1; i < 32; i++)
-		{
-			day += '<option value="'+pad(i,2)+'">'+pad(i,2)+'</option>'
-		}
-
-	$("#startD").html(day);
-	$("#endD").html(day);
-}
-	
-// This function auto-lists all the hours in a day (00-23) and put them into the 
+// This function auto-lists all the hours in a day (00-23) and put them into the
 // selection fields.
 function autoListHours() {
 	var hours = "";
@@ -121,7 +111,7 @@ function autoListHours() {
 		{
 			hours += '<option value="'+pad(i,2)+'">'+pad(i,2)+'</option>'
 		}
-		
+
 	$("#startH").html(hours);
 	$("#endH").html(hours);
 }
@@ -133,408 +123,359 @@ function pad(num, size) {
     return s;
 }
 
-// Retrieve the current time based on users' clock and return as a string of 
-// HH:MM:SS DD/MM/YYYY.
-function getTimeForLog() {
-	var d = new Date();
-	
-	return "["+pad(d.getUTCHours(),2) + ":" + pad(d.getUTCMinutes(),2) + ":" + 
-				pad(d.getUTCSeconds(),2) + " " + pad(d.getUTCDate(),2) + "/" + 
-				pad(d.getUTCMonth()+1,2) + "/" + d.getUTCFullYear().toString()+"]";
-}
-
-// Log a message in the designated div.
-function logMessage(str) {
-	$("#right_panel").append(getTimeForLog()+" "+str+"<br>");
-	//$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
-}
-
-// Log divider
-function divideLog() {
-	// Add a horizontal break.
-	$("#right_panel").append("<hr>");
-
-	// Scroll down to the last log.
-	$("#right_panel").scrollTop($("#right_panel")[0].scrollHeight);
-
-	// Re-enable the check button.
-	$("#check_step_one").prop('disabled',false);
-}
 
 // Wrapper function to perform sanity check for Step 1.
 
 function getDB(token){
+    $("#datasets").empty();
+    $('#bad_token').hide();
+    $("#time_periods").hide();
+    $("#database").hide();
+    $("#download_options").hide();
+    $("#user_datasets").hide();
 	$.getJSON( URL_BASE + "/user_token/"+token+".json", function(data) {
-		logMessage("Token is valid.");
-		
 		var datasets = data['token']['datasets'];
-		var dropDown = '<option selected value="---">---</option>';
-		
+        var dropDown = '';
 		for (var i=0; i<datasets.length;i++)
 			{
 				dropDown += '<option value="'+datasets[i]['name']+'">'+datasets[i]['long_name']+'</option>';
 			}
-		
-		// Begin constructing the variable table dynamically.
+        if (i == 0 ) {
+            // The user token exists but has no datasets
+            $('#bad_token').html('The user token <strong>'+token+'</strong> is not currently allowed to view any data.').show();
+            return;
+        }
+		// Begin constructing the variable table dynamically based on first entry inlist
 		$("#datasets").html(dropDown);
+         updateSelectedDataset();
 		$("#database_info").html("");
-		divideLog();
+		$("#user_datasets").show();
 	}).fail(function(){
-		logMessage("Token not found. Please contact the administrator.");
-		divideLog();
+        $("#bad_token").html('<strong>Token not recognised</strong>: Please note tokens are case-sensitive.').show()
 	});
 }
-function changeDateFields(inputDate,target){
-	if (target != "start" && target != "end") return;
-	
-	$('#'+target+'Y').val(inputDate[0]);
-	$('#'+target+'M').val(inputDate[1]);
-	$('#'+target+'D').val(inputDate[2]);
-	$('#'+target+'H').val(inputDate[3]);
-}
+
 var earliest_rec="";
 var latest_rec="";
+var startDate=''
+var endDate='';
+var varCat = ['typetemp', 'typewind',  'typesrad', 'typenull', 'typepres', 'typerain']
 function getDatasetTimeRange(dataset){
-		logMessage("Retrieving dataset information from server.");
+        $('#dataset_error').hide();
 		$.getJSON( URL_BASE + "/dataset/"+dataset+".json", function(data) {
-			logMessage("Dataset information received.");
 			earliest_rec = 	data['dataset']['start_date'];
 			latest_rec = 	data['dataset']['end_date'];
 
-			//$("#earliest_rec").val(data['dataset']['start_date']);
-			//$("#latest_rec").val(data['dataset']['end_date']);
-			
-			var startDate = data['dataset']['start_date'].split("-");
-			var endDate = data['dataset']['end_date'].split("-");
-			// var startHour = startDate[3].split(":")[0];
-                        var startHour = "00";
-			
+			startDate = data['dataset']['start_date'].split("-");
+			endDate = data['dataset']['end_date'].split("-");
+            var startHour = "00";
+
 			var startDateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
-			var endDateArray = [endDate[0],Number(endDate[1]).toString(),endDate[2],"23"];
-		        if (!compareDateWithNow(endDateArray.reverse())){
+			var startDateStr = startDate[0] + '-' + startDate[1] + '-' + startDate[2] + '-'  + startHour + ':00:00';
+			var endDateArray = [endDate[0], Number(endDate[1]).toString(), endDate[2],"23"];
+            var endDateStr  = endDate[0] + '-' + pad(endDate[1],2) + '-' + pad(endDate[2],2) + '-' + "23:59:59";
+
+		    if (!compareDateWithNow(endDateArray.reverse())){
 				// If end date in future, cap final date as today
-			 	var ytd = new Date();	
+			 	var ytd = new Date();
 				ytd.setDate(ytd.getDate()-1);
 				endDateArray = [ytd.getUTCFullYear().toString(), (ytd.getUTCMonth()+1).toString(), pad(ytd.getUTCDate(),2), "23"].reverse()
+				endDateStr  = ytd.getUTCFullYear().toString() + '-' + pad(ytd.getUTCMonth()+1,2) + '-' + pad(ytd.getUTCDate(),2) + "-23:59:59"
 			}
-			changeDateFields(startDateArray,"start");
-			changeDateFields(endDateArray.reverse(),"end");
-			divideLog();
+            $("#start_date").val(startDateStr)
+            $("#end_date").val(endDateStr)
+            $("#start_date").datepicker('setStartDate', startDateStr.substr(0,10))
+            $("#start_date").datepicker('setEndDate', endDateStr.substr(0,10))
+            $("#end_date").datepicker('setStartDate', startDateStr.substr(0,10))
+            $("#end_date").datepicker('setEndDate', endDateStr.substr(0,10))
+
 		}).fail(function(){
-			logMessage("Dataset not found!");
-			divideLog();
+			$('#dataset_error').html("<strong>Problem retrieving dataset information</strong>: Please check your internet connection. If the problem persists, please contact us.").show();
 		});
 	}
 
 function checkStepOne() {
-	$("#check_step_one").prop('disabled',true);
-	logMessage("Initialising input sanity check...");
-	
+
 	// Error status
-	var err = 0;
-	
-	// Check if user has selected the type of data to extract. Return an error 
+    $('#download_error').html("").hide();
+
+	// Check if user has selected the type of data to extract. Return an error
 	// message if false.
 	var dataType = $("#datasets").val();
-	
+
 	if (dataType == "")
 		{
-			logMessage("Please choose the type of data to extract.");
-			err = 1; 
+            $('#download_error').html("No dataset selected.").show();
+            return false;
 		}
-	
-	// Retrieve users input dates from the form.
-	var startDateArray = new Array($("#startH").val(),$("#startD").val(),$("#startM").val(),$("#startY").val()),
-		endDateArray = new Array($("#endH").val(),$("#endD").val(),$("#endM").val(),$("#endY").val());
-	
+
+	// Retrieve users input dates from the form and validate them
+
+	var startDateArray = [  $('#start_date').val().substr(11,2), // hours
+	                        $('#start_date').val().substr(8,2), // DD
+	                        $('#start_date').val().substr(5,2), // MM
+	                        $('#start_date').val().substr(0,4)] // YYYY
+	var endDateArray = [  $('#end_date').val().substr(11,2), // hours
+	                        $('#end_date').val().substr(8,2), // DD
+	                        $('#end_date').val().substr(5,2), // MM
+	                        $('#end_date').val().substr(0,4)] // YYYY
+
+
 	// Check for errors in the input dates.
 	if (!isValidDate(startDateArray))
 		{
-			logMessage("Invalid start date. Please check again.");
-			err = 1;
+			$('#download_error').html("Invalid start date. Please check.").show();
+            return false;
+
 		}
 	if (!isValidDate(endDateArray))
 		{
-			logMessage("Invalid end date. Please check again.");
-			err = 1;
+			$('#download_error').html("Invalid end date. Please check.").show();
+            return false;
 		}
 	if (!compareDates(startDateArray,endDateArray))
 		{
-			logMessage("Start date is later than or equal to end date. Please check again.");
-			err = 1;
+			$('#download_error').html("Start date must be earlier than end date.").show();
+            return false;
 		}
 	if (!compareDateWithNow(startDateArray))
 		{
-			logMessage("Start date is in the future! Please check again.");
-			err = 1;
+			$('#download_error').html("Start date cannot be later than now.").show();
+            return false;
 		}
 	if (!compareDateWithNow(endDateArray))
 		{
-			logMessage("End date is in the future! Please check again.");
-			err = 1;
+			$('#download_error').html("End date cannot be later than now.").show();
+            return false;
 		}
-	
-	// Retrieve user-selected variable categories.
-	var varCat = $('input[name="var_type"]:checked');
-	
-	//Return error messages if none of the variable categories is selected.	
-	if (varCat.length == 0)
-		{
-			logMessage("No variable category is checked. Please choose at least 1 category.");
-			err = 1; 
-		}
-	
-	// Routine if the input passes the sanity check.
-	if (!err)
-		{
-			logMessage("Input sanity check passed.");
-			
-			// Need another json to look at the user database to determine what data level
-			// the user can retrieve.
-			
-			logMessage("User can access level 2 data.");
-			
-			logMessage("Requesting lists of available variables from server.");
-			$.getJSON(URL_BASE + "/dataset/"+dataType+"/vars.json", function( data ) {
-				logMessage("Information received.");
-				console.debug(data)
-				console.debug(data["typerain"])
 
-				// Begin constructing the variable table dynamically.
-				var tableHTML = '<span style="width: 100%; text-align: center;">Available variables</span><br><table class="table">'+"\n<thead><tr>";
-
-				// Start with the headers.
-				for (var i = 0; i < varCat.length; i++)
-					{
-						// Changed typeX to long name of X.
-						// A more elegant method might be needed later!
-						var catName = varCat[i].value;
-				
-						if (catName == "typerain") var longName = "Precipitation";
-						else if (catName == "typetemp") var longName = "Temperature";
-						else if (catName == "typewind") var longName = "Wind";
-						else if (catName == "typesrad") var longName = "Radiation";
-                        else if (catName == "typepres") var longName = "Pressure";
-						else if (catName == "typenull") var longName = "Other";
-						else var longName = varCat[i].value;
-						
-						tableHTML += "<th>"+longName+"</th>";
-					}
-				
-				tableHTML += '</tr></thead>\n<tbody><tr">';
-				
-				for (var i = 0; i < varCat.length; i++)
-					{
-						// fake ajax return for now. This will change to some sort of server
-						// return in the future.
-
-						// The start of the table cell.
-						tableHTML += '<td class="vars"><div class="scrollable">';
-						
-						// Generate a random number for the fake number of variables.
-						var vars = data[varCat[i].value];
-						
-						if (vars)
-							{
-								var numOfVar = vars.length;
-						
-						// In the future a list of available variables for each category will
-						// be returned from the serve. Currently, fake variable names are 
-						// created in the loop. The following loop will simply push each of
-						// the variables into the relevant column.
-						//if (numOfVar > 0)
-							//{
-								for (var j = 0; j < numOfVar; j++)
-									{
-										// Fake variable name.
-										var varName = vars[j]["long_name"];
-										
-										// Add the variable checkbox to the table.
-										tableHTML += '<label><input type="checkbox" name="var" value="'+vars[j]["var"]+'" vartype="'+varCat[i].value+'">'+varName+'</label>';
-										
-										// Add new line html tag if it is not the last var.
-										if (j < numOfVar-1) tableHTML += "<br>";
-									}
-							}
-						else
-							{
-								// If this is no variable, say so.
-								tableHTML += "No variables.";
-							}
-						
-						// The end of the table cell.
-						tableHTML += "</div></td>";
-					}
-				
-				tableHTML += "</tr></tbody>\n<tfoot><tr>";
-				
-				// Generate the check / uncheck buttons dynamically
-				for (var i = 0; i < varCat.length; i++)
-					{	
-						tableHTML += '<td class="foot"><input type="button" class="check_all_var" value="All" target="'+varCat[i].value+'"></input>&nbsp;<input type="button" class="uncheck_all_var" value="None" target="'+varCat[i].value+'"></input></td>';
-					}
-				
-				// Complete table
-				tableHTML += "</tr></tfoot></table>";
-				
-				// Add table to the correct div.
-				$("#variables").html(tableHTML);
-				
-				$("#variables table .scrollable").css("height","40vh");
-				$("#variables table .scrollable").css("overflowY","scroll");
-				
-				// Check / Uncheck all  functionalities upon clicks on buttons for temp variables. 
-				$(".check_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",true);});
-				$(".uncheck_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",false);});
-				
-				divideLog();
-			});
-			
-		}
-	else
-		{
-			divideLog();
-		}
-		
+    return true;
 }
 
 // Function to generate the HTTP API URL, e.g.:
 // http://127.0.0.1:5000/dataset/1sec_Level1/get_data?&start_date=2016-12-01-00:00:00&end_date=2016-12-01-04:00:00&var=T0.56&missing=blank&data_format=html
 function generateURL() {
+    $('#download_error').hide().html('');
 
+    // Validate dates
+    var valid_dates = checkStepOne();
+    if(!valid_dates){
+        return;
+    }
 	var fields = $('input[name="var"]:checked');
-	
+
 	if (fields.length > 0)
 		{
 			var url = window.location.protocol + "//" + window.location.host + URL_BASE + "/dataset/";
-	
+
 			// Append dataset to API
 			url += $("#datasets").val() + "/get_data?"
 
 			// Append token to API
 			url += "token=" + $("#token").val();
-	
+
 			// Append start date to API
-			url += "&start_date="+$("#startY").val()+"-"+pad($("#startM").val(),2)+
-					"-"+$("#startD").val()+"-"+$("#startH").val()+":00:00";
-			
+			url += "&start_date="+$("#start_date").val();
+
 			// Append end date to API
-			url += "&end_date="+$("#endY").val()+"-"+pad($("#endM").val(),2)+
-					"-"+$("#endD").val()+"-"+$("#endH").val()+":00:00";
+			url += "&end_date="+$("#end_date").val();
 
 			// Append all fields to API
 			var fields = $('input[name="var"]:checked');
-	
+
 			for (var i = 0; i < fields.length; i++)
 				{
 					url += "&var="+fields[i].value;
 				}
-	
+
 			// Append missing data option to API
 			url += "&missing="+$("#missing").val();
-	
+
 			// Append data output format to API
 			url += "&data_format="+$("#output_format").val();
-	
-			// Display the URL in the text field
-		    $("#direct_url").html('<a href="' + url + '">get data url</a>');
-			return url;
 
+			// Display the URL in the text field
+		    $("#direct_url").html('<p>Permalink: <a href="' + url + '">'+url+'</a></p>');
+			return url;
 		}
 	else
 		{
-			logMessage("No variable is selected. Nothing to retrieve.");
-			divideLog();
+		    $('#download_error').html('<strong>No variable(s) selected:</strong> Nothing to download.').show();
 		}
 
 }
 function retrieveData(url) {
         window.location.href = url;
 }
+
+function updateSelectedDataset(){
+    // When dataset selected, get its date range and available variables
+        $("#time_periods").hide();
+        $("#database").hide();
+        $("#download_options").hide();
+        var selected =$("#datasets").val()
+        var selected_label =$("#datasets").text()
+		getDatasetTimeRange(selected);
+
+        // Another JSON call to get the list of variables in this dataset
+        $.getJSON(URL_BASE + "/dataset/"+selected+"/vars.json", function( data ) {
+
+            // Begin constructing the variable table dynamically.
+            var tableHTML = '<span style="width: 100%; text-align: center;">Variables available in dataset <strong>'+ selected_label +'<strong>:</span><br><table class="table">'+"\n<thead><tr>";
+
+            // Start with the headers.
+            for (var i = 0; i < varCat.length; i++){
+                var catName = varCat[i];
+
+                if (catName == "typerain") var longName = "Precipitation";
+                else if (catName == "typetemp") var longName = "Temperature";
+                else if (catName == "typewind") var longName = "Wind";
+                else if (catName == "typesrad") var longName = "Radiation";
+                else if (catName == "typepres") var longName = "Pressure";
+                else if (catName == "typenull") var longName = "Other";
+                else var longName = varCat[i];
+
+                tableHTML += "<th>"+longName+"</th>";
+            }
+
+            tableHTML += '</tr></thead>\n<tbody><tr">';
+
+            for (var i = 0; i < varCat.length; i++) {
+                // The start of the table cell.
+                tableHTML += '<td class="vars"><div class="scrollable">';
+
+                // Generate a random number for the fake number of variables.
+                var vars = data[varCat[i]];
+
+                if (vars){
+                    var numOfVar = vars.length;
+
+                    // In the future a list of available variables for each category will
+                    // be returned from the serve. Currently, fake variable names are
+                    // created in the loop. The following loop will simply push each of
+                    // the variables into the relevant column.
+                    for (var j = 0; j < numOfVar; j++){
+                        // Fake variable name.
+                        var varName = vars[j]["long_name"];
+
+                        // Add the variable checkbox to the table.
+                        tableHTML += '<label><input type="checkbox" name="var" value="'+vars[j]["var"]+'" vartype="'+varCat[i]+'">'+varName+'</label>';
+
+                        // Add new line html tag if it is not the last var.
+                        if (j < numOfVar-1) tableHTML += "<br>";
+                    }
+                }else{
+                    // If this is no variable, say so.
+                    tableHTML += "N/A";
+                }
+
+                // The end of the table cell.
+                tableHTML += "</div></td>";
+            }
+
+            tableHTML += "</tr></tbody>\n<tfoot><tr>";
+
+            // Generate the check / uncheck buttons dynamically
+            for (var i = 0; i < varCat.length; i++) {
+                tableHTML += '<td class="foot">' +
+                            '<div class="btn-group" role="group">' +
+                              '<input type="button" class="check_all_var btn btn-secondary" value="All" target="'+varCat[i]+'">'+
+                              '&nbsp; <input type="button" class="uncheck_all_var btn btn-secondary" value="None" target="'+varCat[i]+'"></div></td>';
+            }
+
+            // Complete table
+            tableHTML += "</tr></tfoot></table>";
+
+            // Add table to the correct div.
+            $("#variables").html(tableHTML);
+
+            $("#variables table .scrollable").css("height","40vh");
+            $("#variables table .scrollable").css("overflowY","scroll");
+            // Check / Uncheck all  functionalities upon clicks on buttons for temp variables.
+            $(".check_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",true);});
+            $(".uncheck_all_var").click(function(){$('#variables table :input[vartype="'+$(this).attr("target")+'"]').prop("checked",false);});
+
+        });
+        $("#time_periods").show();
+        $("#database").show();
+        $("#download_options").show();
+
+}
+
 // Initialise after document is fully loaded.
 $(function(){
-	// Auto-put the days and hours into the selection field in start/end times. 
+	// Auto-put the days and hours into the selection field in start/end times.
 	clearVarBox();
-	infoDatabase();
-	welcomeMsg();
-	autoListYears();
-	autoListDays();
 	autoListHours();
 	// Define button functions.
 	// Check / Uncheck all functionalities upon clicks on buttons for variable categories.
-	$("#check_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",true);});
-	$("#uncheck_all_vartypes").click(function(){$('input[name="var_type"]').prop("checked",false);});
+	$("#check_all_vartypes").click(function(){$('input[vartype="var_type"]').prop("checked",true);});
+	$("#uncheck_all_vartypes").click(function(){$('input[vartype="var_type"]').prop("checked",false);});
 	$("#submitPublic").click(function(){
 		 $("#token").val("public");
 	         $("#submitToken").trigger( "click" );});
 
 	$("#submitToken").click(function(){
+	    $("#bad_token").hide();
+	    $("#good_token").hide();
 		var token = $("#token").val();
-		
-		if (token.length > 0) getDB(token);
-		else logMessage("Please enter a token.");
+
+		if (token.length > 0) {
+		  getDB(token);
+		} else {
+          $("#bad_token").html('<strong>User token required:</strong> A user token is required to use this utility. Please request one from the administrator if required.').show()
+        }
 	});
-	$("#check_step_one").click(checkStepOne);
 	$("#retrieve_data").click(function(){
 		var url = generateURL();
-		retrieveData(url);
+		if ( url ) {
+		    retrieveData(url);
+		 }
 	});
 	$("#generate_url").click(function(){
 		generateURL();
 	});
 	$("#setStartToYtd").click(function(){
-		var ytd = new Date();
+	    // Set start date to yesterday unless dataset ended before yesterday, in which case set to the start of the final day
+        var ytd = new Date();
 		ytd.setDate(ytd.getDate()-1);
-		
-		var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
-		
-		changeDateFields(dateArray,"start");
-	});	
-	$("#setEndToNow").click(function(){
-		var ytd = new Date();
-		
-		var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
-		
-		changeDateFields(dateArray,"end");
+        var ed = new Date(endDate[0], endDate[1], endDate[2], 23, 59, 59.9);
+        if (ed < ytd) {
+          var startDateStr = ed.getUTCFullYear() + '-' + pad(ed.getUTCMonth(), 2) + '-' + pad(ed.getUTCDate(),2) + '-00:00:00';
+        } else {
+          var startDateStr = ytd.getUTCFullYear() + '-' + pad(ytd.getUTCMonth(), 2) + '-' + pad(ytd.getUTCDate(),2) + '-00:00:00';
+        }
+
+		$('#start_date').val(startDateStr)
 	});
+
+    $("#setEndToLatest").click(function(){
+        // Set end date to either the end of day (if measurement still on-going) or end of measurement itself (if ended)
+		if (latest_rec == "")
+			{
+				return;
+			}
+        var ed = new Date(endDate[0], endDate[1], endDate[2], 23, 59, 59.9);
+        var td = new Date();
+        if (ed < td) {
+          var endDateStr = ed.getUTCFullYear() + '-' + pad(ed.getUTCMonth(), 2) + '-' + pad(ed.getUTCDate(),2) + '-23:59:59.9';
+        } else {
+          var endDateStr = td.getUTCFullYear() + '-' + pad(td.getUTCMonth(), 2) + '-' + pad(td.getUTCDate(),2) + '-' + pad(td.getUTCHours(),2) + ':' + pad(td.getUTCMinutes(), 2) + ':00';
+        }
+		$('#end_date').val(endDateStr)
+	});
+
 	$("#setStartToEarliest").click(function(){
 		if (earliest_rec == "")
 			{
-				logMessage("Please select a dataset.");
-				divideLog();
 				return;
 			}
-		
-		var startDate = earliest_rec.split("-");
-		var startHour = startDate[3].split(":")[0];
-		
-		var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
-		
-		changeDateFields(dateArray,"start");
-	
-	});
-	$("#setEndToLatest").click(function(){
-		if (latest_rec == "")
-			{
-				logMessage("Please select a dataset.");
-				divideLog();
-				return;
-			}
-		//var startDate = $("#latest_rec").val().split("-");
-		var startDate = latest_rec.split("-")
-		var startHour = startDate[3].split(":")[0];
+        var sd = new Date(startDate[0], startDate[1], startDate[2], 00, 00, 00);
 
-	        var dateArray = [startDate[0],Number(startDate[1]).toString(),startDate[2],startHour];
-		// Check to see whether latestDate is in the future; set to now if so.
-		var latestDate = new Date(dateArray[0], dateArray[1] - 1, dateArray[2] - 1, dateArray[3]);
-        var ytd = new Date();
-	    if (latestDate > ytd)
-            {
-                var dateArray = [ytd.getUTCFullYear().toString(),(ytd.getUTCMonth()+1).toString(),pad(ytd.getUTCDate(),2),pad(ytd.getUTCHours(),2)];
-            }
- 	    changeDateFields(dateArray,"end");
-	
+        var startStr = sd.getUTCFullYear() + '-' + pad(sd.getUTCMonth(), 2) + '-' + pad(sd.getUTCDate()+1,2) + '-00:00:00';
+		$('#start_date').val(startStr)
 	});
+
 	$("#reset_1").click(function(){
 		$("#token").val("");
 		$("#datasets").html("");
@@ -546,156 +487,158 @@ $(function(){
                 $('input[name="var_type"]').prop("checked",false);
 		infoDatabase();
 	});
-	
-	$("#datasets").on("change",function(){
-		getDatasetTimeRange($(this).val());
-	});
+
+	$("#datasets").on("click change",function(){
+	    updateSelectedDataset();
+    });
 });
 </script>
+
 
 {% endblock %}
 
 {% block body %}
 
-<div class="row">
-    <div id="left_panel" class="well col-sm-8">
-        <div id="datatype" class="well well-sm">
-            Access token
-            <input type="text" id="token">
-            <button id="submitToken">Submit token</button> or 
-            <button id="submitPublic">View public datasets</button><br>
-            <span style="font-size: 0.75em;">A valid token is required to use this utility. Please request one from the administrator if required.</span>
-        </div>
-        <div class="well well-sm">
-            Select dataset:
-            <select id="datasets"></select><br>
-            <span id="dataset_info" style="font-size: 0.75em;"></span>
-        </div>
-        <div class="well well-sm">
-            Request time range (UTC):
-            <br>
-            <div style="padding: 0px; width: 100%;">
-                <div id="start_date" style="padding: 0px;">
-                    <span class="inline-span">
-                        <span class="inline-span" style="width:50px">From:</span>
-                        <select id="startY" class="dates"></select>
-                        <select id="startM" class="dates">
-                            <option value="1">Jan</option>
-                            <option value="2">Feb</option>
-                            <option value="3">Mar</option>
-                            <option value="4">Apr</option>
-                            <option value="5">May</option>
-                            <option value="6">Jun</option>
-                            <option value="7">Jul</option>
-                            <option value="8">Aug</option>
-                            <option value="9">Sep</option>
-                            <option value="10">Oct</option>
-                            <option value="11">Nov</option>
-                            <option value="12">Dec</option>
-                        </select>
-                        <select id="startD" class="dates"></select>
-                        <select id="startH" class="dates"></select>
-                    </span>
-                    <span class="inline-span">
-                        <span class="inline-span" style="width:50px">Set to:</span>
-                        <button id="setStartToYtd" class="time-set">Yesterday</button>
-                        <button id="setStartToEarliest" class="time-set">Earliest</button>
-                    </span>
-                    <!--<span class="inline-span">
-                        <span class="inline-span" style="width:100px">Earliest record:</span>
-                        <input type="text" id="earliest_rec" disabled>
-                    </span>--!>
-                </div>
-                <div id="end_date" style="padding: 0px;">
-                    <span class="inline-span">
-                        <span style="text-align:right; display:inline-block; width:50px">To:</span>
-                        <select id="endY" class="dates"></select>
-                        <select id="endM" class="dates">
-                            <option value="1">Jan</option>
-                            <option value="2">Feb</option>
-                            <option value="3">Mar</option>
-                            <option value="4">Apr</option>
-                            <option value="5">May</option>
-                            <option value="6">Jun</option>
-                            <option value="7">Jul</option>
-                            <option value="8">Aug</option>
-                            <option value="9">Sep</option>
-                            <option value="10">Oct</option>
-                            <option value="11">Nov</option>
-                            <option value="12">Dec</option>
-                        </select>
-                        <select id="endD" class="dates"></select>
-                        <select id="endH" class="dates"></select>
-                    </span>
-                    <span class="inline-span">
-                        <span class="inline-span" style="width:50px">Set to:</span>
-                        <button id="setEndToNow" class="time-set">Now</button>
-                        <button id="setEndToLatest" class="time-set">Latest</button>
-                    </span>
-                   <!-- <span class="inline-span">
-                        <span class="inline-span" style="width:100px">Latest record:</span>
-                        <input type="text" id="latest_rec" disabled>
-                    </span>--!>
-                </div>
-            </div>
-            <span style="font-size: 0.75em;">Available dates are determined by the chosen dataset.</span>
-        </div>
+<script>
+    // Initialize datepicker options (actual datepickers initialised when a dataset chosen)
+    $(document).ready(function(){
+      var yesterday = new Date();
+      yesterday.setDate(yesterday.getDate()-1);
 
-        <div id="vtype" class="well well-sm">
-            Choose variable categories:
-            <table style="width: 100%;" id="var_choices">
-            	<tr>
-            		<th><label><input type="checkbox" name="var_type" value="typetemp"> Temperature</label></th>
-            		<th><label><input type="checkbox" name="var_type" value="typerain"> Rainfall</label></th>
-            		<th><label><input type="checkbox" name="var_type" value="typesrad"> Sun/Radiation</label></th>
-            		<th><label><input type="checkbox" name="var_type" value="typewind"> Wind</label></th>
-                    <th><label><input type="checkbox" name="var_type" value="typepres"> Pressure</label></th>
-                    <th><label><input type="checkbox" name="var_type" value="typenull"> Other</label></th>
-                </tr>
-            </table>
-            <input type="button" id="check_all_vartypes" value="Check all"></input>
-            <!--<input type="button" id="uncheck_all_vartypes" value="Uncheck all"></input>--!>
-        </div>
-        <div>
-            <input type="button" id="check_step_one" value="Check data availability"></input><input type="button" id="reset_1" value="Reset all"></input>
-        </div>
+      validateNumberInput = function(){
+        if (this.value != this.value.replace(/[^0-9\.\-]/g, '')) {
+           this.value = this.value.replace(/[^0-9\.\-]/g, '');
+        }
+      }
+
+      // Instantiate datepickers with the right start and end times
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+
+      var options_start={
+            format: 'yyyy-mm-dd-00:00:00',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+          };
+       var options_end={
+            format: 'yyyy-mm-dd-23:59:59.9',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+          };
+
+      $("#start_date").datepicker(options_start);
+      $("#end_date").datepicker(options_end);
+    })
+</script>
+<div class="row well col-sm-12">
+    <h4>Log in<br/><small>A user token is needed in order to download data. Please contact the <a href="http://www.met.reading.ac.uk/observatorymain/Observatory_introduction.html">University of Reading</a> to arrange access.</small></h4>
+    <div class="row">
+        <div class="col-sm-2" align="center">User token</div>
+        <div class="col-sm-4" align="center"> <input type="text" class="form-control" id="token"></div>
+        <div class="col-sm-2" align="right"> <button id="submitToken" class="btn btn-primary">Log in</button></div>
+        <div class="col-sm-4" align="left"><button id="submitPublic" class="btn btn-secondary" >View public datasets</button></div>
     </div>
 
-    <div class="col-sm-4">
-        <div id="right_panel" class="well" style="font-size:0.8em;"></div>
+    <div class="row">
+            <div class="alert alert-danger" id="bad_token"></div>
+            <div class="alert alert-success" id="good_token"></div>
     </div>
 </div>
-<div class="row">
-    <div id="database" class="well">
-        <div id="variables" style="text-align:left;">
+<div id="user_datasets" style="display:none;" class="row well col-sm-12">
+    <h4>Dataset(s) available for this token</h4>
+    <div class="row">
+        <div class="col-sm-3">Choose dataset:</div>
+        <div class="col-sm-7"><select id="datasets"></select></div>
+        <div class="col-sm-2"></div>
+        </div>
+    <div class="row"><div id="dataset_error" class=""></div><span id="dataset_info"></span></div>
+</div>
+
+<div id="time_periods" style="display:none" class="row well col-sm-12">
+    <h4>Time period to download<br /><small>Start and end dates reflect the available data</small></h4>
+    <div class="row">
+        <div class="col-sm-3">Time range (UTC):<br />(Inclusive)</div>
+        <div class="col-sm-5">
+            <label>From:<input type="text" class="form-control" name="start_date" id="start_date"></label>
+            <div class="btn-group" role="group">
+                <button id="setStartToYtd" class="btn btn-secondary">Yesterday</button>
+                <button id="setStartToEarliest" class="btn btn-secondary">Earliest</button>
+             </div>
+        </div>
+        <div class="col-sm-4">
+            <label>To:<input type="text" class="form-control" name="end_date" id="end_date"></label>
+            <button id="setEndToLatest" class="btn btn-secondary">Latest</button>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div id="footer" class="well">
-        <div id="missing_value_options">
-            Select a value for the missing data:
+<div id="database" style="display:none" class="row well col-sm-12">
+    <h4>Measurement variables to download</h4>
+    <div id="variables" style="text-align:left;"></div>
+</div>
+
+<div id="download_options" style="display:none" class="row well col-sm-12">
+    <h4>Download options</h4>
+    <div class="row">
+        <div class="col-sm-4">Label missing values with:</div>
+        <div class="col-sm-4">
             <select id="missing">
                 <option value="blank">Blank/Empty</option>
                 <option value="9999.9">9999.9</option>
                 <option value="x">x</option>
+                <option value="NaN">NaN</option>
             </select>
-            <br>
-            Select the output format:
-            <select id="output_format">
-                <option value="html" selected>Web Page (HTML)</option>
-                <option value="csv">Comma Separated Values (CSV)</option>
-                <option value="json">JavaScript Object Notation (JSON)</option>
-                <!--option value="netcdf">NetCDF</option-->
-            </select>
-        </div>
-
-        <div id="final">
-            <input type="button" id="generate_url" value="Generate URL"></input>
-            <input type="button" id="retrieve_data" value="Retrieve data"></input>
-            <span>HTTP API URL: <span name="url" id="direct_url"></span></span>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-4">Download data as:</div>
+        <div class="col-sm-4">
+            <select id="output_format">
+                <option value="html" selected>Web Page (HTML)</option>
+                <option value="csv">Comma Separated Values (CSV) file</option>
+                <option value="json">JavaScript Object Notation (JSON) file</option>
+            </select>
+        </div>
+    </div>
+    <div id="download_error" class="alert alert-danger"></div>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-sm-3">
+                    <input type="button" class="btn btn-primary" id="generate_url" value="Generate permalink"></input>
+                </div>
+                <div class="col-sm-9">
+                    Generate a web address from which the selected data can be downloaded later
+                    (<strong>Note:</strong> this link includes your user token and should therefore not be shared).
+                </div>
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9"> <span name="url" id="direct_url"></span></div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-sm-3">
+                    <input type="button" id="retrieve_data" class="btn btn-primary" value="Download data"></input>
+                </div>
+                <div class="col-sm-9">
+                    <p>Begins data download (in a new window).</p>
+                    <p><strong>By downloading data you agree to the following terms and conditions:</strong></p>
+                    <p>The data is published for information and educational purposes only.</p>
+                        <p>Whilst reasonable efforts have been made to publish reliable data, the University does not warrant the accuracy
+                        of the information provided. To the fullest extent permitted by law, all representations, warranties and guarantees
+                        regarding the data are excluded and the University does not accept any liability whatsoever for any loss, damage or
+                        liability directly or indirectly caused or alleged to be caused by any reliance placed on the data. </p>
+
+                        <p>The University reserves all rights in the data and the data should not be published in any article (or similar)
+                            in any form or used for any commercial purpose without the prior written consent of the University.</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 </div>
 {% endblock  %}

@@ -3,112 +3,116 @@
     <head>
 	<meta charset="utf-8">
 	<title>UoR Met Data Extractor|{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<!--link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"-->
 	{% block head %}{% endblock %}
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 	<style>
 
-div.container {
-    width: 100%;
-    /*border: 1px solid gray;*/
-}
+		div.container {
+			width: 100%;
+			/*border: 1px solid gray;*/
+		}
 
-header, footer {
-    padding: 16px;
-    padding-left: 190px;
-    color: white;
-    background-color: black;
-   /* clear: left; */
-    text-align: left;
-}
+		header, footer {
+			padding: 16px;
+			padding-left: 190px;
+			color: white;
+			background-color: #d8131d;
+		   /* clear: left; */
+			text-align: left;
+		}
 
-header h1 a {
-    text-decoration: none;
-    color: inherit;
-}
+		header h1 a {
+			text-decoration: none;
+			color: inherit;
+		}
 
-header h1 a:hover {
-    color: inherit;
-}
+		header h1 a:hover {
+			color: inherit;
+		}
+		h1 small {
+			color: #fff;
+		}
+		html, body {
+			margin: 0 !important;
+			padding: 0 !important;
+		}
 
-html, body {    
-    margin: 0 !important;
-    padding: 0 !important;
-}
+		a.auth {
+			color: white;
+			text-align: right;
+		}
 
-a.auth {
-    color: white;
-    text-align: right;
-}
+		a.auth:hover {
+			color: white;
+		}
 
-a.auth:hover {
-    color: white;
-}
+		nav {
+			float: left;
+			max-width: 160px;
+			margin: 0;
+			padding: 16px;
+		}
 
-nav {
-    float: left;
-    max-width: 160px;
-    margin: 0;
-    padding: 16px;
-}
+		nav ul {
+			list-style-type: none;
+			padding: 0;
+		}
 
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
+		nav ul a {
+			text-decoration: none;
+			color: inherit;
+		}
 
-nav ul a {
-    text-decoration: none;
-    color: inherit;
-}
+		article {
+			margin-left: 170px;
+			padding: 16px;
+			min-height:150px;
+		}
 
-article {
-    margin-left: 170px;
-    border-left: 1px solid gray;
-    padding: 16px;
-    min-height:150px;
-}
-
-.edit-field > input {
-    width: 600px;
-}
+		.edit-field > input {
+			width: 600px;
+		}
 	</style>
     </head>
     <body>
 	<div class="container">
 	    <header>
-            <h1><a href="{{ url_for('index') }}">Data Extractor</a> | {{ self.title() }}</h1>
-		{% if current_user.is_authenticated %}
-		    <a class="auth" href="{{url_for('logout')}}">logout</a>
-		{% else %}
-		    <a class="auth"  href="{{url_for('login')}}">login</a>
-		{% endif %}
+			<h1><a href="{{ url_for('index') }}">{{ self.title() }}</a><br/>
+				<small>University of Reading Atmospheric Observatory Database</small></h1>
 	    </header>
 
 	    <nav>
-		<ul>
-		    <li><a href="{{url_for('data_extractor')}}">Data Extractor</a></li>
-		    <li><a href="{{url_for('datasets')}}">Datasets</a></li>
+		<div class="list-group">
+		    <a href="{{url_for('data_extractor')}}" type="button" class="list-group-item">Get Data</a>
+		    <a href="{{url_for('datasets')}}" type="button" class="list-group-item">View Datasets</a>
+			<a href="{{url_for('manual')}}" type="button" class="list-group-item">Information</a>
+
 		    {% if current_user.is_authenticated %}
-			<li><a href="{{url_for('user_tokens')}}">Tokens</a></li>
-			<li><a href="{{url_for('users')}}">Users</a></li>
+			<a href="{{url_for('user_tokens')}}" type="button" class="list-group-item">Tokens</a>
+			<a href="{{url_for('users')}}" type="button" class="list-group-item">Users</a>
 		    {% endif %}
-		</ul>
+			{% if current_user.is_authenticated %}
+		    <a class="list-group-item" href="{{url_for('logout')}}" type="button">Admin logout</a>
+			{% else %}
+		    <a class="list-group-item"  href="{{url_for('login')}}" type="button">Admin login</a>
+			{% endif %}
+		</div>
 	    </nav>
 
 	    <article>
 		{% block body %}{% endblock %}
 	    </article>
 
-	    <footer></footer>
 	</div>
+	<footer>Department of Meteorology, University of Reading, UK</footer>
     </body>
 </html>

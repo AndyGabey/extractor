@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Information and user guide{% endblock %}
+
+{% block body %}
+<h3>Welcome to the University of Reading Atmospheric Observatory database.</h3>
+<p>This website allows measurement data to be downloaded from the <a href="http://www.met.reading.ac.uk/observatorymain/index.html" target="_new">University of Reading's Atmospheric Observatory</a> (URAO).
+Data holdings are updated at least once per day with the latest values, and data can be downloaded in a variety of formats.</p>
+
+<h4>Available data</h4>
+<p>A list of the datasets currently available can be viewed on the "View datasets" page. This describes
+    the datasets and the meteorological variables therein. </p>
+
+<h4>Getting access</h4>
+<p>An access token must be requested in order to download URAO data. Please contact Roger Brugge for more information.
+     When requesting access, please include the dataset(s), variable(s) and time period(s) of interest.</p>
+
+<h4>Downloading data</h4>
+<p>Once you have an access token, data can be downloaded using the "Get Data" link on the menu (left)</p>
+<p>Data can be downloaded in a choice of formats:
+    <ul>
+    <li><strong>CSV:</strong> Comma-separated variables: Suitable for Microsoft Excel and data analysis programs)</li>
+    <li><strong>JSON:</strong> Javascript Object Notation: Suitable for ingestion by computer software</li>
+    <li><strong>HTML:</strong> A table of values best viewed in a Web Browser</li>
+    </ul>
+</p>
+<h5>Missing data</h5>
+<p>On some dates there may be no measurement data at all. If data is missing for the whole day, then this day will be completely skipped
+in the downloaded data to save space. This is reflected by a gap in the timestamps.</p>
+<p>If part of the data are missing on a certain day, missing value markers are substituted to ensure regular data.
+    The missing value marker is chosen in the &quot;Download options&quot; section of the form.</p>
+
+<h3>Terms and conditions</h3>
+<p>Please note that the data is published for information and educational purposes only.</p>
+    <p>Whilst reasonable efforts have been made to publish reliable data, the University does not warrant the accuracy
+    of the information provided. To the fullest extent permitted by law, all representations, warranties and guarantees
+    regarding the data are excluded and the University does not accept any liability whatsoever for any loss, damage or
+    liability directly or indirectly caused or alleged to be caused by any reliance placed on the data. </p>
+
+    <p>The University reserves all rights in the data and the data should not be published in any article (or similar)
+        in any form or used for any commercial purpose without the prior written consent of the University.</p>
+
+{% endblock body %}

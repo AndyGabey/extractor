@@ -129,12 +129,9 @@ class DataExtractor(object):
         self._set(start_date, end_date, variables, token, data_format, missing_val)
 
     def run(self):
-        timer_start = timer()
         for line in self.extract_data_stream():
             yield line
-        timer_end = timer()
-        print('Extracted data in {}'.format(timer_end - timer_start))
-    
+
     def _set(self, start_date, end_date, variables, token=None, data_format='json', missing_val=None):
         self.start_date = start_date
         self.end_date = end_date
@@ -202,7 +199,7 @@ class DataExtractor(object):
                         units = []
                         curr_rows = []
                     else:
-                        cols, units, curr_rows = parse_csv(csv_file, 
+                        cols, units, curr_rows = parse_csv(csv_file,
                                                            self.variables, 
                                                            self.start_date, 
                                                            self.end_date,

@@ -36,7 +36,7 @@ def handle_invalid_usage(error):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('manual.html')
 
 
 @app.route('/data_extractor')
@@ -44,6 +44,9 @@ def data_extractor():
     datasets = Dataset.query.all()
     return render_template('data_extractor.html', datasets=datasets)
 
+@app.route('/manual')
+def manual():
+    return render_template('manual.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -299,6 +302,10 @@ def get_data(dataset_name):
 
         for line in extractor.run():
             yield line
+    mimetype = 'text/{}; charset=utf-8'.format(data_format)
 
-    mimetype = 'text/{}'.format(data_format)
-    return Response(stream_with_context(streamer()), mimetype=mimetype)
+    if data_format == 'csv':
+        headers = [('Content-Type', mimetype), ('Content-Disposition', 'attachment; filename=UoR_Data.csv')]
+    else:
+        headers = [('Content-Type', mimetype), ('Content-Disposition', 'inline')]
+    return Response(stream_with_context(streamer()), headers=headers)
