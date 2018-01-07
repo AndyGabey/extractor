@@ -66,8 +66,6 @@ if (window.location.hostname == "127.0.0.1") {
 // of (D)D/(M)M/(YY)YY and returns true/false
 function isValidDate(dateArray) {
 
-    //var dateArray = s.split(/[\.|\/|-]/);
-
 	// correct month value
 	dateArray = dateArray.slice(1);
 	dateArray[1] = dateArray[1] - 1;
@@ -86,15 +84,9 @@ function isValidDate(dateArray) {
 	}
 }
 
-function formatDate(dateObj){
-    // Return string YYYY-mm-dd HH:MM:SS from a date object
-    return dateObj.getUTCFullYear() + '-' + pad(dateObj.getUTCMonth()+1,2) + '-' + pad(dateObj.getUTCDate(),2) + '-' + pad(dateObj.getUTCHours(),2) + ':' + pad(dateObj.getUTCMinutes(),2) + ':' + pad(dateObj.getUTCSeconds(),2)
-}
-
 // Compares two dates in array form and see if Date2 is larger than Date1.
 // Date arrays must be in (H)H (D)D (M)M YYYY
 function compareDates(dateArrayOne,dateArrayTwo) {
-
 	var dateOne = new Date(dateArrayOne[3],dateArrayOne[2]-1,dateArrayOne[1],dateArrayOne[0]);
 	var	dateTwo = new Date(dateArrayTwo[3],dateArrayTwo[2]-1,dateArrayTwo[1],dateArrayTwo[0]);
 
@@ -167,8 +159,8 @@ function getDB(token){
 // Set up global date variables
 var startDate=''
 var endDate='';
-var td = moment(); // Now
-var ytd = moment().subtract(1, 'days'); // Yesterday
+var td = moment.utc(); // Now
+var ytd = moment.utc().subtract(1, 'days'); // Yesterday
 
 var varCat = ['typetemp', 'typewind',  'typesrad', 'typenull', 'typepres', 'typerain']
 function getDatasetTimeRange(dataset){
@@ -177,34 +169,30 @@ function getDatasetTimeRange(dataset){
 			earliest_rec = 	data['dataset']['start_date'];
 			latest_rec = 	data['dataset']['end_date'];
 
-			sda = data['dataset']['start_date'].split("-");
-            startDate = new Date(Date.UTC(Number(sda[0]), Number(sda[1]), Number(sda[2]), 00, 00, 00));
+            startDate = moment.utc(earliest_rec, format='YYYY-MM-DD-HH:mm:ss');
+            endDate = moment.utc(latest_rec, format='YYYY-MM-DD-HH:mm:ss');
 
-			eda = data['dataset']['end_date'].split("-");
-            endDate = new Date(Date.UTC(Number(eda[0]), Number(eda[1]), Number(eda[2]), 23, 59, 59));
-
-	        // If end date in future, cap final date as today
+	        // If end date in future, cap final date as now
 		    if (endDate > td){
 				endDate = td
 			}
 
             // Set text box entries
-            $("#start_date").val(formatDate(startDate))
-            $("#end_date").val(formatDate(endDate))
+            $("#start_date").val(startDate.format('YYYY-MM-DD-HH:mm:ss'))
+            $("#end_date").val(endDate.format('YYYY-MM-DD-HH:mm:ss'))
 
             // Also set the datetime picker defaults to reflect these entries
-            var ds_start_date = moment(formatDate(startDate), 'YYYY-MM-DD-HH:mm:ss');
-            var ds_end_date = moment(formatDate(endDate), 'YYYY-MM-DD-HH:mm:ss');
+
 
             // (re)Instantiate the datetime pickers, limited according to data extent
             $('#datetime_startpicker').datetimepicker({
                 format: 'YYYY-MM-DD-HH:mm:ss'
-            }).data("DateTimePicker").minDate(ds_start_date).maxDate(ds_end_date); // Prevent selection of out-of-bounds data
+            }).data("DateTimePicker").minDate(startDate).maxDate(endDate); // Prevent selection of out-of-bounds data
 
             $('#datetime_endpicker').datetimepicker({
                 format: 'YYYY-MM-DD-HH:mm:ss',
                 useCurrent: false //Important! See issue #1075
-            }).data("DateTimePicker").minDate(ds_start_date).maxDate(ds_end_date);
+            }).data("DateTimePicker").minDate(startDate).maxDate(endDate);
 
             $("#datetime_startpicker").on("dp.change", function (e) {
                 $('#datetime_endpicker').data("DateTimePicker").minDate(e.date);
@@ -464,10 +452,9 @@ $(function(){
 	$("#setStartToYtd").click(function(){
 	    // Set start date to yesterday unless dataset ended before yesterday, in which case set to the start of the final day
         if (endDate < ytd) {
-          var startDateStr = formatDate(endDate);
-          startDateStr = startDateStr.substr(0,10) + '-00:00:00'; // Change end of day to start of day
+          startDateStr = endDate.subtract(1, 'days').format('YYYY-MM-DD-HH:mm:ss'); // 24 hours before final time
         } else {
-          var startDateStr = formatDate(ytd);
+          var startDateStr = ytd.format('YYYY-MM-DD-HH:mm:ss');
         }
 
 		$('#start_date').val(startDateStr)
@@ -476,15 +463,15 @@ $(function(){
     $("#setEndToLatest").click(function(){
         // Set end date to either the end of day (if measurement still on-going) or end of measurement itself (if ended)
         if (endDate < td) {
-          var endDateStr = formatDate(endDate);
+          var endDateStr = endDate.format('YYYY-MM-DD-HH:mm:ss');
         } else {
-          var endDateStr = formatDate(td);
+          var endDateStr = td.format('YYYY-MM-DD-HH:mm:ss');
         }
 		$('#end_date').val(endDateStr)
 	});
 
 	$("#setStartToEarliest").click(function(){
-		$('#start_date').val(formatDate(startDate))
+		$('#start_date').val(startDate.format('YYYY-MM-DD-HH:mm:ss'))
 	});
 
 	$("#reset_1").click(function(){
@@ -550,8 +537,8 @@ $(function(){
 
             </label>
             <div class="btn-group" role="group">
-                <button id="setStartToYtd" class="btn btn-secondary">Yesterday</button>
                 <button id="setStartToEarliest" class="btn btn-secondary">Earliest</button>
+                <button id="setStartToYtd" class="btn btn-secondary">Last 24 hours</button>
              </div>
         </div>
         <div class="col-sm-5">
