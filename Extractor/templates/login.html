@@ -1,7 +1,12 @@
 {% extends "layout.html" %}
 
 {% block title %}Login{% endblock %}
-
+{% block head %}
+  <script type="text/javascript" src="../bower/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="../bower/bootstrap/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../bower/bootstrap/dist/css/bootstrap.min.css" />
+{% endblock %}
+k
 {% block body %}
 <h1>Login</h1>
 {% from "_formhelpers.html" import render_field %}

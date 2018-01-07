@@ -4,11 +4,14 @@
 
 {% block head %}
 
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+  <script type="text/javascript" src="bower/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="bower/moment/min/moment.min.js"></script>
+  <script type="text/javascript" src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="bower/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+  <link rel="stylesheet" href="bower/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="bower/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
 
-	<meta charset="utf-8">
-	<!--link rel=stylesheet type=text/css href="/static/style.css"-->
+<meta charset="utf-8">
 <style type="text/css">
 div
 	{
@@ -47,7 +50,8 @@ span.inline-span {
 
 </style>
 
-  <script type="text/javascript">
+
+<script type="text/javascript">
 function clearVarBox(){
 	$("#variables").html("Available variables of selected categories in selected database will be populated here.");
 }
@@ -163,9 +167,8 @@ function getDB(token){
 // Set up global date variables
 var startDate=''
 var endDate='';
-var td = new Date();
-var ytd = new Date();
-ytd.setDate(ytd.getDate()-1);
+var td = moment(); // Now
+var ytd = moment().subtract(1, 'days'); // Yesterday
 
 var varCat = ['typetemp', 'typewind',  'typesrad', 'typenull', 'typepres', 'typerain']
 function getDatasetTimeRange(dataset){
@@ -185,12 +188,32 @@ function getDatasetTimeRange(dataset){
 				endDate = td
 			}
 
+            // Set text box entries
             $("#start_date").val(formatDate(startDate))
             $("#end_date").val(formatDate(endDate))
-            $("#start_date").datepicker('setStartDate', formatDate(startDate).substr(0,10))
-            $("#start_date").datepicker('setEndDate', formatDate(endDate).substr(0,10))
-            $("#end_date").datepicker('setStartDate', formatDate(startDate).substr(0,10))
-            $("#end_date").datepicker('setEndDate', formatDate(endDate).substr(0,10))
+
+            // Also set the datetime picker defaults to reflect these entries
+            var ds_start_date = moment(formatDate(startDate), 'YYYY-MM-DD-HH:mm:ss');
+            var ds_end_date = moment(formatDate(endDate), 'YYYY-MM-DD-HH:mm:ss');
+
+            // (re)Instantiate the datetime pickers, limited according to data extent
+            $('#datetime_startpicker').datetimepicker({
+                format: 'YYYY-MM-DD-HH:mm:ss'
+            }).data("DateTimePicker").minDate(ds_start_date).maxDate(ds_end_date); // Prevent selection of out-of-bounds data
+
+            $('#datetime_endpicker').datetimepicker({
+                format: 'YYYY-MM-DD-HH:mm:ss',
+                useCurrent: false //Important! See issue #1075
+            }).data("DateTimePicker").minDate(ds_start_date).maxDate(ds_end_date);
+
+            $("#datetime_startpicker").on("dp.change", function (e) {
+                $('#datetime_endpicker').data("DateTimePicker").minDate(e.date);
+
+            });
+            $("#datetime_endpicker").on("dp.change", function (e) {
+                $('#datetime_startpicker').data("DateTimePicker").maxDate(e.date);
+            });
+
 
 		}).fail(function(){
 			$('#dataset_error').html("<strong>Problem retrieving dataset information</strong>: Please check your internet connection. If the problem persists, please contact us.").show();
@@ -308,7 +331,7 @@ function generateURL() {
 
 }
 function retrieveData(url) {
-        window.location.href = url;
+        window.open(url, "_blank");
 }
 
 function updateSelectedDataset(){
@@ -487,36 +510,7 @@ $(function(){
 
 {% block body %}
 
-<script>
-    // Initialize datepicker options (actual datepickers initialised when a dataset chosen)
-    $(document).ready(function(){
 
-      validateNumberInput = function(){
-        if (this.value != this.value.replace(/[^0-9\.\-]/g, '')) {
-           this.value = this.value.replace(/[^0-9\.\-]/g, '');
-        }
-      }
-
-      // Instantiate datepickers with the right start and end times
-      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-
-      var options_start={
-            format: 'yyyy-mm-dd-00:00:00',
-            container: container,
-            todayHighlight: true,
-            autoclose: true,
-          };
-       var options_end={
-            format: 'yyyy-mm-dd-23:59:59',
-            container: container,
-            todayHighlight: true,
-            autoclose: true,
-          };
-
-      $("#start_date").datepicker(options_start);
-      $("#end_date").datepicker(options_end);
-    })
-</script>
 <div class="row well col-sm-12">
     <h4>Log in<br/><small>A user token is needed in order to download data. Please contact the <a href="http://www.met.reading.ac.uk/observatorymain/Observatory_introduction.html">University of Reading</a> to arrange access.</small></h4>
     <div class="row">
@@ -544,20 +538,37 @@ $(function(){
 <div id="time_periods" style="display:none" class="row well col-sm-12">
     <h4>Time period to download<br /><small>Start and end dates reflect the available data</small></h4>
     <div class="row">
-        <div class="col-sm-3">Time range (UTC):<br />(Inclusive)</div>
+        <div class="col-sm-2">Time range (UTC):<br />(Inclusive)</div>
         <div class="col-sm-5">
-            <label>From:<input type="text" class="form-control" name="start_date" id="start_date"></label>
+            <label>From:
+                <div class='input-group date' id='datetime_startpicker'>
+                    <input type='text' class="form-control" name="start_date" id="start_date">
+                     <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                     </span>
+                </div>
+
+            </label>
             <div class="btn-group" role="group">
                 <button id="setStartToYtd" class="btn btn-secondary">Yesterday</button>
                 <button id="setStartToEarliest" class="btn btn-secondary">Earliest</button>
              </div>
         </div>
-        <div class="col-sm-4">
-            <label>To:<input type="text" class="form-control" name="end_date" id="end_date"></label>
-            <button id="setEndToLatest" class="btn btn-secondary">Latest</button>
+        <div class="col-sm-5">
+            <label>To:
+                <div class='input-group date' id='datetime_endpicker'>
+                    <input type='text' class="form-control" name="end_date" id="end_date">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </label>
+            <div class="btn-group" role="group"><button id="setEndToLatest" class="btn btn-secondary">Latest</button></div>
         </div>
+        <!--<label>To:<input type="text" class="form-control" name="end_date" id="end_date"></label>-->
     </div>
 </div>
+
 
 <div id="database" style="display:none" class="row well col-sm-12">
     <h4>Measurement variables to download</h4>
@@ -623,7 +634,6 @@ $(function(){
             </div>
         </div>
     </div>
-
 </div>
 
 </div>

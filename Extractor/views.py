@@ -1,11 +1,10 @@
 import datetime as dt
 import uuid
 from collections import defaultdict
-
+import os
 import flask
-from flask import request, render_template, Response, stream_with_context
+from flask import request, render_template, Response, stream_with_context, send_from_directory
 from flask_login import login_required, login_user, logout_user
-
 from Extractor import app, login_manager
 from Extractor.data_extractor import DataExtractor
 from Extractor.database import db_session
@@ -13,7 +12,9 @@ from Extractor.exceptions import InvalidUsage
 from Extractor.forms import LoginForm, DatasetForm, VariableForm, TokenForm
 from Extractor.models import User, Dataset, Variable, UserToken
 from Extractor.utils import is_safe_url, DATE_FMT
+from flask_bower import Bower
 
+Bower(app) # For static javascript file serving
 
 @app.errorhandler(400)
 def page_not_found(error):
