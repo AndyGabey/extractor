@@ -63,42 +63,24 @@ if (window.location.hostname == "127.0.0.1") {
     URL_BASE = ""
 }
 // Checks a string to see if it in a valid date format
-// of (D)D/(M)M/(YY)YY and returns true/false
-function isValidDate(dateArray) {
-
-	// correct month value
-	dateArray = dateArray.slice(1);
-	dateArray[1] = dateArray[1] - 1;
-
-	// correct year value
-	if (dateArray[2].length<4) {
-		// correct year value
-		dateArray[2] = (parseInt(dateArray[2]) < 50) ? 2000 + parseInt(dateArray[2]) : 1900 + parseInt(dateArray[2]);
-	}
-
-	var testDate = new Date(dateArray[2], dateArray[1], dateArray[0]);
-	if (testDate.getDate()!=dateArray[0] || testDate.getMonth()!=dateArray[1] || testDate.getFullYear()!=dateArray[2]) {
-		return false;
-	} else {
-		return true;
-	}
+function isValidDate(dateStr) {
+    var testDate = moment(dateStr, format='YYYY-MM-DD-HH:mm:ss');
+    return testDate.isValid();
 }
 
-// Compares two dates in array form and see if Date2 is larger than Date1.
-// Date arrays must be in (H)H (D)D (M)M YYYY
-function compareDates(dateArrayOne,dateArrayTwo) {
-	var dateOne = new Date(dateArrayOne[3],dateArrayOne[2]-1,dateArrayOne[1],dateArrayOne[0]);
-	var	dateTwo = new Date(dateArrayTwo[3],dateArrayTwo[2]-1,dateArrayTwo[1],dateArrayTwo[0]);
+// Compares two dates in string form and see if Date2 is larger than Date1.
+function compareDates(dateStr1, dateStr2) {
+    var date1 = moment(dateStr1, format='YYYY-MM-DD-HH:mm:ss');
+    var date2 = moment(dateStr2, format='YYYY-MM-DD-HH:mm:ss');
 
-	if (dateOne >= dateTwo) return false
+	if (date1 >= date2) return false
 	else return true
 }
 
-// Compares a given day in array form (dateArray) with the current time.
-// Date array must be in (H)H (D)D (M)M YYYY
-function compareDateWithNow(dateArray) {
-	var d = new Date(dateArray[3],dateArray[2]-1,dateArray[1],dateArray[0]);
-	var dnow = new Date();
+// Compares a given day string with the current time.
+function compareDateWithNow(dateStr) {
+	var d = moment(dateStr, format='YYYY-MM-DD-HH:mm:ss');
+	var dnow = moment();
 
 	if (d > dnow) return false
 	else return true
@@ -236,28 +218,28 @@ function checkStepOne() {
 
 
 	// Check for errors in the input dates.
-	if (!isValidDate(startDateArray))
+	if (!isValidDate($('#start_date').val()))
 		{
 			$('#download_error').html("Invalid start date. Please check.").show();
             return false;
 
 		}
-	if (!isValidDate(endDateArray))
+	if (!isValidDate($('#end_date').val()))
 		{
 			$('#download_error').html("Invalid end date. Please check.").show();
             return false;
 		}
-	if (!compareDates(startDateArray,endDateArray))
+	if (!compareDates($('#start_date').val(), $('#end_date').val()))
 		{
-			$('#download_error').html("Start date must be earlier than end date.").show();
+			$('#download_error').html("Start time must be earlier than end time.").show();
             return false;
 		}
-	if (!compareDateWithNow(startDateArray))
+	if (!compareDateWithNow($('#start_date').val()))
 		{
 			$('#download_error').html("Start date cannot be later than now.").show();
             return false;
 		}
-	if (!compareDateWithNow(endDateArray))
+	if (!compareDateWithNow($('#end_date').val()))
 		{
 			$('#download_error').html("End date cannot be later than now.").show();
             return false;
@@ -534,8 +516,7 @@ $(function(){
                         <span class="glyphicon glyphicon-calendar"></span>
                      </span>
                 </div>
-
-            </label>
+            </label><br/>
             <div class="btn-group" role="group">
                 <button id="setStartToEarliest" class="btn btn-secondary">Earliest</button>
                 <button id="setStartToYtd" class="btn btn-secondary">Last 24 hours</button>
@@ -549,7 +530,7 @@ $(function(){
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>
-            </label>
+            </label><br/>
             <div class="btn-group" role="group"><button id="setEndToLatest" class="btn btn-secondary">Latest</button></div>
         </div>
         <!--<label>To:<input type="text" class="form-control" name="end_date" id="end_date"></label>-->
