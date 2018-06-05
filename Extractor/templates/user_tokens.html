@@ -1,10 +1,8 @@
 {% extends "layout.html" %}
-
-{% block title %}Tokens{% endblock %}
 {% block head %}
-  <script type="text/javascript" src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="bower/bootstrap/dist/css/bootstrap.min.css" />
+  {{ super() }}
 {% endblock %}
+{% block title %}Tokens{% endblock %}
 
 {% block body %}
 <h1>Tokens</h1>

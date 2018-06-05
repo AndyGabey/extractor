@@ -181,7 +181,8 @@ class DataExtractor(object):
 
     def extract_data_stream(self):
         """Parse all CSV files sequentially, streaming formatted results"""
-        header_sent = False
+        header_sent = False # Has list of variable IDs been sent yet?
+        units_sent = False # Has list of measurement units been sent yet?
         max_rows = self.token.max_request_rows
         prev_data_row = None
 
@@ -212,10 +213,14 @@ class DataExtractor(object):
                     raise Exception('Parse error: {}'.format(parse_e.message))
 
                 try:
-                    if i == 0:
+                    if i == 0: # Print list of variables
                         yield self.formatter.header(cols)
                         header_sent = True
-                    
+
+                    if not units_sent and curr_rows:
+                        yield self.formatter.units_row(units)
+                        units_sent = True
+
                     if curr_rows:
                         for data_row in self.formatter.rows(curr_rows):
                             # Convoluted? Yes a little. The problem is that it's quite hard to

@@ -1,18 +1,12 @@
 {% extends "layout.html" %}
-
-{% block title %}Dataset edit{% endblock %}
 {% block head %}
-  <script type="text/javascript" src="../../bower/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="../../bower/moment/min/moment.min.js"></script>
-  <script type="text/javascript" src="../../bower/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../../bower/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
-  <link rel="stylesheet" href="../../bower/bootstrap/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="../../bower/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+  {{ super() }}
 {% endblock %}
+{% block title %}Dataset edit{% endblock %}
 {% block body %}
 <script>
 $(document).ready(function(){
-    $('[data-toggle="popover"]').popover(); 
+    $('[data-toggle="popover"]').popover();
 });
 </script>
 <h1>Dataset</h1>
@@ -34,4 +28,3 @@ $(document).ready(function(){
     <p><input type="submit" value="Submit">
 </form>
 {% endblock body %}
-

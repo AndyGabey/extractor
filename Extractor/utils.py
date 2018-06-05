@@ -66,6 +66,7 @@ def parse_csv(csv_file, variables, start_date, end_date, date_col_name, time_col
 
             cols = ['TimeStamp']
             units = ['timestamp']
+
             for cd in col_data:
                 if cd[0] is not None:
                     cols.append(header[cd[0]])

@@ -3,21 +3,14 @@
 {% block title %}Get Data{% endblock %}
 
 {% block head %}
-
-  <script type="text/javascript" src="bower/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="bower/moment/min/moment.min.js"></script>
-  <script type="text/javascript" src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="bower/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
-  <link rel="stylesheet" href="bower/bootstrap/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="bower/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
-
+  {{ super() }}
 <meta charset="utf-8">
 <style type="text/css">
 div
 	{
 		padding: 5px;
 	}
-#var_choices td 
+#var_choices td
 	{
 		width: 20%;
 		text-align: center;
@@ -62,6 +55,7 @@ var URL_BASE = "/ext";
 if (window.location.hostname == "127.0.0.1") {
     URL_BASE = ""
 }
+
 // Checks a string to see if it in a valid date format
 function isValidDate(dateStr) {
     var testDate = moment(dateStr, format='YYYY-MM-DD-HH:mm:ss');
@@ -476,9 +470,7 @@ $(function(){
 
 
 {% endblock %}
-
 {% block body %}
-
 
 <div class="row well col-sm-12">
     <h4>Log in<br/><small>A user token is needed in order to download data. Please contact the <a href="http://www.met.reading.ac.uk/observatorymain/Observatory_introduction.html">University of Reading</a> to arrange access.</small></h4>

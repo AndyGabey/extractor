@@ -10,7 +10,7 @@ class JsonFormatter(object):
         for col in cols:
             header_row.append('"{}"'.format(col))
         json_rows.append(','.join(header_row))
-        json_rows.append('], "data": [')
+        json_rows.append('], ')
         return ''.join(json_rows)
     
     def row(self, row_data):
@@ -22,6 +22,17 @@ class JsonFormatter(object):
             else:
                 json_row.append('"{}"'.format(cell))
         return '[' + ','.join(json_row) + '],'
+
+    def units_row(self, units):
+        """Return json for measurement units"""
+        json_rows = ['"units": [']
+
+        unit_row = []
+        for unit in units:
+            unit_row.append('"{}"'.format(unit))
+        json_rows.append(','.join(unit_row))
+        json_rows.append('], "data": [')
+        return ''.join(json_rows)
 
     def rows(self, rows_data):
         """Return json for each row"""
@@ -63,11 +74,18 @@ class HtmlFormatter(object):
         header_row = ['<thead><tr>']
         for col in cols:
             header_row.append('<th>{}</th>'.format(col))
-        header_row.append('</tr></thead>')
+        header_row.append('</tr>')
         html_rows.append(''.join(header_row))
-        html_rows.append('<tbody>')
         return '\n'.join(html_rows)
-    
+
+    def units_row(self, units):
+
+        unit_row = ['<tr>']
+        for col in units:
+            unit_row.append('<th>{}</th>'.format(col))
+        unit_row.append('</tr></thead>')
+        return '\n'.join(unit_row)
+
     def row(self, row_data):
         """Return html for row"""
         html_row = ['<tr>']
@@ -109,6 +127,10 @@ class CsvFormatter(object):
         """Return csv for header"""
         header_row = ','.join(cols)
         return header_row + '\n'
+
+    def units_row(self, units):
+        """ return CSV row for units"""
+        return self.header(units) #Same as header row
     
     def row(self, row_data):
         """Return csv for row"""
@@ -118,8 +140,9 @@ class CsvFormatter(object):
                 html_row.append('{}'.format(self.missing_val))
             else:
                 html_row.append('{}'.format(cell))
-        html_row.append('\n')
-        return ','.join(html_row)
+        row_str = ','.join(html_row)
+        row_str = row_str + '\n'
+        return row_str
 
     def rows(self, rows_data):
         """yield csv for each row"""
